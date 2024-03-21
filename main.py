@@ -1,15 +1,16 @@
-import random
-import os
-from dataset.create_datasets import create_datasets, load_datasets
+from dataset.dataset_creation import *
+from dataset.embeddings_generator import *
 
 
 def main():
-    if not os.listdir('data'):
-        create_datasets()
-    train, test, validation = load_datasets()
-    print(train, test, validation)
+    splits = ('train', 'test')
+    seed = 7
+    dataset = load_tweet_eval()
+    dataset = to_binary(dataset, splits, seed)
+    dataset = normalize(dataset, splits, seed)
+    dataset = add_sentence_embedding(dataset, splits)
+    save(dataset, splits, './data/')
 
 
 if __name__ == '__main__':
-    random.seed(58481)
     main()
