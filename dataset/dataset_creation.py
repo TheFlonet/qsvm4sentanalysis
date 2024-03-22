@@ -1,5 +1,5 @@
 from datasets import load_dataset, concatenate_datasets, Dataset, DatasetDict
-from typing import Tuple
+from typing import Tuple, Dict
 
 """
 tweet_eval has 3 splits:
@@ -33,14 +33,19 @@ def to_binary(dataset: DatasetDict, splits: Tuple[str, str], seed: int) -> Datas
     return dataset
 
 
+def normalize_label(entry: Dict[str, str | int]) -> Dict[str, str | int]:
+    entry['label'] = entry['label'] // (entry['label'] if entry['label'] != 0 else 1)
+    return entry
+
+
 def normalize(dataset: DatasetDict, splits: Tuple[str, str], seed: int) -> DatasetDict:
     """
     Unify the cardinality of elements in the positive class and in the negative class
     """
     for split in splits:
         new_dataset = []
-        pos, neg = (dataset[split].filter(lambda example: example['label'] == 2),
-                    dataset[split].filter(lambda example: example['label'] == 0))
+        pos, neg = (dataset[split].filter(lambda example: example['label'] == 2).map(normalize_label),
+                    dataset[split].filter(lambda example: example['label'] == 0).map(normalize_label))
         target_dim = min(len(pos), len(neg))
         num = 0
         for p in pos:
