@@ -1,5 +1,12 @@
 from datasets import load_dataset, concatenate_datasets, Dataset, DatasetDict
 from typing import Tuple, Dict
+from sklearn.datasets import make_circles
+import numpy as np
+
+
+def get_dummy_dataset() -> Tuple[np.ndarray, np.ndarray]:
+    return make_circles(n_samples=100, shuffle=True, noise=0.1, random_state=7, factor=0.6)
+
 
 """
 tweet_eval has 3 splits:

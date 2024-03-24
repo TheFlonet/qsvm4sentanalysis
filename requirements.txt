@@ -7,3 +7,6 @@ tokenizers==0.15.2
 torch==2.2.1
 tqdm==4.66.2
 transformers==4.39.0
+matplotlib==3.8.3
+matplotlib-inline==0.1.6
+seaborn==0.13.2
