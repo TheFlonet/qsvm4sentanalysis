@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.svm import SVC
+from classical.CSVM import CSVM
 
 
-def plot_decision_boundary(model: SVC, examples: np.ndarray, labels: np.ndarray) -> None:
+def plot_decision_boundary(model: SVC | CSVM, examples: np.ndarray, labels: np.ndarray) -> None:
     h = 0.02
     x_min, x_max = examples[:, 0].min() - 1, examples[:, 0].max() + 1
     y_min, y_max = examples[:, 1].min() - 1, examples[:, 1].max() + 1
@@ -15,18 +15,11 @@ def plot_decision_boundary(model: SVC, examples: np.ndarray, labels: np.ndarray)
     plt.xlabel('X1')
     plt.ylabel('X2')
     plt.title('Decision Boundary')
-    plt.show()
+    plt.savefig('img/decision_boundary.png')
+    # plt.show()
 
 
 def plot_dataset(examples: np.ndarray, labels: np.ndarray) -> None:
     plt.scatter(examples[:, 0], examples[:, 1], c=labels)
-    plt.show()
-
-
-def plot_confusion_matrix(matrix: np.ndarray) -> None:
-    plt.figure(figsize=(3, 3))
-    sns.heatmap(matrix, annot=True, fmt="d", cmap="Blues", cbar=False)
-    plt.xlabel('Predicted Labels')
-    plt.ylabel('True Labels')
-    plt.title('Confusion Matrix')
-    plt.show()
+    plt.savefig('img/dataset.png')
+    # plt.show()

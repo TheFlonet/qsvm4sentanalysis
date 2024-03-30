@@ -5,7 +5,10 @@ import numpy as np
 
 
 def get_dummy_dataset() -> Tuple[np.ndarray, np.ndarray]:
-    return make_circles(n_samples=100, shuffle=True, noise=0.1, random_state=7, factor=0.6)
+    res = make_circles(n_samples=100, shuffle=True, noise=0.1, random_state=7, factor=0.6)
+    for i, ex in enumerate(res[1]):
+        res[1][i] = res[1][i] if res[1][i] == 1 else -1
+    return res
 
 
 """
