@@ -1,5 +1,6 @@
 data
 *.ipynb
+*.png
 
 # IntelliJ project files
 *.iml
