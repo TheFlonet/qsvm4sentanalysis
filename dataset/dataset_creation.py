@@ -5,7 +5,7 @@ import numpy as np
 
 
 def get_dummy_dataset() -> Tuple[np.ndarray, np.ndarray]:
-    res = make_circles(n_samples=100, shuffle=True, noise=0.1, random_state=7, factor=0.6)
+    res = make_circles(n_samples=50, shuffle=True, noise=0.1, random_state=7, factor=0.6)
     for i, ex in enumerate(res[1]):
         res[1][i] = res[1][i] if res[1][i] == 1 else -1
     return res
@@ -44,7 +44,7 @@ def to_binary(dataset: DatasetDict, splits: Tuple[str, str], seed: int) -> Datas
 
 
 def normalize_label(entry: Dict[str, str | int]) -> Dict[str, str | int]:
-    entry['label'] = entry['label'] // (entry['label'] if entry['label'] != 0 else 1)
+    entry['label'] -= 1
     return entry
 
 
@@ -54,8 +54,9 @@ def normalize(dataset: DatasetDict, splits: Tuple[str, str], seed: int) -> Datas
     """
     for split in splits:
         new_dataset = []
-        pos, neg = (dataset[split].filter(lambda example: example['label'] == 2).map(normalize_label),
-                    dataset[split].filter(lambda example: example['label'] == 0).map(normalize_label))
+        dataset[split] = dataset[split].map(normalize_label)
+        pos, neg = (dataset[split].filter(lambda example: example['label'] == 1),
+                    dataset[split].filter(lambda example: example['label'] == -1))
         target_dim = min(len(pos), len(neg))
         num = 0
         for p in pos:
