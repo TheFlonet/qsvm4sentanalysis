@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from classical.CSVM import CSVM
+from quantum.QSVM import QSVM
 
 
-def plot_decision_boundary(model: SVC | CSVM, examples: np.ndarray, labels: np.ndarray) -> None:
+def plot_decision_boundary(model: SVC | CSVM | QSVM, examples: np.ndarray, labels: np.ndarray, title) -> None:
     h = 0.02
     x_min, x_max = examples[:, 0].min() - 1, examples[:, 0].max() + 1
     y_min, y_max = examples[:, 1].min() - 1, examples[:, 1].max() + 1
@@ -15,7 +16,7 @@ def plot_decision_boundary(model: SVC | CSVM, examples: np.ndarray, labels: np.n
     plt.xlabel('X1')
     plt.ylabel('X2')
     plt.title('Decision Boundary')
-    plt.savefig('img/decision_boundary.png')
+    plt.savefig(f'img/decision_boundary_{title}.png')
     # plt.show()
 
 

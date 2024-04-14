@@ -10,7 +10,7 @@ def sentence_bert(entry: Dict[str, str | List]) -> Dict[str, str | List]:
     return entry
 
 
-def add_sentence_embedding(dataset: DatasetDict, splits: Tuple[str, str]):
+def add_sentence_embedding(dataset: DatasetDict, splits: Tuple[str, str]) -> DatasetDict:
     for split in splits:
         dataset[split] = dataset[split].map(sentence_bert)
     return dataset

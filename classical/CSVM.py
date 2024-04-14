@@ -1,4 +1,5 @@
 import itertools
+from typing import Callable
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -14,8 +15,8 @@ class CSVM(BaseEstimator, ClassifierMixin):
             alpha_i * alpha_j * y_i * y_j * K(x_i * x_j)
         ) + sum_{i=1}^N alpha_i
     subject to:
-        C >= alpha_i >= 0 i in {1...N}
-        sum_{i=1}^N y_i * alpha_i = 0
+        (1) C >= alpha_i >= 0 i in {1...N}
+        (2) sum_{i=1}^N y_i * alpha_i = 0
 
     Where:
     - alpha_i are real number (optimization variables)
@@ -25,7 +26,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
     - C is a bound on the error
     """
 
-    def __init__(self, big_c, kernel):
+    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
         self.big_c = big_c
         self.kernel = kernel
         self.support_vectors_labels = None
@@ -33,12 +34,13 @@ class CSVM(BaseEstimator, ClassifierMixin):
         self.support_vectors_examples = None
         self.b = None
 
-    def fit(self, examples, labels):
+    def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, n_features = examples.shape
         N = range(n_samples)
         model = pyo.ConcreteModel()
         model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals)
-        kernel_matrix = np.array([[self.kernel(x1, x2) for x1 in examples] for x2 in examples])
+        gamma = 1 / examples.shape[1]
+        kernel_matrix = np.array([[self.kernel(x1, x2, gamma) for x1 in examples] for x2 in examples])
 
         model.objective = pyo.Objective(rule=lambda w_model: (
                 sum(w_model.alpha[i] for i in N)
@@ -60,13 +62,12 @@ class CSVM(BaseEstimator, ClassifierMixin):
         else:
             raise Exception('Optimal solution was not found.')
 
-    def predict(self, examples):
+    def predict(self, examples: np.ndarray) -> np.ndarray:
         if any(x is None for x in [self.support_vectors_examples, self.support_vectors_labels,
                                    self.support_vectors_alphas, self.b]):
             raise Exception('You need to fit before predicting.')
-        preds = []
-        for example in examples:
-            preds.append(np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
-                                     * self.kernel(self.support_vectors_examples[i], example)
-                                     for i in range(len(self.support_vectors_alphas))) + self.b))
-        return np.array(preds)
+        gamma = 1 / examples.shape[1]
+        return np.array([np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
+                                     * self.kernel(self.support_vectors_examples[i], example, gamma)
+                                     for i in range(len(self.support_vectors_alphas))) + self.b)
+                         for example in examples])
