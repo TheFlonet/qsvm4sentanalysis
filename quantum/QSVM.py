@@ -1,5 +1,5 @@
 import itertools
-from typing import Callable
+from typing import Callable, List
 
 import numpy as np
 from dwave.preprocessing import Presolver
@@ -35,13 +35,15 @@ class QSVM(BaseEstimator, ClassifierMixin):
     In this case constraint (1) can be omitted because the value range is specified at the variable creation stage
     """
 
-    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
+    def __init__(self, big_c: int, ensemble: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
         self.big_c = big_c
         self.kernel = kernel
-        self.support_vectors_labels = None
-        self.support_vectors_alphas = None
-        self.support_vectors_examples = None
-        self.b = None
+        self.ensemble_dim = ensemble
+        self.support_vectors_labels: List[np.array] = []
+        self.support_vectors_alphas: List[np.array] = []
+        self.support_vectors_examples: List[np.array] = []
+        self.b: List[float] = []
+        self.ensemble_w = [1 / ensemble for _ in range(ensemble)]
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, n_features = examples.shape
@@ -63,33 +65,48 @@ class QSVM(BaseEstimator, ClassifierMixin):
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
 
+    @staticmethod
+    def __softmax(x):
+        x = np.vectorize(round)(-x, 5)
+        exp_x = np.exp(x)
+        sum_exp_x = np.sum(exp_x)
+        softmax_x = exp_x / sum_exp_x
+        return softmax_x
+
     def __extract_solution(self, examples: np.ndarray, labels: np.ndarray,
                            kernel_matrix: np.ndarray, sampleset: dimod.SampleSet) -> None:
         df = sampleset.to_pandas_dataframe()
         df = df.loc[(df['is_feasible']) & (df['is_satisfied'])]
         df = df.drop(['is_feasible', 'is_satisfied', 'num_occurrences'], axis=1)
-        selected = df.nsmallest(1, 'energy')
-        selected = selected.drop(['energy'], axis=1)
+        selected = df.nsmallest(self.ensemble_dim, 'energy')
+        self.w = self.__softmax(np.array(selected['energy']))
+        selected = selected.drop('energy', axis=1)
         for _, row in selected.iterrows():
             indices, alphas = [], []
             for i in range(len(row)):
                 col = f'alpha_{i}'
-                if 0 < row[col] < 20:
+                if 0 < row[col] < self.big_c:
                     indices.append(i)
                     alphas.append(int(row[col]))
-            self.support_vectors_examples = examples[indices]
-            self.support_vectors_alphas = np.array(alphas)
-            self.support_vectors_labels = labels[indices]
-            self.b = np.average([labels[original_i] - sum(alphas[real_j] * labels[original_j]
-                                                          * kernel_matrix[original_i, original_j]
-                                                          for real_j, original_j in enumerate(indices))
-                                 for real_i, original_i in enumerate(indices)])
+            self.support_vectors_examples.append(examples[indices])
+            self.support_vectors_alphas.append(np.array(alphas))
+            self.support_vectors_labels.append(labels[indices])
+            self.b.append(np.average([labels[original_i] - sum(alphas[real_j] * labels[original_j]
+                                                               * kernel_matrix[original_i, original_j]
+                                                               for real_j, original_j in enumerate(indices))
+                                      for real_i, original_i in enumerate(indices)]))
 
     def predict(self, examples: np.ndarray) -> np.ndarray:
         if any(x is None for x in [self.support_vectors_examples, self.support_vectors_labels,
                                    self.support_vectors_alphas, self.b]):
             raise Exception('You need to fit before predicting.')
-        return np.array([np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
-                                     * self.kernel(self.support_vectors_examples[i], example, 1 / examples.shape[1])
-                                     for i in range(len(self.support_vectors_alphas))) + self.b)
-                         for example in examples])
+        predictions = np.ndarray(shape=(examples.shape[0], self.ensemble_dim))
+
+        for i in range(examples.shape[0]):
+            for j in range(self.ensemble_dim):
+                predictions[i, j] = np.sign(sum(self.support_vectors_alphas[j][k] * self.support_vectors_labels[j][k]
+                                                * self.kernel(self.support_vectors_examples[j][k],
+                                                              examples[i], 1 / examples.shape[1])
+                                                for k in range(len(self.support_vectors_alphas[j]))) + self.b[j])
+        res = np.dot(predictions, self.ensemble_w)
+        return np.sign(res).astype(int)
