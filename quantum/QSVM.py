@@ -66,7 +66,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
 
     @staticmethod
-    def __softmax(x):
+    def __softmax(x: np.ndarray) -> np.ndarray:
         x = np.vectorize(round)(-x, 5)
         exp_x = np.exp(x)
         sum_exp_x = np.sum(exp_x)

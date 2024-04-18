@@ -6,6 +6,7 @@ from util.evaluation import evaluate
 from sklearn.svm import SVC
 from classical.CSVM import CSVM
 from quantum.QSVM import QSVM
+import time
 
 
 def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
@@ -16,7 +17,6 @@ def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.a
     predictions = svm_model.predict(examples_test)
     print(f'Testing with sklearn'.upper())
     evaluate(labels_test, predictions)
-    print('-' * 50)
 
 
 def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
@@ -28,11 +28,10 @@ def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np
     predictions = svm_model.predict(examples_test)
     print(f'Testing with gurobi'.upper())
     evaluate(labels_test, predictions)
-    print('-' * 50)
 
 
 def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
-    svm_model = QSVM(big_c=20, ensemble=20,
+    svm_model = QSVM(big_c=20, ensemble=1,
                      kernel=lambda x1, x2, gamma: np.exp(-np.linalg.norm(x1 - x2, ord=2) / (2 * (gamma ** 2))))
     print(f'Training with d-wave'.upper())
     svm_model.fit(examples_train, labels_train)
@@ -40,7 +39,6 @@ def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.a
     predictions = svm_model.predict(examples_test)
     print(f'Testing with d-wave'.upper())
     evaluate(labels_test, predictions)
-    print('-' * 50)
 
 
 def main() -> None:
@@ -49,9 +47,24 @@ def main() -> None:
     examples, labels = get_dummy_dataset()
     plot_dataset(examples, labels)
     ex_train, ex_test, l_train, l_test = train_test_split(examples, labels, test_size=0.4, random_state=7)
+    st, stp = time.time(), time.process_time()
     main_c(ex_train, ex_test, l_train, l_test)
+    et, etp = time.time(), time.process_time()
+    print('Execution time:', et-st)
+    print('Process time:', etp-stp)
+    print('-' * 50)
+    st, stp = time.time(), time.process_time()
     main_opt(ex_train, ex_test, l_train, l_test)
+    et, etp = time.time(), time.process_time()
+    print('Execution time:', et - st)
+    print('Process time:', etp - stp)
+    print('-' * 50)
+    st, stp = time.time(), time.process_time()
     main_q(ex_train, ex_test, l_train, l_test)
+    et, etp = time.time(), time.process_time()
+    print('Execution time:', et - st)
+    print('Process time:', etp - stp)
+    print('-' * 50)
 
 
 if __name__ == '__main__':
