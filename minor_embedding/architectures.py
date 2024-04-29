@@ -21,7 +21,7 @@ def svm_dummy_dataset():
 
     cqm.set_objective(0.5 * sum(labels[i] * alphas[i] * kernel_matrix[i, j] * labels[j] * alphas[j]
                                 for i, j in itertools.product(N, N)) - sum(alphas))
-    cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) >= 0)
+    cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) == 0)
     presolve = Presolver(cqm)
     presolve.apply()
     bqm, _ = dimod.cqm_to_bqm(presolve.detach_model())
