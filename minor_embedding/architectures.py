@@ -26,3 +26,20 @@ def svm_dummy_dataset():
     presolve.apply()
     bqm, _ = dimod.cqm_to_bqm(presolve.detach_model())
     return dimod.to_networkx_graph(bqm)
+
+
+def toy_svm():
+    # NOTE: presolve increase nodes number
+
+    examples = np.array([[1, 0], [0, 1]])
+    labels = np.array([-1, 1])
+    cqm = dimod.ConstrainedQuadraticModel()
+    alphas = [dimod.Integer(label=f'alpha_{i}', lower_bound=0, upper_bound=10) for i in range(len(labels))]
+    cqm.set_objective(0.5 * (alphas[0] * alphas[0] * labels[0] * labels[0] * examples[0] @ examples[0]
+                             + alphas[0] * alphas[1] * labels[0] * labels[1] * examples[0] @ examples[1]
+                             + alphas[1] * alphas[0] * labels[1] * labels[0] * examples[1] @ examples[0]
+                             + alphas[1] * alphas[1] * labels[1] * labels[1] * examples[1] @ examples[1])
+                      + sum(alphas))
+    cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) == 0)
+    bqm, _ = dimod.cqm_to_bqm(cqm)
+    return dimod.to_networkx_graph(bqm)

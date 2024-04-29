@@ -7,3 +7,4 @@ __pycache__/
 .idea
 sketches
 minor_embedding/minors_dummy
+minor_embedding/minors_toy
