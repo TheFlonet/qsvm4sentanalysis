@@ -6,3 +6,4 @@ __pycache__/
 .venv
 .idea
 sketches
+minor_embedding/minors_dummy

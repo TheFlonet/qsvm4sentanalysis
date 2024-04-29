@@ -41,7 +41,7 @@ def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.a
     evaluate(labels_test, predictions)
 
 
-def main() -> None:
+def compare_svm() -> None:
     load_dotenv()
     print('Generating dataset'.upper())
     examples, labels = get_dummy_dataset()
@@ -50,8 +50,8 @@ def main() -> None:
     st, stp = time.time(), time.process_time()
     main_c(ex_train, ex_test, l_train, l_test)
     et, etp = time.time(), time.process_time()
-    print('Execution time:', et-st)
-    print('Process time:', etp-stp)
+    print('Execution time:', et - st)
+    print('Process time:', etp - stp)
     print('-' * 50)
     st, stp = time.time(), time.process_time()
     main_opt(ex_train, ex_test, l_train, l_test)
@@ -68,4 +68,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    compare_svm()
