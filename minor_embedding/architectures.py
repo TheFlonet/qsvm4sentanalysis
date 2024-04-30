@@ -1,12 +1,13 @@
 import itertools
 import dimod
+import networkx as nx
 import numpy as np
 from dwave.preprocessing import Presolver
 from sklearn.model_selection import train_test_split
 from dataset.dataset_creation import get_dummy_dataset
 
 
-def svm_dummy_dataset():
+def svm_dummy_dataset() -> nx.Graph:
     examples, labels = get_dummy_dataset()
     examples, _, labels, _ = train_test_split(examples, labels, test_size=0.4, random_state=7)
 
@@ -28,7 +29,7 @@ def svm_dummy_dataset():
     return dimod.to_networkx_graph(bqm)
 
 
-def toy_svm():
+def toy_svm() -> nx.Graph:
     # NOTE: presolve increase nodes number
 
     examples = np.array([[1, 0], [0, 1]])

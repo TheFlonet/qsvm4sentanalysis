@@ -2,7 +2,7 @@ from minor_embedding.architectures import svm_dummy_dataset, toy_svm
 from minor_embedding.minors import generate_pegasus, search_embedding
 
 
-def main():
+def main() -> None:
     pegasus = generate_pegasus()
     # svm = svm_dummy_dataset()
     svm = toy_svm()
