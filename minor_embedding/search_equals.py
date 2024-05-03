@@ -28,14 +28,16 @@ def same_graph_same_location() -> None:
     print('Seeds loaded, generating embedding...')
     embeddings = [generate_embedding_graph(svm, pegasus, i) for i in primes]
 
-    for i in range(len(primes)):
-        if i % 100 == 0:
-            print(f'{i}/{len(primes)}')
+    s = ''
+    for i in tqdm(range(len(primes))):
         for j in range(len(primes)):
             if j <= i:
                 continue
             if embeddings[i].adj == embeddings[j].adj:
-                print(f'Embeddings for {primes[i]} and {primes[j]} are identical')
+                s += f'Embeddings for {primes[i]} and {primes[j]} are identical\n'
+
+    with open('same_pos.log', 'w') as f:
+        f.write(s)
 
 
 def same_graph() -> None:
