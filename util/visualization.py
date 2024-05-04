@@ -18,9 +18,11 @@ def plot_decision_boundary(model: SVC | CSVM | QSVM, examples: np.ndarray, label
     plt.title('Decision Boundary')
     plt.savefig(f'img/decision_boundary_{title}.png')
     # plt.show()
+    plt.clf()
 
 
 def plot_dataset(examples: np.ndarray, labels: np.ndarray) -> None:
     plt.scatter(examples[:, 0], examples[:, 1], c=labels)
     plt.savefig('img/dataset.png')
     # plt.show()
+    plt.clf()

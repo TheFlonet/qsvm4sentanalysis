@@ -93,7 +93,72 @@ Per poter testare e visualizzare durante la fase di sviluppo sono stati creati d
 
 \section{Implementazione dell'architettura}
 
+Per svolgere una prima fase eplorativa l'architettura delle SVM è stata testata con il dataset \textsc{Dummy} in tre casi:
+\begin{itemize}
+  \item Usando le librerie allo stato dell'arte (sk-learn)
+  \item Implementando il problema di ottimizzazione e risolvendolo con un ottimizzatore classico (Gurobi)
+  \item Implementando il problema per una soluzione su QPU tramite i solver ibridi di DWave
+\end{itemize}
 
+\paragraph{SK-Learn} La classe SVC implementa il modello di suppor vector machine per la classificazione.
+Questo metodo risulta essere il più veloce come tempo di esecuzione per via dei binding a librerie scritte nativamente in \textsc{C++}.
+Oltre alle tempistiche è anche l'approccio che riporta risultati migliori in termini di generalizzazione.
+Seppure le principali misure di scoring sono paragonabili tra i vari modelli, si può valutare in modo qualitativo il decision boundary creato,
+che con la libreria SK-Learn risulta essere quello che ci aspetterebbe intuitivamente considerando il dataset di riferimento.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{img/decision_boundary_sklearn.png}
+\end{figure}
+
+\paragraph{Gurobi} Per la scrittura del problema di ottimizzazione è stata utilizzata la libreria \textsc{PyOmo},
+che permette di scrivere i problemi di soddisfacimento di vincoli in modo intuitivo e facilmente comprensibile in quando “vicino" a come gli stessi problemi verrebbero scritti in forma matematica.
+Una volta scritto il problema è possibile inizializzare un solver general purpose (in questo caso Gurobi) e richiedere la soluzione.
+È importante sottolineare che, per quanto ottima a livello di leggibilità e utilizzo, 
+\textsc{PyOmo} aggiunge overhead durante la risoluzione in quanto il problema viene prima rappresentato con un formato interno e poi convertito per essere passato al solver selezionato.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{img/decision_boundary_gurobi.png}
+\end{figure}
+
+Per quanto i risultati siano paragonabili in quanto a metriche si può notare come il decision boundary prodotto tenda all'overfitting,
+questo potrebbe essere dovuto principalemente a due fattori:
+\begin{enumerate}
+  \item Numero troppo ridotto di esempi di training
+  \item Errata parametrizzazione che porta ad un ottimo globale non desiderato
+\end{enumerate}
+Tra queste meriterebbe maggiore analisi la seconda, in quanto la libreria SK-Learn ha dimostrato empiricamente che anche con un ridotto numero di esempi è possibile ottenere un buon classificatore.
+È interessante la differenza prodotta in quanto i parametri passati ad entrambe le metodologie sono gli stessi, sarebbe quindi ragionevole aspettarsi una risultato pressoché identico.
+
+\paragraph{D-Wave} Utilizzando il solver ibrido per i problemi di soddisfacimento di vincoli quadratici è possibile scrivere il problema di ottimizzazione in modo analogo a come avviene su \textsc{PyOmo} anche con le librerie D-Wave.
+In questo caso il problema viene formalizzato, inviato al solver in remoto e viene restituita la risposta, con i livelli di energia associati.
+Da notare che, per via dei limiti della libreria le variabili $\alpha$ non sono considerate a valori reali ma interi,
+inoltre siccome i processi di ottimizzazione quantistica si aspettano problemi di minimizzazione, la funzione obiettivo è passata con segni invertiti rispetto al problema originale.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{img/decision_boundary_dwave.png}
+\end{figure}
+
+Anche in questo caso si verifica una situazione di overfitting paragonabile a quanto sperimentato con l'ottimizzatore Gurobi.
+È interessante notare che la discretizzazione delle variabili di ottimizzazione non incida sulla qualità del risultato, 
+in quanto a livello quantitativo le metriche restituiscono sempre valori paragonabili.
+
+Ottenendo come risposta dal risolutore di D-Wave una lista di possibili soluzioni,
+è possibile implementare una procedura concettualmente simile all'ensemble learning. 
+Tuttavia tale implementazione non ha riscontrato vantaggi nella predizione di nuovi esempi, 
+con l'unico risultato di aumentare in modo sensibile i tempi di calcolo necessari per inizializzare i diversi modelli.
+
+\subsection{Problema di ottimizzazione per le SVM}
+
+\paragraph{Problema primale}
+
+\paragraph{Problema duale con soft margin}
+
+\paragraph{Kernel trick}
+
+\paragraph{Dalla soluzione duale alla procedura di inferenza}
 
 \section{Analisi del \emph{minor embedding}}
 
