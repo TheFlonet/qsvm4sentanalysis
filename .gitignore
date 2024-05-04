@@ -1,10 +1,30 @@
-data
-*.ipynb
-*.png
-__pycache__/
-.env
+# Python VENV
 .venv
-.idea
-sketches
+__pycache__
+
+# Private config
+.env
+
+# Imgs
+*.png
 *.svg
+!report/extra/img/*.*
+
+# Dev Env
+.idea
+
+# Extra
+sketches
+
+# Logs
 *.log
+!minor_embedding/same_pos.log
+!minor_embedding/same_shape.log
+
+# LaTeX files
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.pdf
+*.gz
