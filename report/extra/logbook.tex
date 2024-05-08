@@ -10,6 +10,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{enumerate}
+\usepackage{multicol}
 
 \title{QSVM for Sentiment Analysis}
 \author{Mario Bifulco (881727)}
@@ -234,6 +235,49 @@ inoltre testando la creazione dell'embedding con diversi seed randomici viene ne
 Questo comportamento può essere dovuto alla necessità di utilizzare la quasi totalità dei qubit anche con soluzioni semplici quali quella attesa con il dataset \textsc{Dummy}.
 
 Si è quindi reso necessario l'utilizzo del dataset \textsc{Toy} per formulare delle ipotesi su un problema triviale e per poi applicarle in casi più complessi.
+
+Il grafo generato dal dataset \textsc{Toy} contiene 8 nodi, considerando solo due esempi e le variabili $\alpha$ discretizzate e con upper-bound a 10.
+Si può facilmente dedurre come sia necessario un numero di nodi pari al numero di esempi (o equivalentemente il numero di $\alpha$) moltiplicato per il numero di bit necessario per rappresentare ogni variabile $\alpha$.
+$$\#nodes = \#examples (\lfloor\log_2(UB_\alpha)\rfloor+1)$$
+Ovviamente il numero di nodi nel grafo target può aumentare per via delle catene di qubit che si occupano di rappresentare un singolo nodo del grafo minore.
+
+Eseguendo la procedura di Minor-Embedding, utilizzando come seed randomico i primi 1000 numeri primi, è seguita un'analisi sugli embedding prodotti,
+cercando di identificare quanto frequentemente seed diversi producessero lo stesso embedding e la posizione sul grafo \emph{pegasus} di tali embedding.
+
+Solo in 16 dei 1000 casi analizzati si riscontrano embedding identici sia nella forma che nella posizione, questo avviene per le coppie di seed:
+\begin{multicols}{4}
+  \begin{itemize}
+    \item 19 - 6451
+    \item 107 - 4871
+    \item 419 - 6947
+    \item 859 - 2789
+    \item 967 - 7523
+    \item 1237 - 6967
+    \item 1699 - 6703
+    \item 1709 - 4789
+    \item 1979 - 5107
+    \item 2389 - 3761
+    \item 2917 - 3041
+    \item 3571 - 3793
+    \item 3877 - 6709
+    \item 4027 - 6199
+    \item 4813 - 7789
+    \item 5179 - 6737
+  \end{itemize}
+\end{multicols}
+
+Invece cercando embedding con le stesse forme, ammettendo quindi posizioni diverse nel grafo, si ottiene un numero considerevolmente maggiore di riscontri.
+
+Vengono trovati un totale di 156 gruppi di grafi identici, la maggioranza dei quali con un numero di elementi $\leq 10$.
+Il gruppo più frequente contiene 42 elementi, e il grafo prodotto assume la seguente forma:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{img/317.png}
+\end{figure}
+
+Si può notare come il numero di nodi sia maggiore di quanto conteggiato precedentemente, questo perché sono presenti 4 coppie di nodi che collassano in un unico nodo nel grafo minore.
+Nella figura riportata non sono segnalati gli archi che collegano una catena di nodi in quanto questo può variare in base al seed randomico fornito.
 
 \paragraph{Analisi delle performance}
 
