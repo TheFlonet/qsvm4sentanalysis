@@ -8,6 +8,8 @@
 \usepackage{indentfirst}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{enumerate}
 
 \title{QSVM for Sentiment Analysis}
 \author{Mario Bifulco (881727)}
@@ -35,9 +37,9 @@ I problemi di machine learning si possono quasi sempre ridurre all'ottimizzazion
 
 La domanda in questo momento è ambigua, innanzitutto bisogna decidere su quale aspetto effettuare il confronto:
 \begin{enumerate}
-    \item Tempo di apprendimento
-    \item Qualità della soluzione
-    \item Semplicità nella riscrittura del problema
+    \item Tempo di apprendimento,
+    \item Qualità della soluzione,
+    \item Semplicità nella riscrittura del problema.
 \end{enumerate}
 Bisogna inoltre considerare che le attuali QPU sono estremamente limitate, 
 quindi bisogna considerare anche \emph{problemi di scalabilità}.
@@ -71,7 +73,7 @@ una architettura Transformer che permette di ottenere l'embedding di una frase.
 Successivamente è possibile sperimentare con eltre forme di embedding quali ad esempio:
 \begin{itemize}
     \item Un senso mediano estratto da Word2Vec. Word2Vec permette di associare un embedding per ogni parola, ed è stato dimostrato come sia possibile svolgere “aritmetica di base" sugli embedding.
-    \item Embedding custom estratti a partire dalle caratteristiche della frase decise dallo sviluppatore
+    \item Embedding custom estratti a partire dalle caratteristiche della frase decise dallo sviluppatore.
 \end{itemize}
 
 \paragraph{Dataset di test}
@@ -95,9 +97,9 @@ Per poter testare e visualizzare durante la fase di sviluppo sono stati creati d
 
 Per svolgere una prima fase eplorativa l'architettura delle SVM è stata testata con il dataset \textsc{Dummy} in tre casi:
 \begin{itemize}
-  \item Usando le librerie allo stato dell'arte (sk-learn)
-  \item Implementando il problema di ottimizzazione e risolvendolo con un ottimizzatore classico (Gurobi)
-  \item Implementando il problema per una soluzione su QPU tramite i solver ibridi di DWave
+  \item Usando le librerie allo stato dell'arte (SK-Learn),
+  \item Implementando il problema di ottimizzazione e risolvendolo con un ottimizzatore classico (Gurobi),
+  \item Implementando il problema per una soluzione su QPU tramite i solver ibridi di DWave.
 \end{itemize}
 
 \paragraph{SK-Learn} La classe SVC implementa il modello di suppor vector machine per la classificazione.
@@ -125,8 +127,8 @@ Una volta scritto il problema è possibile inizializzare un solver general purpo
 Per quanto i risultati siano paragonabili in quanto a metriche si può notare come il decision boundary prodotto tenda all'overfitting,
 questo potrebbe essere dovuto principalemente a due fattori:
 \begin{enumerate}
-  \item Numero troppo ridotto di esempi di training
-  \item Errata parametrizzazione che porta ad un ottimo globale non desiderato
+  \item Numero troppo ridotto di esempi di training,
+  \item Errata parametrizzazione che porta ad un ottimo globale indesiderato.
 \end{enumerate}
 Tra queste meriterebbe maggiore analisi la seconda, in quanto la libreria SK-Learn ha dimostrato empiricamente che anche con un ridotto numero di esempi è possibile ottenere un buon classificatore.
 È interessante la differenza prodotta in quanto i parametri passati ad entrambe le metodologie sono gli stessi, sarebbe quindi ragionevole aspettarsi una risultato pressoché identico.
@@ -154,12 +156,85 @@ con l'unico risultato di aumentare in modo sensibile i tempi di calcolo necessar
 
 \paragraph{Problema primale}
 
+\begin{align*}
+  \text{minimize}_{w, t}\ & \frac{1}{2}||w||^2 \\
+  \text{subject to } & y_i(w \cdot x_i - 1)\geq 1 \quad \forall i:1\leq i\leq n
+\end{align*}
+
 \paragraph{Problema duale con soft margin}
+
+\begin{align*}
+  \text{maximize}_\alpha\ & -\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jx_ix_j + \sum_{i=1}^n
+\alpha_i \\
+  \text{subject to } & 0 \leq \alpha_i \leq C \quad \forall i: 1\leq i\leq n \\
+  & \sum_iy_i\alpha_i=0
+\end{align*}
 
 \paragraph{Kernel trick}
 
+\begin{align*}
+  \text{maximize}_\alpha\ & -\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) + \sum_{i=1}^n
+\alpha_i \\
+  \text{subject to } & 0 \leq \alpha_i \leq C \quad \forall i: 1\leq i\leq n \\
+  & \sum_iy_i\alpha_i=0
+\end{align*}
+
 \paragraph{Dalla soluzione duale alla procedura di inferenza}
 
+\subparagraph{Calcolo del bias}
+
+$$b = \frac{\sum_{i=1}^n y_i - \sum_{j=1}^n(\alpha_jy_jK(x_i,x_j))}{n}$$
+
+\subparagraph{Predizione}
+
+$$f(x)=\sum_{i=1}^n\alpha_iy_iK(x_i, x) + b$$
+
 \section{Analisi del \emph{minor embedding}}
+
+Per la prima parte del lavoro di tesi l'analisi si è basata sull'uso del solver ibrido per problemi quadratici fornito da D-Wave.
+Siccome la famiglia dei solver ibridi è \emph{closed-source} non è possibile indagare a fondo sui motivi della differenza di performance rispetto alla classe di SK-Learn.
+
+Per questo motivo una successiva fase di analisi si è concentrata nel convertire i problemi da quadratici a binari (tramite i metodi di supporto forniti dalle librerie D-Wave) e analizzare il comportamento della soluzione su una QPU pura.
+Il vantaggio è che in questo caso è possibile analizzare:
+\begin{enumerate}[a)]
+  \item La trasformazione del problema da CSP a grafo di variabili binarie,
+  \item La ricerca del minore nel grafo dei qubit nella QPU disponibile,
+  \item La variazione di performance in questo contesto.
+\end{enumerate}
+
+\paragraph{Conversione da CQM a BQM}
+
+Per una soluzione “migliore" e per ridurre il carico sulla QPU, la documentazione di D-Wave consiglia di effetturare una fase di Pre-Solving.
+Questa procedura dovrebbe svolgere delle inferenze sulla struttura del problema e ridurre il quantitativo di qubit necessari per calcolare la nuova soluzione.
+Tutta le trasformazioni applicate forniscono la garanzia di mantenere il problema ridotto equivalente all'originale.
+Le strategia adottate per il Pre-Solving comprendono:
+\begin{itemize}
+  \item Rimozione di vincoli superflui,
+  \item Rimozione di bias piccoli dalla funzione obiettivo e dai vincoli,
+  \item Domain propagation.
+\end{itemize}
+
+Analizzando la trasformazione del problema si può notare come, per il modello di ottimizzazione delle SVM, la strategia di Pre-Solving conduca ad un grafo con più nodi rispetto a quello iniziale.
+Questo può significare che le strategie proposte da D-Wave non siano particolarmente efficaci su problemi con una struttura simile a quella delle SVM.
+Per questo motivo, le successive considerazioni considereranno una conversione da CQM a BQM senza applicare il Pre-Solving.
+
+\paragraph{Minor Embedding}
+
+Per la risoluzione di problemi tramite computazione quantistica adiabatica è necessario ricercare un grafo, nella rete di qubit, equivalente al problema di partenza.
+La costruzione di tale embedding può essere svolta utilizzando nodi, archi e considerando diversi nodi come mapping di uno solo nel minore.
+
+Il problema della ricerca del minore di un grafo quando sia il grafo di partenza che quello di arrivo sono parte dell'input è NP-completo.
+Per questo motivo la strategia risolutiva di D-Wave sfrutta un'euristica che dichiarano funzionare ragionevolmente bene per grafi sparsi.
+
+Il problema delle SVM è per sua natura un grafo completo, bisogna quindi valutare l'efficacia dell'euristica in questo contesto.
+Dalla documentazione viene anche proposto una strategia di embedding a clique, al momento però sembra non funzionare a dovere, quindi i commenti saranno riferiti solo alla strategia standard proposta.
+
+Usando il dataset \textsc{Dummy} si registrano tempi necessari per l'embedding incompatibili con la velocità di risoluzione del solver ibrido,
+inoltre testando la creazione dell'embedding con diversi seed randomici viene nella maggior parte dei casi restituita una soluzione non valida.
+Questo comportamento può essere dovuto alla necessità di utilizzare la quasi totalità dei qubit anche con soluzioni semplici quali quella attesa con il dataset \textsc{Dummy}.
+
+Si è quindi reso necessario l'utilizzo del dataset \textsc{Toy} per formulare delle ipotesi su un problema triviale e per poi applicarle in casi più complessi.
+
+\paragraph{Analisi delle performance}
 
 \end{document}
