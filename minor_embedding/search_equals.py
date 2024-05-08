@@ -36,7 +36,7 @@ def same_graph_same_location() -> None:
             if embeddings[i].adj == embeddings[j].adj:
                 s += f'Embeddings for {primes[i]} and {primes[j]} are identical\n'
 
-    with open('same_pos.log', 'w') as f:
+    with open('outputs/same_pos.log', 'w') as f:
         f.write(s)
 
 
@@ -66,7 +66,7 @@ def same_graph() -> None:
             mse = mean_squared_error(imgs[i], imgs[j])
             if mse == 0:
                 s += f'{primes[i]} - {primes[j]} have the same embedding\n'
-    with open('same_shape.log', 'w') as f:
+    with open('outputs/same_shape.log', 'w') as f:
         f.write(s)
 
     os.removedirs('embedded_toy_graph')

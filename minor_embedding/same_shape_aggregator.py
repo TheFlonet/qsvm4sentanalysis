@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def aggregate():
-    with open('./same_shape.log') as f:
+    with open('outputs/same_shape.log') as f:
         results = [x.strip() for x in f.readlines()]
 
     pairs = []
@@ -28,7 +28,7 @@ def aggregate():
         df.append((len(group), sorted(list(group))))
     df = pd.DataFrame(df, columns=['Num elems', 'elements'])
 
-    df.sort_values(by='Num elems', ascending=False).to_csv('shape.csv', index=False)
+    df.sort_values(by='Num elems', ascending=False).to_csv('outputs/shape.csv', index=False)
 
 
 if __name__ == '__main__':

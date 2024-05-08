@@ -18,8 +18,8 @@ sketches
 
 # Logs
 *.log
-!minor_embedding/same_pos.log
-!minor_embedding/same_shape.log
+!minor_embedding/outputs/same_pos.log
+!minor_embedding/outputs/same_shape.log
 
 # LaTeX files
 *.aux
