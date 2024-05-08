@@ -1,14 +1,16 @@
 from dotenv import load_dotenv
 from dataset.dataset_creation import get_dummy_dataset
 from sklearn.model_selection import train_test_split
+
+from util.time_elapsed import eval_time
 from util.visualization import *
 from util.evaluation import evaluate
 from sklearn.svm import SVC
 from classical.CSVM import CSVM
 from quantum.QSVM import QSVM
-import time
 
 
+@eval_time
 def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
     svm_model = SVC(kernel='rbf', C=20, gamma='auto')
     print(f'Training with sklearn'.upper())
@@ -19,6 +21,7 @@ def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.a
     evaluate(labels_test, predictions)
 
 
+@eval_time
 def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
     svm_model = CSVM(big_c=20,
                      kernel=lambda x1, x2, gamma: np.exp(-np.linalg.norm(x1 - x2, ord=2) / (2 * (gamma ** 2))))
@@ -30,6 +33,7 @@ def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np
     evaluate(labels_test, predictions)
 
 
+@eval_time
 def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
     svm_model = QSVM(big_c=20, ensemble=1,
                      kernel=lambda x1, x2, gamma: np.exp(-np.linalg.norm(x1 - x2, ord=2) / (2 * (gamma ** 2))))
@@ -47,24 +51,10 @@ def compare_svm() -> None:
     examples, labels = get_dummy_dataset()
     plot_dataset(examples, labels)
     ex_train, ex_test, l_train, l_test = train_test_split(examples, labels, test_size=0.4, random_state=7)
-    st, stp = time.time(), time.process_time()
+
     main_c(ex_train, ex_test, l_train, l_test)
-    et, etp = time.time(), time.process_time()
-    print('Execution time:', et - st)
-    print('Process time:', etp - stp)
-    print('-' * 50)
-    st, stp = time.time(), time.process_time()
     main_opt(ex_train, ex_test, l_train, l_test)
-    et, etp = time.time(), time.process_time()
-    print('Execution time:', et - st)
-    print('Process time:', etp - stp)
-    print('-' * 50)
-    st, stp = time.time(), time.process_time()
     main_q(ex_train, ex_test, l_train, l_test)
-    et, etp = time.time(), time.process_time()
-    print('Execution time:', et - st)
-    print('Process time:', etp - stp)
-    print('-' * 50)
 
 
 if __name__ == '__main__':
