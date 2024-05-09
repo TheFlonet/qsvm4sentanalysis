@@ -3,6 +3,7 @@ import dimod
 import networkx as nx
 import numpy as np
 from dwave.preprocessing import Presolver
+from networkx import Graph
 from sklearn.model_selection import train_test_split
 from dataset.dataset_creation import get_dummy_dataset
 
@@ -29,7 +30,7 @@ def svm_dummy_dataset() -> nx.Graph:
     return dimod.to_networkx_graph(bqm)
 
 
-def toy_svm(alpha_ub: int = 10, presolve: bool = False) -> nx.Graph:
+def toy_svm(alpha_ub: int = 10, presolve: bool = False) -> tuple[nx.Graph, bool]:
     examples = np.array([[1, 0], [0, 1]])
     labels = np.array([-1, 1])
     cqm = dimod.ConstrainedQuadraticModel()
@@ -38,13 +39,36 @@ def toy_svm(alpha_ub: int = 10, presolve: bool = False) -> nx.Graph:
                              + alphas[0] * alphas[1] * labels[0] * labels[1] * examples[0] @ examples[1]
                              + alphas[1] * alphas[0] * labels[1] * labels[0] * examples[1] @ examples[0]
                              + alphas[1] * alphas[1] * labels[1] * labels[1] * examples[1] @ examples[1])
-                      + sum(alphas))
+                      - sum(alphas))
     cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) == 0)
 
+    presolve_apply = False
     if presolve:
         cqm = Presolver(cqm)  # NOTE: presolve increase nodes number
-        print('Is pre-solvable?', cqm.apply())
+        presolve_apply = cqm.apply()
         cqm = cqm.detach_model()
 
     bqm, _ = dimod.cqm_to_bqm(cqm)
-    return dimod.to_networkx_graph(bqm)
+    return dimod.to_networkx_graph(bqm), presolve_apply
+
+
+def scale_svm(num_examples: int, alpha_ub: int = 10, presolve: bool = False) -> tuple[Graph, bool]:
+    examples = np.array([[-(i + 1), 0] if i < num_examples // 2
+                         else [(i + 1 - num_examples // 2), 0] for i in range(num_examples)])
+    labels = np.array([-1 if i < num_examples // 2 else 1 for i in range(num_examples)])
+
+    N = range(num_examples)
+    cqm = dimod.ConstrainedQuadraticModel()
+    alphas = [dimod.Integer(label=f'alpha_{i}', lower_bound=0, upper_bound=alpha_ub) for i in range(len(labels))]
+    cqm.set_objective(0.5 * sum(labels[i] * alphas[i] * examples[i] @ examples[j] * labels[j] * alphas[j]
+                                for i, j in itertools.product(N, N)) - sum(alphas))
+    cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) == 0)
+
+    presolve_apply = False
+    if presolve:
+        cqm = Presolver(cqm)
+        presolve_apply = cqm.apply()
+        cqm = cqm.detach_model()
+
+    bqm, _ = dimod.cqm_to_bqm(cqm)
+    return dimod.to_networkx_graph(bqm), presolve_apply

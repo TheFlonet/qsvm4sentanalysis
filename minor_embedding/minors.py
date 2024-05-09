@@ -16,7 +16,7 @@ def generate_pegasus() -> nx.Graph:
     return dnx.pegasus_graph(16, node_list=qpu_nodes, edge_list=qpu_edges)
 
 
-def search_embedding(source: nx.Graph, target: nx.Graph, out_path: str, seed: int=7):
+def search_embedding(source: nx.Graph, target: nx.Graph, out_path: str, seed: int = 7):
     s = time.time()
     embedding, is_valid = find_embedding(S=source, T=target, random_seed=seed, threads=8, return_overlap=True)
     if is_valid:

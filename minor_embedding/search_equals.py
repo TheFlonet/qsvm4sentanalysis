@@ -1,7 +1,6 @@
 import networkx as nx
 from minorminer import find_embedding
 from sklearn.metrics import mean_squared_error
-
 from minor_embedding.architectures import toy_svm
 from minor_embedding.minors import generate_pegasus
 import dwave_networkx as dnx
@@ -11,17 +10,19 @@ import cv2
 from tqdm import tqdm
 
 
-def generate_embedding_graph(source: nx.Graph, target: nx.Graph, seed: int) -> nx.Graph:
-    embedding_i = find_embedding(S=source, T=target, random_seed=seed, threads=8)
-    embedding_i_nodes = []
-    for nodes in embedding_i.values():
-        embedding_i_nodes.extend(nodes)
-    return dnx.pegasus_graph(16, node_list=embedding_i_nodes)
+def generate_embedding_graph(source: nx.Graph, target: nx.Graph, seed: int) -> nx.Graph | None:
+    embedding_i, is_valid = find_embedding(S=source, T=target, random_seed=seed, threads=8, return_overlap=True)
+    if is_valid:
+        embedding_i_nodes = []
+        for nodes in embedding_i.values():
+            embedding_i_nodes.extend(nodes)
+        return dnx.pegasus_graph(16, node_list=embedding_i_nodes)
+    return None
 
 
 def same_graph_same_location() -> None:
     pegasus = generate_pegasus()
-    svm = toy_svm()
+    svm, _ = toy_svm()
 
     with open('../util/1000.prime') as f:
         primes = [int(x) for x in f.readline().split(', ')]
@@ -42,7 +43,7 @@ def same_graph_same_location() -> None:
 
 def same_graph() -> None:
     pegasus = generate_pegasus()
-    svm = toy_svm()
+    svm, _ = toy_svm()
 
     with open('../util/1000.prime') as f:
         primes = [int(x) for x in f.readline().split(', ')]
@@ -73,5 +74,6 @@ def same_graph() -> None:
 
 
 if __name__ == '__main__':
+    # number of nodes in pegasus = 5627
     # same_graph_same_location()
     same_graph()

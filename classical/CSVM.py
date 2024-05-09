@@ -1,6 +1,5 @@
 import itertools
 from typing import Callable
-
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import pyomo.environ as pyo

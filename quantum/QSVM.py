@@ -1,6 +1,5 @@
 import itertools
 from typing import Callable, List
-
 import numpy as np
 from dwave.preprocessing import Presolver
 from sklearn.base import BaseEstimator, ClassifierMixin

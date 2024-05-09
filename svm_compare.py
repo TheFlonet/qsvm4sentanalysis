@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from dataset.dataset_creation import get_dummy_dataset
 from sklearn.model_selection import train_test_split
-
 from util.time_elapsed import eval_time
 from util.visualization import *
 from util.evaluation import evaluate

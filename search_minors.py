@@ -5,7 +5,7 @@ from minor_embedding.minors import generate_pegasus, search_embedding
 def main() -> None:
     pegasus = generate_pegasus()
     # svm = svm_dummy_dataset()
-    svm = toy_svm()
+    svm, _ = toy_svm()
 
     with open('./util/1000.prime') as f:
         primes = [int(x) for x in f.readline().split(', ')]
