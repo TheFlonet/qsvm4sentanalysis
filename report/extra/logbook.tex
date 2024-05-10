@@ -197,7 +197,7 @@ Siccome la famiglia dei solver ibridi è \emph{closed-source} non è possibile i
 
 Per questo motivo una successiva fase di analisi si è concentrata nel convertire i problemi da quadratici a binari (tramite i metodi di supporto forniti dalle librerie D-Wave) e analizzare il comportamento della soluzione su una QPU pura.
 Il vantaggio è che in questo caso è possibile analizzare:
-\begin{enumerate}[a)]
+\begin{enumerate}
   \item La trasformazione del problema da CSP a grafo di variabili binarie,
   \item La ricerca del minore nel grafo dei qubit nella QPU disponibile,
   \item La variazione di performance in questo contesto.
@@ -278,6 +278,42 @@ Il gruppo più frequente contiene 42 elementi, e il grafo prodotto assume la seg
 
 Si può notare come il numero di nodi sia maggiore di quanto conteggiato precedentemente, questo perché sono presenti 4 coppie di nodi che collassano in un unico nodo nel grafo minore.
 Nella figura riportata non sono segnalati gli archi che collegano una catena di nodi in quanto questo può variare in base al seed randomico fornito.
+
+\paragraph{Scalabilità del problema}
+Oltra ad una analisi di alto livello sugli embedding prodotti dal dataset \textsc{Toy} è interessante verificare fino a che punto è possibile fare crescere il problema di ottimizzazione prima di superare i limiti fisici della QPU.
+
+Per questo tipo di sperimentazione si definisce una dataset composto da $n$ punti, i punti sono disposti su una linea e gli $n/2$ punti della classe positiva sono specchiati per generare i punti della classe negativa.
+
+Con una dataset facilmente definibile in modo programmatico è possibile testare le diverse combinazioni di: 
+\begin{itemize}
+  \item Seed randomico,
+  \item Dimensione del dataset,
+  \item Upper bound al valore delle variabili di ottimizzazione,
+  \item Applicazione della strategia di Pre-Solving 
+\end{itemize}
+
+Dei diversi risultati raccolti si riportano i seguenti grafi:
+\begin{enumerate}
+  \item Crescita nel numero di nodi dell'embedding con 32 esempi e senza pre-solving
+  \item Tempo richiesto per il calcolo dell'embedding
+  \item Crescita nel numero di nodi dell'embedding fissando il limite di $\alpha$ a 3 e senza pre-solving
+  \item Tempo richiesto per il calcolo dell'embedding
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=.48\textwidth]{img/example_growth.png}}\quad
+  \subfloat[]{\includegraphics[width=.48\textwidth]{img/presolve.png}}\\
+  \subfloat[]{\includegraphics[width=.48\textwidth]{img/time.png}}\quad
+  \subfloat[]{\includegraphics[width=.48\textwidth]{img/ub_growth.png}}
+\end{figure}
+
+Considerando che i nodi disponibili nella QPU di D-Wave sono 5627 (grafo pegasus) si possono trarre alcune considerazioni:
+\begin{itemize}
+  \item L'utilizzo diretto della QPU non scala per un numero di esempi significativo,
+  \item La procedura di minor-embedding, per quanto guidata da un'euristica, non porta a buoni risultati nel problema affrontato,
+  \item La componente classica nel solver ibrido ha un ruolo cruciale per permettere al problema di scalare su dataset reali.
+\end{itemize}
 
 \paragraph{Analisi delle performance}
 
