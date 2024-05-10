@@ -23,24 +23,27 @@ def problem_scalability() -> None:
     pegasus = generate_pegasus()
     with open('../util/1000.prime') as f:
         primes = [int(x) for x in f.readline().split(', ')][:100]
-    ub_list = [2 ** x - 1 for x in range(2, 9)]
+    ub_list = [2 ** x - 1 for x in range(2, 6)]
 
     i = 0
     for prime in primes:
+        print('Seed:', prime, end='')
         df = pd.DataFrame(columns=['seed', 'num_examples', 'ub', 'is_valid', 'presolve',
                                    'pre_solvable', 'nodes', 'time'])
         valid = True
         num_examples = 2
-        print('Computed for:', end=' ')
         while valid:
-            print(num_examples, end=', ')
+            print('\n  Num examples:', num_examples, end=' - ubs: ')
             for ub in ub_list:
-                df.loc[i] = compute_data_entry(pegasus, num_examples, prime, ub, True)
-                i += 1
-                df.loc[i] = compute_data_entry(pegasus, num_examples, prime, ub, False)
-                i += 1
-                valid = df.loc[i - 1].is_valid or df.loc[i - 2].is_valid
-            num_examples += 2
+                if not valid:
+                    continue
+                print(ub, end=' ')
+                r1 = compute_data_entry(pegasus, num_examples, prime, ub, True)
+                r2 = compute_data_entry(pegasus, num_examples, prime, ub, False)
+                df.loc[i], df.loc[i + 1] = r1, r2
+                valid = df.loc[i].is_valid or df.loc[i + 1].is_valid
+                i += 2
+            num_examples *= 2
 
         print('\nSaving for prime', prime)
         df.to_csv(f'outputs/scale_{str(prime).zfill(4)}.csv', index=False)
