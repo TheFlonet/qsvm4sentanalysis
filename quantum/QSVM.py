@@ -59,7 +59,6 @@ class QSVM(BaseEstimator, ClassifierMixin):
         print('Is model pre-solvable?'.upper(), presolve.apply())
         reduced_cqm = presolve.detach_model()
         solver = dwavesampler.LeapHybridCQMSampler()
-        # solver.properties['parameters'] = {'num_reads': 100, 'time_limit': 20}
         reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM')
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)

@@ -11,7 +11,7 @@ from quantum.QSVM import QSVM
 
 @eval_time
 def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
-    svm_model = SVC(kernel='rbf', C=20, gamma='auto')
+    svm_model = SVC(kernel='rbf', gamma='auto')
     print(f'Training with sklearn'.upper())
     svm_model.fit(examples_train, labels_train)
     plot_decision_boundary(svm_model, examples_train, labels_train, 'sklearn')
@@ -22,8 +22,8 @@ def main_c(examples_train: np.array, examples_test: np.array, labels_train: np.a
 
 @eval_time
 def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
-    svm_model = CSVM(big_c=20,
-                     kernel=lambda x1, x2, gamma: np.exp(-np.linalg.norm(x1 - x2, ord=2) / (2 * (gamma ** 2))))
+    svm_model = CSVM(big_c=255,
+                     kernel=lambda x1, x2, gamma: np.exp(-gamma * (np.linalg.norm(x1 - x2, ord=2) ** 2)))
     print(f'Training with gurobi'.upper())
     svm_model.fit(examples_train, labels_train)
     plot_decision_boundary(svm_model, examples_train, labels_train, 'gurobi')
@@ -34,8 +34,8 @@ def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np
 
 @eval_time
 def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
-    svm_model = QSVM(big_c=20, ensemble=1,
-                     kernel=lambda x1, x2, gamma: np.exp(-np.linalg.norm(x1 - x2, ord=2) / (2 * (gamma ** 2))))
+    svm_model = QSVM(big_c=255, ensemble=1,
+                     kernel=lambda x1, x2, gamma: np.exp(-gamma * (np.linalg.norm(x1 - x2, ord=2) ** 2)))
     print(f'Training with d-wave'.upper())
     svm_model.fit(examples_train, labels_train)
     plot_decision_boundary(svm_model, examples_train, labels_train, 'dwave')
