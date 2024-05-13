@@ -34,7 +34,7 @@ def main_opt(examples_train: np.array, examples_test: np.array, labels_train: np
 
 @eval_time
 def main_q(examples_train: np.array, examples_test: np.array, labels_train: np.array, labels_test: np.array) -> None:
-    svm_model = QSVM(big_c=255, ensemble=1,
+    svm_model = QSVM(big_c=255,
                      kernel=lambda x1, x2, gamma: np.exp(-gamma * (np.linalg.norm(x1 - x2, ord=2) ** 2)))
     print(f'Training with d-wave'.upper())
     svm_model.fit(examples_train, labels_train)

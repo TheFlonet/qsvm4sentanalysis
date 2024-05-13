@@ -34,15 +34,15 @@ class QSVM(BaseEstimator, ClassifierMixin):
     In this case constraint (1) can be omitted because the value range is specified at the variable creation stage
     """
 
-    def __init__(self, big_c: int, ensemble: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
-        self.big_c = big_c
-        self.kernel = kernel
-        self.ensemble_dim = ensemble
+    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
+        self.big_c: int = big_c
+        self.kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray] = kernel
         self.support_vectors_labels: List[np.array] = []
         self.support_vectors_alphas: List[np.array] = []
         self.support_vectors_examples: List[np.array] = []
         self.b: List[float] = []
-        self.ensemble_w = [1 / ensemble for _ in range(ensemble)]
+        self.ensemble_dim: int
+        self.ensemble_w: List[float]
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, n_features = examples.shape
@@ -76,9 +76,10 @@ class QSVM(BaseEstimator, ClassifierMixin):
         df = sampleset.to_pandas_dataframe()
         df = df.loc[(df['is_feasible']) & (df['is_satisfied'])]
         df = df.drop(['is_feasible', 'is_satisfied', 'num_occurrences'], axis=1)
-        selected = df.nsmallest(self.ensemble_dim, 'energy')
-        self.w = self.__softmax(np.array(selected['energy']))
+        selected = df.loc[df['energy'] == min(df['energy'])]
+        self.ensemble_w = self.__softmax(np.array(selected['energy']))
         selected = selected.drop('energy', axis=1)
+        self.ensemble_dim = len(selected)
         for _, row in selected.iterrows():
             indices, alphas = [], []
             for i in range(len(row)):
