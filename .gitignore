@@ -28,3 +28,6 @@ sketches
 *.out
 *.pdf
 *.gz
+
+# Generated data
+data

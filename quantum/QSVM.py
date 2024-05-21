@@ -1,10 +1,11 @@
 import itertools
-from typing import Callable, List
+from typing import List
 import numpy as np
 from dwave.preprocessing import Presolver
 from sklearn.base import BaseEstimator, ClassifierMixin
 import dimod
 import dwave.system.samplers as dwavesampler
+from util.kernel import rbf_kernel_matrix, rbf_kernel_pair
 
 
 class QSVM(BaseEstimator, ClassifierMixin):
@@ -34,9 +35,8 @@ class QSVM(BaseEstimator, ClassifierMixin):
     In this case constraint (1) can be omitted because the value range is specified at the variable creation stage
     """
 
-    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
+    def __init__(self, big_c: int):
         self.big_c: int = big_c
-        self.kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray] = kernel
         self.support_vectors_labels: List[np.array] = []
         self.support_vectors_alphas: List[np.array] = []
         self.support_vectors_examples: List[np.array] = []
@@ -50,7 +50,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
         cqm = dimod.ConstrainedQuadraticModel()
         alphas = [dimod.Integer(label=f'alpha_{i}', lower_bound=0, upper_bound=self.big_c) for i in range(len(labels))]
         gamma = 1 / n_features
-        kernel_matrix = np.array([[self.kernel(x1, x2, gamma) for x1 in examples] for x2 in examples])
+        kernel_matrix = rbf_kernel_matrix(examples, gamma)
 
         cqm.set_objective(0.5 * sum(labels[i] * alphas[i] * kernel_matrix[i, j] * labels[j] * alphas[j]
                                     for i, j in itertools.product(N, N)) - sum(alphas))
@@ -104,8 +104,8 @@ class QSVM(BaseEstimator, ClassifierMixin):
         for i in range(examples.shape[0]):
             for j in range(self.ensemble_dim):
                 predictions[i, j] = np.sign(sum(self.support_vectors_alphas[j][k] * self.support_vectors_labels[j][k]
-                                                * self.kernel(self.support_vectors_examples[j][k],
-                                                              examples[i], 1 / examples.shape[1])
+                                                * rbf_kernel_pair(self.support_vectors_examples[j][k],
+                                                                  examples[i], 1 / examples.shape[1])
                                                 for k in range(len(self.support_vectors_alphas[j]))) + self.b[j])
         res = np.dot(predictions, self.ensemble_w)
         return np.sign(res).astype(int)

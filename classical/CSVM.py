@@ -1,8 +1,8 @@
 import itertools
-from typing import Callable
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import pyomo.environ as pyo
+from util.kernel import rbf_kernel_matrix, rbf_kernel_pair
 
 
 class CSVM(BaseEstimator, ClassifierMixin):
@@ -25,9 +25,8 @@ class CSVM(BaseEstimator, ClassifierMixin):
     - C is a bound on the error
     """
 
-    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
+    def __init__(self, big_c: int):
         self.big_c = big_c
-        self.kernel = kernel
         self.support_vectors_labels = None
         self.support_vectors_alphas = None
         self.support_vectors_examples = None
@@ -39,7 +38,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
         model = pyo.ConcreteModel()
         model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals)
         gamma = 1 / examples.shape[1]
-        kernel_matrix = np.array([[self.kernel(x1, x2, gamma) for x1 in examples] for x2 in examples])
+        kernel_matrix = rbf_kernel_matrix(examples, gamma)
 
         model.objective = pyo.Objective(rule=lambda w_model: (
                 sum(w_model.alpha[i] for i in N)
@@ -67,6 +66,6 @@ class CSVM(BaseEstimator, ClassifierMixin):
             raise Exception('You need to fit before predicting.')
         gamma = 1 / examples.shape[1]
         return np.array([np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
-                                     * self.kernel(self.support_vectors_examples[i], example, gamma)
+                                     * rbf_kernel_pair(self.support_vectors_examples[i], example, gamma)
                                      for i in range(len(self.support_vectors_alphas))) + self.b)
                          for example in examples])
