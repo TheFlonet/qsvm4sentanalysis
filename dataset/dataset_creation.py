@@ -1,3 +1,4 @@
+import os
 from datasets import load_dataset, concatenate_datasets, Dataset, DatasetDict
 from typing import Tuple, Dict
 from sklearn.datasets import make_circles
@@ -76,5 +77,6 @@ def save(dataset: DatasetDict, splits: Tuple[str, str], path: str) -> None:
     """
     Save dataset splits in data folder
     """
+    os.makedirs(path, exist_ok=True)
     for split in splits:
         dataset[split].to_json(path + split + '.json')

@@ -1,8 +1,10 @@
 import logging
+import os
 from typing import Tuple
 from dotenv import load_dotenv
 import datasets
 from sklearn.svm import SVC
+from dataset.main import generate_data
 from classical.CSVM import CSVM
 from quantum.QSVM import QSVM
 from util.evaluation import evaluate
@@ -54,6 +56,9 @@ def resize_dataset(dataset: DatasetDict, size: int, seed: int) -> Dataset:
 
 
 def get_data(seed: int) -> Tuple[Dataset, Dataset]:
+    if not os.path.exists('./data') or not os.listdir('./data'):
+        log.info('Missing data, dataset generation in progress'.upper())
+        generate_data()
     train = resize_dataset(datasets.DatasetDict.from_json('./data/train.json'), 4096, seed)
     test = resize_dataset(datasets.DatasetDict.from_json('./data/test.json'), 2048, seed)
     return train, test
