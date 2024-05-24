@@ -48,13 +48,11 @@ class QSVM(BaseEstimator, ClassifierMixin):
         n_samples, n_features = examples.shape
         N = range(n_samples)
         cqm = dimod.ConstrainedQuadraticModel()
-        alphas = [dimod.Integer(label=f'alpha_{i}', lower_bound=0, upper_bound=self.big_c) for i in range(len(labels))]
+        alphas = np.array([dimod.Integer(label=i, lower_bound=0, upper_bound=self.big_c) for i in N])
         gamma = 1 / n_features
         kernel_matrix = rbf_kernel_matrix(examples, gamma)
-
-        cqm.set_objective(0.5 * sum(labels[i] * alphas[i] * kernel_matrix[i, j] * labels[j] * alphas[j]
-                                    for i, j in itertools.product(N, N)) - sum(alphas))
-        cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) == 0)
+        cqm.set_objective(0.5 * (labels * alphas) @ kernel_matrix @ (labels * alphas).T - np.sum(alphas))
+        cqm.add_constraint_from_comparison(np.sum(np.multiply(alphas, labels)) == 0)
         presolve = Presolver(cqm)
         print('Is model pre-solvable?'.upper(), presolve.apply())
         reduced_cqm = presolve.detach_model()
@@ -83,10 +81,9 @@ class QSVM(BaseEstimator, ClassifierMixin):
         for _, row in selected.iterrows():
             indices, alphas = [], []
             for i in range(len(row)):
-                col = f'alpha_{i}'
-                if 0 < row[col] < self.big_c:
+                if 0 < row[i] < self.big_c:
                     indices.append(i)
-                    alphas.append(int(row[col]))
+                    alphas.append(int(row[i]))
             self.support_vectors_examples.append(examples[indices])
             self.support_vectors_alphas.append(np.array(alphas))
             self.support_vectors_labels.append(labels[indices])

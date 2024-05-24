@@ -36,16 +36,14 @@ class CSVM(BaseEstimator, ClassifierMixin):
         n_samples, n_features = examples.shape
         N = range(n_samples)
         model = pyo.ConcreteModel()
-        model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals)
+        model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals, bounds=(0, self.big_c))
         gamma = 1 / examples.shape[1]
         kernel_matrix = rbf_kernel_matrix(examples, gamma)
-
         model.objective = pyo.Objective(rule=lambda w_model: (
-                sum(w_model.alpha[i] for i in N)
-                - 0.5 * sum(labels[i] * w_model.alpha[i] * kernel_matrix[i, j] * labels[j] * w_model.alpha[j]
-                            for i, j in itertools.product(N, N))), sense=pyo.maximize)
-        model.constraint1 = pyo.Constraint(rule=lambda w_model: sum(w_model.alpha[i] * labels[i] for i in N) == 0)
-        model.constraint2 = pyo.Constraint(N, rule=lambda w_model, i: w_model.alpha[i] <= self.big_c)
+                sum(w_model.alpha[i] for i in N) -
+                0.5 * ((labels * model.alpha) @ kernel_matrix @ (labels * model.alpha).T)
+        ), sense=pyo.maximize)
+        model.constraint1 = pyo.Constraint(rule=lambda w_model: sum(np.multiply(w_model.alpha, labels)) == 0)
         solver = pyo.SolverFactory('gurobi')
         results = solver.solve(model, tee=False)
 
