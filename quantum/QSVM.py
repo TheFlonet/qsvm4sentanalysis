@@ -1,4 +1,4 @@
-import itertools
+import logging
 from typing import List
 import numpy as np
 from dwave.preprocessing import Presolver
@@ -6,6 +6,8 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import dimod
 import dwave.system.samplers as dwavesampler
 from util.kernel import rbf_kernel_matrix, rbf_kernel_pair
+
+log = logging.getLogger('qsvm')
 
 
 class QSVM(BaseEstimator, ClassifierMixin):
@@ -42,11 +44,11 @@ class QSVM(BaseEstimator, ClassifierMixin):
         self.support_vectors_examples: List[np.array] = []
         self.b: List[float] = []
         self.ensemble_dim: int
-        self.ensemble_w: List[float]
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, n_features = examples.shape
         N = range(n_samples)
+        log.info('Creating model'.upper())
         cqm = dimod.ConstrainedQuadraticModel()
         alphas = np.array([dimod.Integer(label=i, lower_bound=0, upper_bound=self.big_c) for i in N])
         gamma = 1 / n_features
@@ -54,20 +56,22 @@ class QSVM(BaseEstimator, ClassifierMixin):
         cqm.set_objective(0.5 * (labels * alphas) @ kernel_matrix @ (labels * alphas).T - np.sum(alphas))
         cqm.add_constraint_from_comparison(np.sum(np.multiply(alphas, labels)) == 0)
         presolve = Presolver(cqm)
-        print('Is model pre-solvable?'.upper(), presolve.apply())
+        log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()
+        log.info('Solving'.upper())
         solver = dwavesampler.LeapHybridCQMSampler()
-        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM', time_limit=10)  # min time limit = 5 (default)
+        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM', time_limit=5)  # min time limit = 5 (default)
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
+        log.info('Extracting support vectors'.upper())
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
 
-    @staticmethod
+    '''@staticmethod
     def __softmax(x: np.ndarray) -> np.ndarray:
         x = np.vectorize(round)(-x, 5)
         exp_x = np.exp(x)
         sum_exp_x = np.sum(exp_x)
         softmax_x = exp_x / sum_exp_x
-        return softmax_x
+        return softmax_x'''
 
     def __extract_solution(self, examples: np.ndarray, labels: np.ndarray,
                            kernel_matrix: np.ndarray, sampleset: dimod.SampleSet) -> None:
@@ -75,7 +79,6 @@ class QSVM(BaseEstimator, ClassifierMixin):
         df = df.loc[(df['is_feasible']) & (df['is_satisfied'])]
         df = df.drop(['is_feasible', 'is_satisfied', 'num_occurrences'], axis=1)
         selected = df.loc[df['energy'] == min(df['energy'])]
-        self.ensemble_w = self.__softmax(np.array(selected['energy']))
         selected = selected.drop('energy', axis=1)
         self.ensemble_dim = len(selected)
         for _, row in selected.iterrows():
@@ -104,5 +107,4 @@ class QSVM(BaseEstimator, ClassifierMixin):
                                                 * rbf_kernel_pair(self.support_vectors_examples[j][k],
                                                                   examples[i], 1 / examples.shape[1])
                                                 for k in range(len(self.support_vectors_alphas[j]))) + self.b[j])
-        res = np.dot(predictions, self.ensemble_w)
-        return np.sign(res).astype(int)
+        return np.sign(predictions).astype(int)

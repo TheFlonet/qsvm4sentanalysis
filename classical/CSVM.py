@@ -1,8 +1,11 @@
-import itertools
+import logging
+
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import pyomo.environ as pyo
 from util.kernel import rbf_kernel_matrix, rbf_kernel_pair
+
+log = logging.getLogger('qsvm')
 
 
 class CSVM(BaseEstimator, ClassifierMixin):
@@ -35,6 +38,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, n_features = examples.shape
         N = range(n_samples)
+        log.info('Creating model'.upper())
         model = pyo.ConcreteModel()
         model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals, bounds=(0, self.big_c))
         gamma = 1 / examples.shape[1]
@@ -45,6 +49,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
         ), sense=pyo.maximize)
         model.constraint1 = pyo.Constraint(rule=lambda w_model: sum(np.multiply(w_model.alpha, labels)) == 0)
         solver = pyo.SolverFactory('gurobi')
+        log.info('Solving'.upper())
         results = solver.solve(model, tee=False)
 
         if results.solver.termination_condition == pyo.TerminationCondition.optimal:
