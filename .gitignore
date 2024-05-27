@@ -31,3 +31,6 @@ sketches
 
 # Generated data
 data
+
+# LP files
+*.lp

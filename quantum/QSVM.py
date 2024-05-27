@@ -5,7 +5,8 @@ from dwave.preprocessing import Presolver
 from sklearn.base import BaseEstimator, ClassifierMixin
 import dimod
 import dwave.system.samplers as dwavesampler
-from util.kernel import rbf_kernel_matrix, rbf_kernel_pair
+from util.kernel import rbf_kernel_pair
+from util.model_generation import construct_svm_model
 
 log = logging.getLogger('qsvm')
 
@@ -46,15 +47,9 @@ class QSVM(BaseEstimator, ClassifierMixin):
         self.ensemble_dim: int
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
-        n_samples, n_features = examples.shape
-        N = range(n_samples)
-        log.info('Creating model'.upper())
-        cqm = dimod.ConstrainedQuadraticModel()
-        alphas = np.array([dimod.Integer(label=i, lower_bound=0, upper_bound=self.big_c) for i in N])
-        gamma = 1 / n_features
-        kernel_matrix = rbf_kernel_matrix(examples, gamma)
-        cqm.set_objective(0.5 * (labels * alphas) @ kernel_matrix @ (labels * alphas).T - np.sum(alphas))
-        cqm.add_constraint_from_comparison(np.sum(np.multiply(alphas, labels)) == 0)
+        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
+        model.write('qsvm.lp')
+        cqm = dimod.lp.load('qsvm.lp')
         presolve = Presolver(cqm)
         log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()
@@ -64,14 +59,6 @@ class QSVM(BaseEstimator, ClassifierMixin):
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
         log.info('Extracting support vectors'.upper())
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
-
-    '''@staticmethod
-    def __softmax(x: np.ndarray) -> np.ndarray:
-        x = np.vectorize(round)(-x, 5)
-        exp_x = np.exp(x)
-        sum_exp_x = np.sum(exp_x)
-        softmax_x = exp_x / sum_exp_x
-        return softmax_x'''
 
     def __extract_solution(self, examples: np.ndarray, labels: np.ndarray,
                            kernel_matrix: np.ndarray, sampleset: dimod.SampleSet) -> None:
