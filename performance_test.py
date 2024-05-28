@@ -4,6 +4,7 @@ from typing import Tuple
 from dotenv import load_dotenv
 import datasets
 from sklearn.svm import SVC
+from scipy.special import softmax
 from dataset.main import generate_data
 from classical.CSVM import CSVM
 from quantum.QSVM import QSVM
@@ -11,6 +12,7 @@ from util.evaluation import evaluate
 from util.time_elapsed import eval_time
 import numpy as np
 from datasets import concatenate_datasets, DatasetDict, Dataset
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
 @eval_time
@@ -49,6 +51,32 @@ def dwave_test(examples_train: np.array, examples_test: np.array,
     evaluate(labels_test, predictions)
 
 
+@eval_time
+def transformer_test(examples: np.array, labels: np.array) -> None:
+    MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+    log.info('Loading model'.upper())
+    tokenizer = AutoTokenizer.from_pretrained(MODEL)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+    log.info('Predict with Transformer'.upper())
+    predictions = []
+    for example in examples:
+        output = model(**tokenizer(example, return_tensors='pt'))
+        scores = softmax(output[0][0].detach().numpy())
+        ranking = np.argsort(scores)[::-1]
+        skip = False
+        for i in range(scores.shape[0]):
+            if skip:
+                continue
+            if ranking[i] == 2:  # Positive class
+                predictions.append(1)
+                skip = True
+            elif ranking[i] == 0:  # Negative class
+                predictions.append(-1)
+                skip = True
+    log.info('Testing with Transformer'.upper())
+    evaluate(labels, np.array(predictions))
+
+
 def resize_dataset(dataset: DatasetDict, size: int, seed: int) -> Dataset:
     pos = dataset.filter(lambda ex: ex['label'] == 1).shuffle(seed=seed).select(range(size // 2))
     neg = dataset.filter(lambda ex: ex['label'] == -1).shuffle(seed=seed).select(range(size // 2))
@@ -70,11 +98,13 @@ def main() -> None:
     train, test = get_data(7)
     ex_train = np.array(train['sentence_bert'])
     l_train = np.array(train['label'])
-    ex_test = np.array(test['sentence_bert'])
+    test_embedding = np.array(test['sentence_bert'])
+    test_text = np.array(test['text'])
     l_test = np.array(test['label'])
-    sklearn_test(ex_train, ex_test, l_train, l_test)
-    gurobi_test(ex_train, ex_test, l_train, l_test)
-    dwave_test(ex_train, ex_test, l_train, l_test)
+    transformer_test(test_text, l_test)
+    sklearn_test(ex_train, test_embedding, l_train, l_test)
+    gurobi_test(ex_train, test_embedding, l_train, l_test)
+    dwave_test(ex_train, test_embedding, l_train, l_test)
 
 
 if __name__ == '__main__':
