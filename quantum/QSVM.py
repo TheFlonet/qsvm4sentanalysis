@@ -47,7 +47,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
         self.ensemble_dim: int
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
-        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
+        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c, round_to_int=True)
         model.write('qsvm.lp')
         cqm = dimod.lp.load('qsvm.lp')
         presolve = Presolver(cqm)
@@ -71,9 +71,9 @@ class QSVM(BaseEstimator, ClassifierMixin):
         for _, row in selected.iterrows():
             indices, alphas = [], []
             for i in range(len(row)):
-                if 0 < row[i] < self.big_c:
+                if 0 < row[f'x{i + 2}'] < self.big_c:
                     indices.append(i)
-                    alphas.append(int(row[i]))
+                    alphas.append(int(row[f'x{i + 2}']))
             self.support_vectors_examples.append(examples[indices])
             self.support_vectors_alphas.append(np.array(alphas))
             self.support_vectors_labels.append(labels[indices])
