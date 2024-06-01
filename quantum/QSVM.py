@@ -7,6 +7,7 @@ import dimod
 import dwave.system.samplers as dwavesampler
 from util.kernel import rbf_kernel_pair
 from util.model_generation import construct_svm_model
+import math
 
 log = logging.getLogger('qsvm')
 
@@ -55,7 +56,8 @@ class QSVM(BaseEstimator, ClassifierMixin):
         reduced_cqm = presolve.detach_model()
         log.info('Solving'.upper())
         solver = dwavesampler.LeapHybridCQMSampler()
-        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM', time_limit=5)  # min time limit = 5 (default)
+        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM',
+                                              time_limit=math.ceil(solver.min_time_limit(reduced_cqm)))
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
         log.info('Extracting support vectors'.upper())
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
