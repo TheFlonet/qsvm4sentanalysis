@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import List
 import numpy as np
 from dwave.preprocessing import Presolver
@@ -51,6 +52,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
         model, kernel_matrix = construct_svm_model(examples, labels, self.big_c, round_to_int=True)
         model.write('qsvm.lp')
         cqm = dimod.lp.load('qsvm.lp')
+        os.remove('qsvm.lp')
         presolve = Presolver(cqm)
         log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()

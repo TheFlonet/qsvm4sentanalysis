@@ -50,9 +50,9 @@ def compare_svm() -> None:
     plot_dataset(examples, labels)
     ex_train, ex_test, l_train, l_test = train_test_split(examples, labels, test_size=0.4, random_state=7)
 
-    # main_c(ex_train, ex_test, l_train, l_test)
+    main_c(ex_train, ex_test, l_train, l_test)
     main_opt(ex_train, ex_test, l_train, l_test)
-    # main_q(ex_train, ex_test, l_train, l_test)
+    main_q(ex_train, ex_test, l_train, l_test)
 
 
 if __name__ == '__main__':
