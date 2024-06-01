@@ -13,11 +13,18 @@ from util.time_elapsed import eval_time
 import numpy as np
 from datasets import concatenate_datasets, DatasetDict, Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from util.visualization import plot_generalized_boundary
+
+
+SHOW_MODE = True
 
 
 @eval_time
 def sklearn_test(examples_train: np.array, examples_test: np.array,
                  labels_train: np.array, labels_test: np.array) -> None:
+    if SHOW_MODE:
+        plot_generalized_boundary(SVC(kernel='rbf', gamma='auto'), examples_train, labels_train, 'Sk-Learn')
+        return
     svm_model = SVC(kernel='rbf', gamma='auto')
     log.info('Training with sklearn'.upper())
     svm_model.fit(examples_train, labels_train)
@@ -30,6 +37,9 @@ def sklearn_test(examples_train: np.array, examples_test: np.array,
 @eval_time
 def cplex_test(examples_train: np.array, examples_test: np.array,
                 labels_train: np.array, labels_test: np.array) -> None:
+    if SHOW_MODE:
+        plot_generalized_boundary(CSVM(big_c=255), examples_train, labels_train, 'CPLEX')
+        return
     svm_model = CSVM(big_c=255)
     log.info('Training with cplex'.upper())
     svm_model.fit(examples_train, labels_train)
@@ -42,6 +52,9 @@ def cplex_test(examples_train: np.array, examples_test: np.array,
 @eval_time
 def dwave_test(examples_train: np.array, examples_test: np.array,
                labels_train: np.array, labels_test: np.array) -> None:
+    if SHOW_MODE:
+        plot_generalized_boundary(QSVM(big_c=255), examples_train, labels_train, 'D-WAVE')
+        return
     svm_model = QSVM(big_c=255)
     log.info('Training with d-wave'.upper())
     svm_model.fit(examples_train, labels_train)
@@ -101,10 +114,10 @@ def main() -> None:
     test_embedding = np.array(test['sentence_bert'])
     test_text = np.array(test['text'])
     l_test = np.array(test['label'])
-    transformer_test(test_text, l_test)
+    # transformer_test(test_text, l_test)
     sklearn_test(ex_train, test_embedding, l_train, l_test)
-    cplex_test(ex_train, test_embedding, l_train, l_test)
-    dwave_test(ex_train, test_embedding, l_train, l_test)
+    # cplex_test(ex_train, test_embedding, l_train, l_test)
+    # dwave_test(ex_train, test_embedding, l_train, l_test)
 
 
 if __name__ == '__main__':
