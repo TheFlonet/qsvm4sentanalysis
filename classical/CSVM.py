@@ -39,7 +39,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
         n_samples, _ = examples.shape
         N = range(n_samples)
         model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
-        solver = pyo.SolverFactory('gurobi')
+        solver = pyo.SolverFactory('cplex_direct')
         log.info('Solving'.upper())
         results = solver.solve(model, tee=False)
 

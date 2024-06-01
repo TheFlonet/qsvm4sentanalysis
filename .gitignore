@@ -28,6 +28,13 @@ sketches
 *.out
 *.pdf
 *.gz
+*.bbl
+*.bcf
+*.blg
+*.lof
+*.lot
+*.xml
+*.toc
 
 # Generated data
 data

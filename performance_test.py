@@ -28,14 +28,14 @@ def sklearn_test(examples_train: np.array, examples_test: np.array,
 
 
 @eval_time
-def gurobi_test(examples_train: np.array, examples_test: np.array,
+def cplex_test(examples_train: np.array, examples_test: np.array,
                 labels_train: np.array, labels_test: np.array) -> None:
     svm_model = CSVM(big_c=255)
-    log.info('Training with gurobi'.upper())
+    log.info('Training with cplex'.upper())
     svm_model.fit(examples_train, labels_train)
-    log.info('Predict with gurobi'.upper())
+    log.info('Predict with cplex'.upper())
     predictions = svm_model.predict(examples_test)
-    log.info('Testing with gurobi'.upper())
+    log.info('Testing with cplex'.upper())
     evaluate(labels_test, predictions)
 
 
@@ -103,7 +103,7 @@ def main() -> None:
     l_test = np.array(test['label'])
     transformer_test(test_text, l_test)
     sklearn_test(ex_train, test_embedding, l_train, l_test)
-    gurobi_test(ex_train, test_embedding, l_train, l_test)
+    cplex_test(ex_train, test_embedding, l_train, l_test)
     dwave_test(ex_train, test_embedding, l_train, l_test)
 
 

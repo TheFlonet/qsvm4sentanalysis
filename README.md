@@ -8,7 +8,8 @@ the advantages and disadvantages of the different paradigm.
 
 ## Note 
 
-1) This project is tested with python 3.11, other versions could not work properly.
+1) This project is tested with python 3.11 and 3.10, other versions could not work properly.
 2) After installing `requirements.txt` you need to install `dwave-inspectorapp` (closed source package) via: 
 `pip install dwave-inspectorapp --extra-index=https://pypi.dwavesys.com/simple`
 3) For executing on D-Wave Leap solvers you need to create a `.env` file with `DWAVE_API_TOKEN=your-token`
+4) For executing CSVM with Cplex python 3.10 is mandatory (no bindings for 3.11 are currently available)
