@@ -16,7 +16,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from util.visualization import plot_generalized_boundary
 
 
-SHOW_MODE = True
+SHOW_MODE = False
 
 
 @eval_time
@@ -114,10 +114,10 @@ def main() -> None:
     test_embedding = np.array(test['sentence_bert'])
     test_text = np.array(test['text'])
     l_test = np.array(test['label'])
-    # transformer_test(test_text, l_test)
+    transformer_test(test_text, l_test)
     sklearn_test(ex_train, test_embedding, l_train, l_test)
-    # cplex_test(ex_train, test_embedding, l_train, l_test)
-    # dwave_test(ex_train, test_embedding, l_train, l_test)
+    cplex_test(ex_train, test_embedding, l_train, l_test)
+    dwave_test(ex_train, test_embedding, l_train, l_test)
 
 
 if __name__ == '__main__':
