@@ -15,7 +15,6 @@ from datasets import concatenate_datasets, DatasetDict, Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from util.visualization import plot_generalized_boundary
 
-
 SHOW_MODE = False
 
 
@@ -36,7 +35,7 @@ def sklearn_test(examples_train: np.array, examples_test: np.array,
 
 @eval_time
 def cplex_test(examples_train: np.array, examples_test: np.array,
-                labels_train: np.array, labels_test: np.array) -> None:
+               labels_train: np.array, labels_test: np.array) -> None:
     if SHOW_MODE:
         plot_generalized_boundary(CSVM(big_c=255), examples_train, labels_train, 'CPLEX')
         return
