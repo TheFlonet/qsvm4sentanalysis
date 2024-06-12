@@ -2,9 +2,8 @@ from dataset.dataset_creation import load_tweet_eval, to_binary, normalize, save
 from dataset.embeddings_generator import add_sentence_embedding
 
 
-def generate_data() -> None:
+def generate_data(seed: int) -> None:
     splits = ('train', 'test')
-    seed = 7
     dataset = load_tweet_eval()
     dataset = to_binary(dataset, splits, seed)
     dataset = normalize(dataset, splits, seed)
@@ -13,4 +12,4 @@ def generate_data() -> None:
 
 
 if __name__ == '__main__':
-    generate_data()
+    generate_data(7)

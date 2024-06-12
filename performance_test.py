@@ -11,7 +11,7 @@ from quantum.QSVM import QSVM
 from util.evaluation import evaluate
 from util.time_elapsed import eval_time
 import numpy as np
-from datasets import concatenate_datasets, DatasetDict, Dataset
+from datasets import concatenate_datasets, Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from util.visualization import plot_generalized_boundary
 
@@ -89,7 +89,7 @@ def transformer_test(examples: np.array, labels: np.array) -> None:
     evaluate(labels, np.array(predictions))
 
 
-def resize_dataset(dataset: DatasetDict, size: int, seed: int) -> Dataset:
+def resize_dataset(dataset: Dataset, size: int, seed: int) -> Dataset:
     pos = dataset.filter(lambda ex: ex['label'] == 1).shuffle(seed=seed).select(range(size // 2))
     neg = dataset.filter(lambda ex: ex['label'] == -1).shuffle(seed=seed).select(range(size // 2))
     return concatenate_datasets([pos, neg])
@@ -98,9 +98,10 @@ def resize_dataset(dataset: DatasetDict, size: int, seed: int) -> Dataset:
 def get_data(seed: int) -> Tuple[Dataset, Dataset]:
     if not os.path.exists('./data') or not os.listdir('./data'):
         log.info('Missing data, dataset generation in progress'.upper())
-        generate_data()
-    train = resize_dataset(datasets.DatasetDict.from_json('./data/train.json'), 4096, seed)
-    test = resize_dataset(datasets.DatasetDict.from_json('./data/test.json'), 2048, seed)
+        generate_data(seed)
+    train = datasets.Dataset.from_json('./data/train.json')
+    test = datasets.Dataset.from_json('./data/test.json')
+    train, test = resize_dataset(train, 4096, seed), resize_dataset(test, 2048, seed)
     return train, test
 
 
@@ -108,23 +109,28 @@ def main() -> None:
     load_dotenv()
     log.info('Loading dataset'.upper())
     train, test = get_data(7)
+    log.info(f'Train size: {len(train)}, Test size: {len(test)}'.upper())
     ex_train = np.array(train['sentence_bert'])
     l_train = np.array(train['label'])
     test_embedding = np.array(test['sentence_bert'])
     test_text = np.array(test['text'])
     l_test = np.array(test['label'])
-    transformer_test(test_text, l_test)
     sklearn_test(ex_train, test_embedding, l_train, l_test)
     cplex_test(ex_train, test_embedding, l_train, l_test)
     dwave_test(ex_train, test_embedding, l_train, l_test)
+    transformer_test(test_text, l_test)
 
 
 if __name__ == '__main__':
     log = logging.getLogger('qsvm')
     log.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(message)s')
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
+    file_handler = logging.FileHandler('logfile.log')
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+    log.addHandler(file_handler)
     main()

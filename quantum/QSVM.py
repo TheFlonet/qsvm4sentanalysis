@@ -58,6 +58,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
         reduced_cqm = presolve.detach_model()
         log.info('Solving'.upper())
         solver = dwavesampler.LeapHybridCQMSampler()
+        log.info(f'Min time required on QPU: {math.ceil(solver.min_time_limit(reduced_cqm))}s'.upper())
         reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM',
                                               time_limit=math.ceil(solver.min_time_limit(reduced_cqm)))
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
