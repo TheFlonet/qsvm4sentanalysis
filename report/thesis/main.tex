@@ -1,13 +1,16 @@
-\documentclass[11pt]{article}
+\documentclass[11pt, draft]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{multicol}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
 \usepackage{lipsum}
 % \usepackage[showframe]{geometry}
-% \usepackage{lineno}
-% \linenumbers
+\usepackage{lineno}
+\linenumbers
+\usepackage[obeyDraft]{todonotes}
+\newcommand\note[1]{\todo[inline]{#1}}
 \usepackage[style=numeric-comp]{biblatex}
 \addbibresource{bibliography.bib}
 \setlength{\columnsep}{4.5cm}
