@@ -1,6 +1,7 @@
+import itertools
 import logging
 from collections import defaultdict
-from typing import List, Mapping, Hashable, Tuple
+from typing import List, Mapping, Hashable, Tuple, Any
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -41,7 +42,7 @@ def __split_problem(qubo: Mapping[tuple[Hashable, Hashable], float | floating | 
         if row < split_idx and col < split_idx:
             split_u_l[k] = v
         elif row < split_idx <= col:
-            qubo_matrix_u_r[row, col - split_idx] = v
+            qubo_matrix_u_r[row % split_idx, col % split_idx] = v
         elif row >= split_idx and col >= split_idx:
             split_d_r[k] = v
         else:
@@ -56,14 +57,14 @@ def __split_problem(qubo: Mapping[tuple[Hashable, Hashable], float | floating | 
     return split_u_l, split_u_r, split_d_r
 
 
-def __nan_hamming_distance(a, b):
+def __nan_hamming_distance(a: np.ndarray, b: np.ndarray) -> float | Any:
     mask = ~np.isnan(a) & ~np.isnan(b)
     if np.sum(mask) == 0:
         return np.inf
     return np.sum(a[mask] != b[mask]) / np.sum(mask)
 
 
-def __combine_rows(row1, row2):
+def __combine_rows(row1: pd.Series, row2: pd.Series) -> List[float | Any]:
     combined_row = []
     is_row_consistent = True
     for col in row1.index:
@@ -111,6 +112,34 @@ def __get_closest_assignments(starting_sols: pd.DataFrame, ur_qubo_filled: pd.Da
     return pd.DataFrame(closest_rows).reset_index(drop=True)
 
 
+def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, int]:
+    result_rows = []
+    for idx, row in df.drop(columns=['energy']).iterrows():
+        if row.isna().sum() == 0:
+            new_row = row.copy()
+            new_row['energy'] = df.loc[idx, 'energy']
+            result_rows.append(new_row)
+        else:
+            nan_columns = row.index[row.isna()]
+            for combination in itertools.product([0, 1], repeat=len(nan_columns)):
+                new_row = row.copy()
+                new_row[nan_columns] = combination
+                new_row['energy'] = np.nan
+                result_rows.append(new_row)
+
+    result_df = pd.DataFrame(result_rows, columns=df.columns).reset_index(drop=True)
+    result_df = result_df.drop_duplicates(subset=result_df.columns[:-1]).reset_index(drop=True)
+
+    trials = 0
+    for idx, row in result_df.iterrows():
+        if pd.isna(row['energy']):
+            trials += 1
+            x = row.drop('energy').values.astype(int)
+            result_df.at[idx, 'energy'] = x @ qubo_matrix @ x.T
+
+    return result_df.reset_index(drop=True), trials
+
+
 def __aggregate_solutions(solutions: List[pd.DataFrame], qubo_matrix: np.ndarray) -> pd.DataFrame:
     # Aggregate upper-left qubo with lower-right
     starting_sols = __combine_ul_lr(solutions[0], solutions[2])
@@ -124,20 +153,20 @@ def __aggregate_solutions(solutions: List[pd.DataFrame], qubo_matrix: np.ndarray
                                 zip(starting_sols.iterrows(), closest_df.iterrows())],
                                columns=starting_sols.columns)
 
-    trials = 1 << combined_df.drop(columns=['energy']).isna().sum().sum()
     # Brute force resolution
-    print(combined_df)
-    log.info(f'Conflicts resolved with {trials} classic resolutions' if trials > 0
-             else 'No conflict, merge successfully done')
+    res, trials = __brute_force(combined_df, qubo_matrix)
+    log.info(f'Dimension {qubo_matrix.shape[0]}. Conflicts resolved with {trials} classic resolutions' if trials > 0
+             else f'Dimension {qubo_matrix.shape[0]}. No conflict, merge successfully done')
 
-    exit()
-
-    return combined_df
+    return res
 
 
 def subqubo_solve(sampler: SimulatedAnnealingSampler,
-                  qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer], dim: int) -> pd.DataFrame:
+                  qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer],
+                  dim: int) -> pd.DataFrame:
     if dim == 2:
+        if len(qubo) == 0:
+            return pd.DataFrame({'energy': [0]})
         res = (sampler.sample_qubo(qubo, num_reads=10)
                .to_pandas_dataframe()
                .drop(columns=['num_occurrences'])
@@ -147,7 +176,7 @@ def subqubo_solve(sampler: SimulatedAnnealingSampler,
 
     qubo_matrix = np.zeros((dim, dim))
     for k, v in qubo.items():
-        qubo_matrix[k[0] - 1, k[1] - 1] = v
+        qubo_matrix[(k[0] - 1) % dim, (k[1] - 1) % dim] = v
 
     return __aggregate_solutions([subqubo_solve(sampler, q, dim // 2) for q in __split_problem(qubo, dim)], qubo_matrix)
 
