@@ -21,6 +21,7 @@ sketches
 !minor_embedding/outputs/same_pos.log
 !minor_embedding/outputs/same_shape.log
 !execution.log
+!complete_performance_test.log
 
 # LaTeX files
 *.aux

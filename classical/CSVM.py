@@ -41,7 +41,7 @@ class CSVM(BaseEstimator, ClassifierMixin):
         model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
         solver = pyo.SolverFactory('cplex_direct')
         log.info('Solving'.upper())
-        results = solver.solve(model, tee=False)
+        results = solver.solve(model, tee=True)
 
         if results.solver.termination_condition == pyo.TerminationCondition.optimal:
             alphas = np.vectorize(round)(np.array([model.alpha[i].value for i in N]), ndigits=5)

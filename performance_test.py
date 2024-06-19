@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 from typing import Tuple
 from dotenv import load_dotenv
 import datasets
@@ -108,17 +109,21 @@ def get_data(seed: int) -> Tuple[Dataset, Dataset]:
 def main() -> None:
     load_dotenv()
     log.info('Loading dataset'.upper())
-    train, test = get_data(7)
-    log.info(f'Train size: {len(train)}, Test size: {len(test)}'.upper())
-    ex_train = np.array(train['sentence_bert'])
-    l_train = np.array(train['label'])
-    test_embedding = np.array(test['sentence_bert'])
-    test_text = np.array(test['text'])
-    l_test = np.array(test['label'])
-    sklearn_test(ex_train, test_embedding, l_train, l_test)
-    cplex_test(ex_train, test_embedding, l_train, l_test)
-    dwave_test(ex_train, test_embedding, l_train, l_test)
-    transformer_test(test_text, l_test)
+    with open('util/1000.prime', 'r') as f:
+        primes = random.choices([int(x.strip()) for x in f.read().split(',')], k=10)
+    for prime in primes:
+        log.info(f'Test with prime {prime}'.upper())
+        train, test = get_data(prime)
+        log.info(f'Train size: {len(train)}, Test size: {len(test)}'.upper())
+        ex_train = np.array(train['sentence_bert'])
+        l_train = np.array(train['label'])
+        test_embedding = np.array(test['sentence_bert'])
+        test_text = np.array(test['text'])
+        l_test = np.array(test['label'])
+        sklearn_test(ex_train, test_embedding, l_train, l_test)
+        cplex_test(ex_train, test_embedding, l_train, l_test)
+        dwave_test(ex_train, test_embedding, l_train, l_test)
+        transformer_test(test_text, l_test)
 
 
 if __name__ == '__main__':

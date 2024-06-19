@@ -9,6 +9,7 @@ import dwave.system.samplers as dwavesampler
 from util.kernel import rbf_kernel_pair
 from util.model_generation import construct_svm_model
 import math
+import pandas as pd
 
 log = logging.getLogger('qsvm')
 
@@ -70,7 +71,8 @@ class QSVM(BaseEstimator, ClassifierMixin):
         df = sampleset.to_pandas_dataframe()
         df = df.loc[(df['is_feasible']) & (df['is_satisfied'])]
         df = df.drop(['is_feasible', 'is_satisfied', 'num_occurrences'], axis=1)
-        selected = df.loc[df['energy'] == min(df['energy'])]
+        # selected = df.loc[df['energy'] == min(df['energy'])]
+        selected = pd.DataFrame([df.loc[df['energy'].idxmin()]])
         selected = selected.drop('energy', axis=1)
         self.ensemble_dim = len(selected)
         for _, row in selected.iterrows():
