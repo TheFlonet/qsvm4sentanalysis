@@ -213,3 +213,40 @@ def draw_cut_from_sample(graph: nx.Graph, sample: SampleView) -> None:
     nx.draw_networkx_edges(graph, pos, edgelist=cut_edges, style='dashdot', alpha=0.5, width=3)
     nx.draw_networkx_edges(graph, pos, edgelist=uncut_edges, style='solid', width=3)
     nx.draw_networkx_labels(graph, pos)
+
+
+def __check_dataframe_consistency(ground_truth: pd.DataFrame, sol: pd.DataFrame,
+                                  qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    for idx, row in ground_truth.iterrows():
+        x = row.drop('energy').values.astype(int)
+        energy = x @ qubo_matrix @ x.T
+        if energy != ground_truth.at[idx, 'energy']:
+            log.warning('Incorrect energy value in ground truth')
+            log.warning(f'Expected: {energy}, found: {ground_truth.at[idx, "energy"]}. Overriding the value')
+            ground_truth.at[idx, 'energy'] = energy
+
+    for idx, row in sol.iterrows():
+        x = row.drop('energy').values.astype(int)
+        energy = x @ qubo_matrix @ x.T
+        if energy != sol.at[idx, 'energy']:
+            log.warning('Incorrect energy value in proposed solution')
+            log.warning(f'Expected: {energy}, found: {sol.at[idx, "energy"]}. Overriding the value')
+            sol.at[idx, 'energy'] = energy
+
+    return ground_truth, sol
+
+
+def compare_solutions(ground_truth: pd.DataFrame, sol: pd.DataFrame,
+                      qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer], dim: int) -> None:
+    qubo_matrix = np.zeros((dim, dim))
+    for k, v in qubo.items():
+        qubo_matrix[(k[0] - 1) % dim, (k[1] - 1) % dim] = v
+    ground_truth, sol = __check_dataframe_consistency(ground_truth, sol, qubo_matrix)
+
+    log.info(f'The best ground truth solution has energy {min(ground_truth.energy)}')
+    log.info(f'The best proposed solution has energy {min(sol.energy)}')
+    if min(ground_truth.energy) == 0:
+        gap = ((min(sol.energy) + 1 - min(ground_truth.energy) + 1) / abs(min(ground_truth.energy) + 1)) * 100
+    else:
+        gap = ((min(sol.energy) - min(ground_truth.energy)) / abs(min(ground_truth.energy))) * 100
+    log.info(f'Relativa gap: {gap:.2f}%')
