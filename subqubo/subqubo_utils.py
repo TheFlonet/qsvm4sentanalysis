@@ -164,7 +164,7 @@ def __aggregate_solutions(solutions: List[pd.DataFrame], qubo_matrix: np.ndarray
 def subqubo_solve(sampler: SimulatedAnnealingSampler,
                   qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer],
                   dim: int) -> pd.DataFrame:
-    if dim == 2:
+    if dim <= 2:
         if len(qubo) == 0:
             return pd.DataFrame({'energy': [0]})
         res = (sampler.sample_qubo(qubo, num_reads=10)
@@ -246,7 +246,7 @@ def compare_solutions(ground_truth: pd.DataFrame, sol: pd.DataFrame,
     log.info(f'The best ground truth solution has energy {min(ground_truth.energy)}')
     log.info(f'The best proposed solution has energy {min(sol.energy)}')
     if min(ground_truth.energy) == 0:
-        gap = ((min(sol.energy) + 1 - min(ground_truth.energy) + 1) / abs(min(ground_truth.energy) + 1)) * 100
+        gap = ((min(sol.energy) + 1 - (min(ground_truth.energy) + 1)) / abs(min(ground_truth.energy) + 1)) * 100
     else:
         gap = ((min(sol.energy) - min(ground_truth.energy)) / abs(min(ground_truth.energy))) * 100
-    log.info(f'Relativa gap: {gap:.2f}%')
+    log.info(f'Relative gap: {gap:.2f}%')
