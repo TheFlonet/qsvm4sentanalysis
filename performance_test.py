@@ -134,7 +134,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    file_handler = logging.FileHandler('complete_dataset.log')
+    file_handler = logging.FileHandler('logfile.log')
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
     log.addHandler(file_handler)
