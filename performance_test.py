@@ -40,7 +40,7 @@ def cplex_test(examples_train: np.array, examples_test: np.array,
     if SHOW_MODE:
         plot_generalized_boundary(CSVM(big_c=255), examples_train, labels_train, 'CPLEX')
         return
-    svm_model = CSVM(big_c=255)
+    svm_model = CSVM(big_c=255, lazy_loading_path='./remote')
     log.info('Training with cplex'.upper())
     svm_model.fit(examples_train, labels_train)
     log.info('Predict with cplex'.upper())
@@ -55,7 +55,7 @@ def dwave_test(examples_train: np.array, examples_test: np.array,
     if SHOW_MODE:
         plot_generalized_boundary(QSVM(big_c=255), examples_train, labels_train, 'D-WAVE')
         return
-    svm_model = QSVM(big_c=255)
+    svm_model = QSVM(big_c=255, lazy_loading_path='./remote')
     log.info('Training with d-wave'.upper())
     svm_model.fit(examples_train, labels_train)
     log.info('Predict with d-wave'.upper())
@@ -102,7 +102,7 @@ def get_data(seed: int) -> Tuple[Dataset, Dataset]:
         generate_data(seed)
     train = datasets.Dataset.from_json('./data/train.json')
     test = datasets.Dataset.from_json('./data/test.json')
-    train, test = resize_dataset(train, 4096, seed), resize_dataset(test, 2048, seed)
+    # train, test = resize_dataset(train, 4096, seed), resize_dataset(test, 2048, seed)
     return train, test
 
 
@@ -110,7 +110,7 @@ def main() -> None:
     load_dotenv()
     log.info('Loading dataset'.upper())
     with open('util/1000.prime', 'r') as f:
-        primes = random.choices([int(x.strip()) for x in f.read().split(',')], k=10)
+        primes = random.choices([int(x.strip()) for x in f.read().split(',')], k=1)
     for prime in primes:
         log.info(f'Test with prime {prime}'.upper())
         train, test = get_data(prime)

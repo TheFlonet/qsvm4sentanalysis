@@ -7,7 +7,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import dimod
 import dwave.system.samplers as dwavesampler
 from util.kernel import rbf_kernel_pair
-from util.model_generation import construct_svm_model
+from util.model_generation import construct_svm_model, load_svm_model
 import math
 import pandas as pd
 
@@ -41,19 +41,23 @@ class QSVM(BaseEstimator, ClassifierMixin):
     In this case constraint (1) can be omitted because the value range is specified at the variable creation stage
     """
 
-    def __init__(self, big_c: int):
+    def __init__(self, big_c: int, lazy_loading_path: str = None):
         self.big_c: int = big_c
         self.support_vectors_labels: List[np.array] = []
         self.support_vectors_alphas: List[np.array] = []
         self.support_vectors_examples: List[np.array] = []
         self.b: List[float] = []
         self.ensemble_dim: int
+        self.lazy_loading_path = lazy_loading_path
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
-        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c, round_to_int=True)
-        model.write('qsvm.lp')
-        cqm = dimod.lp.load('qsvm.lp')
-        os.remove('qsvm.lp')
+        if self.lazy_loading_path is None:
+            model, kernel_matrix = construct_svm_model(examples, labels, self.big_c, round_to_int=True)
+            model.write('qsvm.lp')
+            cqm = dimod.lp.load('qsvm.lp')
+            os.remove('qsvm.lp')
+        else:
+            cqm, kernel_matrix = load_svm_model(self.lazy_loading_path, True)
         presolve = Presolver(cqm)
         log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()

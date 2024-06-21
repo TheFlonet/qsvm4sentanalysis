@@ -1,5 +1,10 @@
 import logging
+import os
 from typing import Tuple
+
+import dimod
+from dimod import ConstrainedQuadraticModel
+
 from util.kernel import rbf_kernel_matrix
 import pyomo.environ as pyo
 import numpy as np
@@ -22,3 +27,25 @@ def construct_svm_model(examples: np.ndarray, labels: np.ndarray, big_c: int,
     ), sense=pyo.minimize)
     model.constraint1 = pyo.Constraint(rule=lambda w_model: sum(np.multiply(w_model.alpha, labels)) == 0)
     return model, kernel_matrix
+
+
+def load_svm_model(path: str,
+                   round_to_int: bool = False) -> Tuple[pyo.ConcreteModel | ConstrainedQuadraticModel, np.array]:
+    if not os.path.isdir(path):
+        raise FileNotFoundError(f'Path {path} not found')
+
+    kernel_file = os.path.join(path, 'svm_kernel.npy')
+    model_int_lp_file = os.path.join(path, 'svm_model_int.lp')
+    model_real_lp_file = os.path.join(path, 'svm_model_real.lp')
+
+    if not os.path.isfile(kernel_file):
+        raise FileNotFoundError(f'Missing kernel matrix file in {kernel_file}')
+    if round_to_int:
+        if not os.path.isfile(model_int_lp_file):
+            raise FileNotFoundError(f'Missing model file in {model_int_lp_file}')
+    else:
+        if not os.path.isfile(model_real_lp_file):
+            raise FileNotFoundError(f'Missing model file in {model_int_lp_file}')
+
+    model = dimod.lp.load(model_int_lp_file) if round_to_int else pyo.ConcreteModel().load(model_real_lp_file)
+    return model, np.load(kernel_file)
