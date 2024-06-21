@@ -236,17 +236,33 @@ def __check_dataframe_consistency(ground_truth: pd.DataFrame, sol: pd.DataFrame,
     return ground_truth, sol
 
 
+def __sanitize_df(ground_truth: pd.DataFrame, sol: pd.DataFrame,
+                  qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    for idx, row in ground_truth.iterrows():
+        x = row.drop('energy').values.astype(int)
+        ground_truth.at[idx, 'energy'] = x @ qubo_matrix @ x.T
+
+    for idx, row in sol.iterrows():
+        x = row.drop('energy').values.astype(int)
+        sol.at[idx, 'energy'] = x @ qubo_matrix @ x.T
+
+    return ground_truth, sol
+
+
 def compare_solutions(ground_truth: pd.DataFrame, sol: pd.DataFrame,
                       qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer], dim: int) -> None:
     qubo_matrix = np.zeros((dim, dim))
     for k, v in qubo.items():
         qubo_matrix[(k[0] - 1) % dim, (k[1] - 1) % dim] = v
-    ground_truth, sol = __check_dataframe_consistency(ground_truth, sol, qubo_matrix)
+    ground_truth, sol = __sanitize_df(ground_truth, sol, qubo_matrix)
+    # __check_dataframe_consistency(ground_truth, sol, qubo_matrix)
 
     log.info(f'The best ground truth solution has energy {min(ground_truth.energy)}')
     log.info(f'The best proposed solution has energy {min(sol.energy)}')
     if min(ground_truth.energy) == 0:
-        gap = ((min(sol.energy) + 1 - (min(ground_truth.energy) + 1)) / abs(min(ground_truth.energy) + 1)) * 100
+        gap = (abs(min(sol.energy) + 1 - (min(ground_truth.energy) + 1)) /
+               max(abs(min(sol.energy) + 1), abs(min(ground_truth.energy) + 1))) * 100
     else:
-        gap = ((min(sol.energy) - min(ground_truth.energy)) / abs(min(ground_truth.energy))) * 100
+        gap = (abs(min(sol.energy) - min(ground_truth.energy)) /
+               max(abs(min(ground_truth.energy)), abs(min(ground_truth.energy)))) * 100
     log.info(f'Relative gap: {gap:.2f}%')
