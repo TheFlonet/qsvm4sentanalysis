@@ -57,7 +57,7 @@ class QSVM(BaseEstimator, ClassifierMixin):
             cqm = dimod.lp.load('qsvm.lp')
             os.remove('qsvm.lp')
         else:
-            cqm, kernel_matrix = load_svm_model(self.lazy_loading_path, True)
+            cqm, kernel_matrix = load_svm_model(self.lazy_loading_path)
         presolve = Presolver(cqm)
         log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()
