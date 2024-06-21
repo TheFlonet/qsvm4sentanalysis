@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import pyomo.environ as pyo
 from util.kernel import rbf_kernel_pair
-from util.model_generation import construct_svm_model, load_svm_model
+from util.model_generation import construct_svm_model
 
 log = logging.getLogger('qsvm')
 
@@ -28,21 +28,17 @@ class CSVM(BaseEstimator, ClassifierMixin):
     - C is a bound on the error
     """
 
-    def __init__(self, big_c: int, lazy_loading_path: str = None):
+    def __init__(self, big_c: int):
         self.big_c = big_c
         self.support_vectors_labels = None
         self.support_vectors_alphas = None
         self.support_vectors_examples = None
         self.b = None
-        self.lazy_loading_path = lazy_loading_path
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
         n_samples, _ = examples.shape
         N = range(n_samples)
-        if self.lazy_loading_path is None:
-            model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
-        else:
-            model, kernel_matrix = load_svm_model(self.lazy_loading_path, False)
+        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
         solver = pyo.SolverFactory('cplex_direct')
         log.info('Solving'.upper())
         results = solver.solve(model, tee=True)
