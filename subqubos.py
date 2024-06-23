@@ -4,7 +4,7 @@ import random
 from typing import Mapping, Hashable, Tuple
 import dimod
 import networkx as nx
-from dwave.samplers import SimulatedAnnealingSampler
+from dimod import SimulatedAnnealingSampler
 from matplotlib import pyplot as plt
 from numpy import floating, integer
 from subqubo.QUBO import QUBO
