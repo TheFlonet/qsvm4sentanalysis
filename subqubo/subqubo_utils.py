@@ -1,24 +1,19 @@
 import itertools
 import logging
 from collections import defaultdict
-from typing import List, Mapping, Hashable, Tuple, Any
+from typing import List, Tuple, Any
 import networkx as nx
 import numpy as np
 import pandas as pd
 from dimod import SampleSet
 from dimod.views.samples import SampleView
 from dwave.samplers import SimulatedAnnealingSampler
-from numpy import integer, floating
-from scipy.linalg import lu
+from subqubo.QUBO import QUBO
 
 log = logging.getLogger('subqubo')
 
 
-def __split_problem(qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer], dim: int) -> Tuple[
-    Mapping[tuple[Hashable, Hashable], float | floating | integer],
-    Mapping[tuple[Hashable, Hashable], float | floating | integer],
-    Mapping[tuple[Hashable, Hashable], float | floating | integer]
-]:
+def __split_problem(qubo: QUBO, dim: int) -> Tuple[QUBO, QUBO, QUBO]:
     """
         Returns 3 sub-problems in qubo form.
         The 3 sub-problems correspond to the matrices obtained by dividing the qubo matrix of the original problem
@@ -35,26 +30,26 @@ def __split_problem(qubo: Mapping[tuple[Hashable, Hashable], float | floating | 
     split_u_r = defaultdict(int)
     split_d_r = defaultdict(int)
     split_idx = dim // 2
-    qubo_matrix_u_r = np.zeros((split_idx, split_idx))
 
-    for k, v in qubo.items():
+    for k, v in qubo.qubo_dict.items():
         row, col = k[0] - 1, k[1] - 1
         if row < split_idx and col < split_idx:
             split_u_l[k] = v
         elif row < split_idx <= col:
-            qubo_matrix_u_r[row % split_idx, col % split_idx] = v
+            split_u_r[k] = v
         elif row >= split_idx and col >= split_idx:
             split_d_r[k] = v
         else:
             raise ValueError('All values in the lower left matrix should be 0, so not present in the qubo dictionary')
 
-    qubo_matrix_u_r = lu(qubo_matrix_u_r, permute_l=True)[1]
-    for i in range(qubo_matrix_u_r.shape[0]):
-        for j in range(qubo_matrix_u_r.shape[1]):
-            if qubo_matrix_u_r[i, j] != 0:
-                split_u_r[(i + 1, j + 1 + split_idx)] = qubo_matrix_u_r[i, j]
+    res = (QUBO(split_u_l, cols_idx=[i + 1 for i in range(split_idx)],
+                rows_idx=[i + 1 for i in range(split_idx)]),
+           QUBO(split_u_r, cols_idx=[i + 1 + split_idx for i in range(split_idx)],
+                rows_idx=[i + 1 for i in range(split_idx)]),
+           QUBO(split_d_r, cols_idx=[i + 1 + split_idx for i in range(split_idx)],
+                rows_idx=[i + 1 + split_idx for i in range(split_idx)]))
 
-    return split_u_l, split_u_r, split_d_r
+    return res
 
 
 def __nan_hamming_distance(a: np.ndarray, b: np.ndarray) -> float | Any:
@@ -85,15 +80,21 @@ def __combine_rows(row1: pd.Series, row2: pd.Series) -> List[float | Any]:
     return combined_row
 
 
-def __combine_ul_lr(ul_qubo: pd.DataFrame, lr_qubo: pd.DataFrame) -> pd.DataFrame:
-    ul_qubo['tmp'] = 1
-    lr_qubo['tmp'] = 1
-    merge = pd.merge(ul_qubo, lr_qubo, on='tmp')
+def __combine_ul_lr(ul: QUBO, lr: QUBO) -> pd.DataFrame:
+    all_indices = sorted(list(set(ul.rows_idx).union(lr.cols_idx)))
+    ul.solutions['tmp'] = 1
+    lr.solutions['tmp'] = 1
+    merge = pd.merge(ul.solutions, lr.solutions, on='tmp')
     merge['energy'] = merge['energy_x'] + merge['energy_y']
-    return merge.drop(['energy_x', 'energy_y', 'tmp'], axis=1)
+    merge = merge.drop(['energy_x', 'energy_y', 'tmp'], axis=1)
+    ul.solutions.drop('tmp', axis=1, inplace=True)
+    lr.solutions.drop('tmp', axis=1, inplace=True)
+    merge = __fill_with_nan(pd.DataFrame(columns=all_indices + ['energy']), merge)
+
+    return __expand_df(merge, keep_energy=True)
 
 
-def __fill_ur_qubo(schema: pd.DataFrame, df_to_fill: pd.DataFrame) -> pd.DataFrame:
+def __fill_with_nan(schema: pd.DataFrame, df_to_fill: pd.DataFrame) -> pd.DataFrame:
     missing_columns = set(schema.columns) - set(df_to_fill.columns)
     for col in missing_columns:
         df_to_fill[col] = np.nan
@@ -112,7 +113,7 @@ def __get_closest_assignments(starting_sols: pd.DataFrame, ur_qubo_filled: pd.Da
     return pd.DataFrame(closest_rows).reset_index(drop=True)
 
 
-def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, int]:
+def __expand_df(df: pd.DataFrame, keep_energy: bool) -> pd.DataFrame:
     result_rows = []
     for idx, row in df.drop(columns=['energy']).iterrows():
         if row.isna().sum() == 0:
@@ -124,11 +125,17 @@ def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFra
             for combination in itertools.product([0, 1], repeat=len(nan_columns)):
                 new_row = row.copy()
                 new_row[nan_columns] = combination
-                new_row['energy'] = np.nan
+                new_row['energy'] = df.loc[idx, 'energy'] if keep_energy else np.nan
                 result_rows.append(new_row)
 
     result_df = pd.DataFrame(result_rows, columns=df.columns).reset_index(drop=True)
     result_df = result_df.drop_duplicates(subset=result_df.columns[:-1]).reset_index(drop=True)
+
+    return result_df
+
+
+def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, int]:
+    result_df = __expand_df(df, keep_energy=False)
 
     trials = 0
     for idx, row in result_df.iterrows():
@@ -140,11 +147,11 @@ def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFra
     return result_df.reset_index(drop=True), trials
 
 
-def __aggregate_solutions(solutions: List[pd.DataFrame], qubo_matrix: np.ndarray) -> pd.DataFrame:
+def __aggregate_solutions(solutions: List[QUBO], qubo: QUBO) -> QUBO:
     # Aggregate upper-left qubo with lower-right
     starting_sols = __combine_ul_lr(solutions[0], solutions[2])
     # Set missing columns in upper-right qubo to NaN
-    ur_qubo_filled = __fill_ur_qubo(starting_sols, solutions[1])
+    ur_qubo_filled = __fill_with_nan(starting_sols, solutions[1].solutions)
     # Search the closest assignments between upper-right qubo and merged solution (UL and LR qubos)
     closest_df = __get_closest_assignments(starting_sols, ur_qubo_filled)
 
@@ -154,31 +161,34 @@ def __aggregate_solutions(solutions: List[pd.DataFrame], qubo_matrix: np.ndarray
                                columns=starting_sols.columns)
 
     # Brute force resolution
-    res, trials = __brute_force(combined_df, qubo_matrix)
-    log.info(f'Dimension {qubo_matrix.shape[0]}. Conflicts resolved with {trials} classic resolutions' if trials > 0
-             else f'Dimension {qubo_matrix.shape[0]}. No conflict, merge successfully done')
+    res, trials = __brute_force(combined_df, qubo.qubo_matrix)
+    log.info(
+        f'Dimension {qubo.qubo_matrix.shape[0]}. Conflicts resolved with {trials} classic resolutions' if trials > 0
+        else f'Dimension {qubo.qubo_matrix.shape[0]}. No conflict, merge successfully done')
+    qubo.solutions = res
 
-    return res
+    return qubo
 
 
-def subqubo_solve(sampler: SimulatedAnnealingSampler,
-                  qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer],
-                  dim: int) -> pd.DataFrame:
-    if dim <= 2:
-        if len(qubo) == 0:
-            return pd.DataFrame({'energy': [0]})
-        res = (sampler.sample_qubo(qubo, num_reads=10)
-               .to_pandas_dataframe()
-               .drop(columns=['num_occurrences'])
-               .drop_duplicates()
-               .sort_values(by='energy', ascending=True))
-        return res[res['energy'] == min(res['energy'])]
-
-    qubo_matrix = np.zeros((dim, dim))
-    for k, v in qubo.items():
-        qubo_matrix[(k[0] - 1) % dim, (k[1] - 1) % dim] = v
-
-    return __aggregate_solutions([subqubo_solve(sampler, q, dim // 2) for q in __split_problem(qubo, dim)], qubo_matrix)
+def subqubo_solve(sampler: SimulatedAnnealingSampler, qubo: QUBO, dim: int, cut_dim: int) -> QUBO:
+    if dim <= cut_dim:
+        if len(qubo.qubo_dict) == 0:
+            all_indices = sorted(list(set(qubo.rows_idx).union(qubo.cols_idx)))
+            combinations = list(itertools.product([0, 1], repeat=len(all_indices)))
+            binary_vectors_as_lists = [list(vec) for vec in combinations]
+            data = [vec + [0] for vec in binary_vectors_as_lists]
+            column_names = all_indices + ['energy']
+            qubo.solutions = pd.DataFrame(data, columns=column_names)
+        else:
+            res = (sampler.sample_qubo(qubo.qubo_dict, num_reads=10)
+                   .to_pandas_dataframe()
+                   .drop(columns=['num_occurrences'])
+                   .drop_duplicates()
+                   .sort_values(by='energy', ascending=True))
+            qubo.solutions = res[res['energy'] == min(res['energy'])]
+        return qubo
+    return __aggregate_solutions([subqubo_solve(sampler, q, dim // 2, cut_dim) for q in __split_problem(qubo, dim)],
+                                 qubo)
 
 
 def print_cut_from_sampleset(sampleset: SampleSet) -> None:
@@ -215,54 +225,20 @@ def draw_cut_from_sample(graph: nx.Graph, sample: SampleView) -> None:
     nx.draw_networkx_labels(graph, pos)
 
 
-def __check_dataframe_consistency(ground_truth: pd.DataFrame, sol: pd.DataFrame,
-                                  qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def __sanitize_df(ground_truth: pd.DataFrame, qubo: QUBO) -> Tuple[pd.DataFrame, pd.DataFrame]:
     for idx, row in ground_truth.iterrows():
         x = row.drop('energy').values.astype(int)
-        energy = x @ qubo_matrix @ x.T
-        if energy != ground_truth.at[idx, 'energy']:
-            log.warning('Incorrect energy value in ground truth')
-            log.warning(f'Expected: {energy}, found: {ground_truth.at[idx, "energy"]}. Overriding the value')
-            ground_truth.at[idx, 'energy'] = energy
+        ground_truth.at[idx, 'energy'] = np.round(x @ qubo.qubo_matrix @ x.T, 5)
 
-    for idx, row in sol.iterrows():
+    for idx, row in qubo.solutions.iterrows():
         x = row.drop('energy').values.astype(int)
-        energy = x @ qubo_matrix @ x.T
-        if energy != sol.at[idx, 'energy']:
-            log.warning('Incorrect energy value in proposed solution')
-            log.warning(f'Expected: {energy}, found: {sol.at[idx, "energy"]}. Overriding the value')
-            sol.at[idx, 'energy'] = energy
+        qubo.solutions.at[idx, 'energy'] = np.round(x @ qubo.qubo_matrix @ x.T, 5)
 
-    return ground_truth, sol
+    return ground_truth, qubo.solutions
 
 
-def __sanitize_df(ground_truth: pd.DataFrame, sol: pd.DataFrame,
-                  qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    for idx, row in ground_truth.iterrows():
-        x = row.drop('energy').values.astype(int)
-        ground_truth.at[idx, 'energy'] = x @ qubo_matrix @ x.T
-
-    for idx, row in sol.iterrows():
-        x = row.drop('energy').values.astype(int)
-        sol.at[idx, 'energy'] = x @ qubo_matrix @ x.T
-
-    return ground_truth, sol
-
-
-def compare_solutions(ground_truth: pd.DataFrame, sol: pd.DataFrame,
-                      qubo: Mapping[tuple[Hashable, Hashable], float | floating | integer], dim: int) -> None:
-    qubo_matrix = np.zeros((dim, dim))
-    for k, v in qubo.items():
-        qubo_matrix[(k[0] - 1) % dim, (k[1] - 1) % dim] = v
-    ground_truth, sol = __sanitize_df(ground_truth, sol, qubo_matrix)
-    # __check_dataframe_consistency(ground_truth, sol, qubo_matrix)
+def compare_solutions(ground_truth: pd.DataFrame, qubo: QUBO) -> None:
+    ground_truth, sol = __sanitize_df(ground_truth, qubo)
 
     log.info(f'The best ground truth solution has energy {min(ground_truth.energy)}')
     log.info(f'The best proposed solution has energy {min(sol.energy)}')
-    if min(ground_truth.energy) == 0:
-        gap = (abs(min(sol.energy) + 1 - (min(ground_truth.energy) + 1)) /
-               max(abs(min(sol.energy) + 1), abs(min(ground_truth.energy) + 1))) * 100
-    else:
-        gap = (abs(min(sol.energy) - min(ground_truth.energy)) /
-               max(abs(min(ground_truth.energy)), abs(min(ground_truth.energy)))) * 100
-    log.info(f'Relative gap: {gap:.2f}%')

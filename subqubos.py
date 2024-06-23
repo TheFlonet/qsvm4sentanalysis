@@ -1,14 +1,17 @@
 import logging
 from collections import defaultdict
+import random
 from typing import Mapping, Hashable, Tuple
+import dimod
 import networkx as nx
 from dwave.samplers import SimulatedAnnealingSampler
 from matplotlib import pyplot as plt
 from numpy import floating, integer
+from subqubo.QUBO import QUBO
 from subqubo.subqubo_utils import subqubo_solve, compare_solutions
 
 
-def generate_max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
+def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
     graph = nx.Graph()
     graph.add_edges_from([(1, 2), (1, 3), (2, 4), (3, 4), (3, 5), (4, 5), (1, 6),
                           (2, 6), (4, 7), (1, 7), (2, 8), (3, 8), (1, 4), (2, 3)])
@@ -21,22 +24,38 @@ def generate_max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashab
     return graph, qubo
 
 
-def main() -> None:
-    graph, qubo = generate_max_cut_problem()
+def tests() -> None:
+    test_set = [
+        {'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2}, {'variables': 8, 'cut_dim': 2, 'seed': 1997},
+        {'variables': 8, 'cut_dim': 4, 'seed': 1997}, {'variables': 16, 'cut_dim': 4, 'seed': 1997},
+        {'variables': 16, 'cut_dim': 8, 'seed': 1997},
+    ]
 
-    nx.draw(graph, with_labels=True, pos=nx.spectral_layout(graph))
-    plt.savefig("graph.png", format="PNG")
+    for idx, test_dict in enumerate(test_set):
+        log.info(f'Test {idx + 1}'.upper())
+        log.info(f'Variables: {test_dict["variables"]}'.upper())
+        if 'problem' in test_dict:
+            qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)], rows_idx=[i + 1 for i in range(8)])
+            nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
+            plt.savefig("graph.png", format="PNG")
+        else:
+            num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
+            log.info(f'Interactions: {num_interactions}'.upper())
+            qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
+                                                        num_interactions=num_interactions,
+                                                        vartype=dimod.BINARY,
+                                                        random_state=test_dict['seed']).to_qubo()[0],
+                        [i for i in range(test_dict['variables'])],
+                        [i for i in range(test_dict['variables'])])
 
-    sampler = SimulatedAnnealingSampler()
-    direct_solutions = (sampler.sample_qubo(qubo, num_reads=10)
-                        .to_pandas_dataframe()
-                        .drop(columns=['num_occurrences'])
-                        .drop_duplicates()
-                        .sort_values(by='energy', ascending=True))
-    problem_dim = len({i for k in qubo.keys() for i in k})
-
-    subqubos_solutions = subqubo_solve(sampler, qubo, problem_dim)
-    compare_solutions(direct_solutions, subqubos_solutions, qubo, problem_dim)
+        sampler = SimulatedAnnealingSampler()
+        for j in range(10):
+            log.info(f'Execution {j + 1}'.upper())
+            direct_solutions = (dimod.ExactSolver().sample_qubo(qubo.qubo_dict).to_pandas_dataframe()
+                                .drop(columns=['num_occurrences']).drop_duplicates()
+                                .sort_values(by='energy', ascending=True))
+            compare_solutions(direct_solutions[direct_solutions['energy'] == min(direct_solutions['energy'])],
+                              subqubo_solve(sampler, qubo, dim=test_dict['variables'], cut_dim=test_dict['cut_dim']))
 
 
 if __name__ == '__main__':
@@ -47,4 +66,8 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    main()
+    file_handler = logging.FileHandler('subqubo.log')
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+    log.addHandler(file_handler)
+    tests()
