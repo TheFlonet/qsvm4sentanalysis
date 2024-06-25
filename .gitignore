@@ -23,6 +23,7 @@ sketches
 !execution.log
 !complete_performance_test.log
 !complete_dataset.log
+!subqubo.log
 
 # LaTeX files
 *.aux
