@@ -114,21 +114,22 @@ def __get_closest_assignments(starting_sols: pd.DataFrame, ur_qubo_filled: pd.Da
 
 
 def __expand_df(df: pd.DataFrame, keep_energy: bool) -> pd.DataFrame:
-    result_rows = []
-    for idx, row in df.drop(columns=['energy']).iterrows():
-        if row.isna().sum() == 0:
-            new_row = row.copy()
-            new_row['energy'] = df.loc[idx, 'energy']
-            result_rows.append(new_row)
-        else:
-            nan_columns = row.index[row.isna()]
-            for combination in itertools.product([0, 1], repeat=len(nan_columns)):
-                new_row = row.copy()
-                new_row[nan_columns] = combination
-                new_row['energy'] = df.loc[idx, 'energy'] if keep_energy else np.nan
-                result_rows.append(new_row)
+    complete_rows = df.dropna().copy()
+    incomplete_rows = df[df.isna().any(axis=1)].copy()
+    result_rows = complete_rows.to_dict('records')
 
-    result_df = pd.DataFrame(result_rows, columns=df.columns).reset_index(drop=True)
+    for idx, row in incomplete_rows.iterrows():
+        nan_columns = row.index[row.isna()]
+        non_nan_part = row.drop(nan_columns)
+        combinations = list(itertools.product([0, 1], repeat=len(nan_columns)))
+
+        for combination in combinations:
+            new_values = dict(zip(nan_columns, combination))
+            new_row = pd.Series({**non_nan_part.to_dict(), **new_values})
+            new_row['energy'] = df.at[idx, 'energy'] if keep_energy else np.nan
+            result_rows.append(new_row.to_dict())
+
+    result_df = pd.DataFrame(result_rows)
     result_df = result_df.drop_duplicates(subset=result_df.columns[:-1]).reset_index(drop=True)
 
     return result_df
@@ -162,9 +163,8 @@ def __aggregate_solutions(solutions: List[QUBO], qubo: QUBO) -> QUBO:
 
     # Brute force resolution
     res, trials = __brute_force(combined_df, qubo.qubo_matrix)
-    log.info(
-        f'Dimension {qubo.qubo_matrix.shape[0]}. Conflicts resolved with {trials} classic resolutions' if trials > 0
-        else f'Dimension {qubo.qubo_matrix.shape[0]}. No conflict, merge successfully done')
+    log.info(f'Dimension {qubo.qubo_matrix.shape[0]}, merged successfully.')
+    log.info(f'    Conflicts resolved with classical resolutions: {trials}')
     qubo.solutions = res
 
     return qubo
@@ -240,5 +240,5 @@ def __sanitize_df(ground_truth: pd.DataFrame, qubo: QUBO) -> Tuple[pd.DataFrame,
 def compare_solutions(ground_truth: pd.DataFrame, qubo: QUBO) -> None:
     ground_truth, sol = __sanitize_df(ground_truth, qubo)
 
-    log.info(f'The best ground truth solution has energy {min(ground_truth.energy)}')
+    log.info('\n' + str(ground_truth['energy'].describe()))
     log.info(f'The best proposed solution has energy {min(sol.energy)}')

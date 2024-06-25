@@ -1,14 +1,18 @@
+from typing import Mapping, Hashable, List, Tuple
+
 import numpy as np
+import pandas as pd
 from scipy.linalg import lu
+from numpy import floating, integer
 
 
 class QUBO:
     def __init__(self, qubo_dict, cols_idx, rows_idx):
-        self.qubo_dict = qubo_dict
-        self.cols_idx = cols_idx
-        self.rows_idx = rows_idx
-        self.solutions = None
-        self.qubo_matrix = None
+        self.qubo_dict: Mapping[tuple[Hashable, Hashable], float | floating | integer] = qubo_dict
+        self.cols_idx: List[int] = cols_idx
+        self.rows_idx: List[int] = rows_idx
+        self.solutions: pd.DataFrame | None = None
+        self.qubo_matrix: np.ndarray | None = None
         self.__from_dict_to_matrix((len(rows_idx), len(cols_idx)))
 
     def __is_upper_triangular(self):
@@ -21,7 +25,7 @@ class QUBO:
                     return False
         return True
 
-    def __from_dict_to_matrix(self, dims):
+    def __from_dict_to_matrix(self, dims: Tuple[int, int]):
         self.qubo_matrix = np.zeros(dims)
         for k, v in self.qubo_dict.items():
             row, col = k[0] - 1, k[1] - 1
