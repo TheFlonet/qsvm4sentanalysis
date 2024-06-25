@@ -31,11 +31,11 @@ def tests() -> None:
         {'variables': 8, 'cut_dim': 2, 'seed': 1997, 'name': '8 vars, cut dim 2'},
         {'variables': 8, 'cut_dim': 4, 'seed': 1997, 'name': '8 vars, cut dim 4'},
         {'variables': 16, 'cut_dim': 8, 'seed': 1997, 'name': '16 vars, cut dim 8'},
-        # {'variables': 16, 'cut_dim': 4, 'seed': 1997, 'name': '16 vars, cut dim 4'},
+        {'variables': 16, 'cut_dim': 4, 'seed': 1997, 'name': '16 vars, cut dim 4'},
         # {'variables': 16, 'cut_dim': 2, 'seed': 1997, 'name': '16 vars, cut dim 2'},
     ]
 
-    for idx, test_dict in enumerate(test_set):
+    for test_dict in test_set:
         log.info(f'Test {test_dict["name"]}'.upper())
         log.info(f'Variables: {test_dict["variables"]}'.upper())
         for j in range(10):
