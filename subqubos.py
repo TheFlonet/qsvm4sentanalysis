@@ -31,37 +31,40 @@ def tests() -> None:
         {'variables': 8, 'cut_dim': 2, 'seed': 1997, 'name': '8 vars, cut dim 2'},
         {'variables': 8, 'cut_dim': 4, 'seed': 1997, 'name': '8 vars, cut dim 4'},
         {'variables': 16, 'cut_dim': 8, 'seed': 1997, 'name': '16 vars, cut dim 8'},
-        {'variables': 16, 'cut_dim': 4, 'seed': 1997, 'name': '16 vars, cut dim 4'},
-        {'variables': 16, 'cut_dim': 2, 'seed': 1997, 'name': '16 vars, cut dim 2'},
+        # {'variables': 16, 'cut_dim': 4, 'seed': 1997, 'name': '16 vars, cut dim 4'},
+        # {'variables': 16, 'cut_dim': 2, 'seed': 1997, 'name': '16 vars, cut dim 2'},
     ]
 
     for idx, test_dict in enumerate(test_set):
         log.info(f'Test {test_dict["name"]}'.upper())
         log.info(f'Variables: {test_dict["variables"]}'.upper())
-        if 'problem' in test_dict:
-            qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)], rows_idx=[i + 1 for i in range(8)])
-            nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
-            plt.savefig("graph.png", format="PNG")
-        else:
-            random.seed(test_dict['seed'])
-            num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
-            log.info(f'Interactions: {num_interactions}'.upper())
-            qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
-                                                        num_interactions=num_interactions,
-                                                        vartype=dimod.BINARY,
-                                                        random_state=test_dict['seed']).to_qubo()[0],
-                        [i for i in range(test_dict['variables'])],
-                        [i for i in range(test_dict['variables'])])
+        for j in range(10):
+            log.info(f'Execution {j + 1}')
+            if 'problem' in test_dict:
+                qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
+                            rows_idx=[i + 1 for i in range(8)])
+                nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
+                plt.savefig("graph.png", format="PNG")
+            else:
+                # random.seed(test_dict['seed'])
+                num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
+                log.info(f'Interactions: {num_interactions}'.upper())
+                qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
+                                                            num_interactions=num_interactions,
+                                                            # random_state=test_dict['seed'],
+                                                            vartype=dimod.BINARY).to_qubo()[0],
+                            [i for i in range(test_dict['variables'])],
+                            [i for i in range(test_dict['variables'])])
 
-        direct_solutions = (dimod.ExactSolver().sample_qubo(qubo.qubo_dict).to_pandas_dataframe()
-                            .drop(columns=['num_occurrences']).drop_duplicates()
-                            .sort_values(by='energy', ascending=True))
-        start = time.time()
-        subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo,
-                                 dim=test_dict['variables'], cut_dim=test_dict['cut_dim'])
-        end = time.time()
-        log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
-        compare_solutions(direct_solutions, subqubos)
+            direct_solutions = (dimod.ExactSolver().sample_qubo(qubo.qubo_dict).to_pandas_dataframe()
+                                .drop(columns=['num_occurrences']).drop_duplicates()
+                                .sort_values(by='energy', ascending=True))
+            start = time.time()
+            subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo,
+                                     dim=test_dict['variables'], cut_dim=test_dict['cut_dim'])
+            end = time.time()
+            log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
+            compare_solutions(direct_solutions, subqubos)
 
 
 if __name__ == '__main__':
