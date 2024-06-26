@@ -1,0 +1,870 @@
+2024-06-25 18:54:49,581 - INFO - TEST MAX_CUT
+2024-06-25 18:54:49,581 - INFO - VARIABLES: 8
+2024-06-25 18:54:49,581 - INFO - Execution 1
+2024-06-25 18:54:49,868 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:49,869 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:49,981 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:49,981 - INFO -     Conflicts resolved with classical resolutions: 9
+2024-06-25 18:54:50,013 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:50,013 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:50,351 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:50,352 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 18:54:50,352 - INFO - Execution time for subqubo solver: 0.61s
+2024-06-25 18:54:50,426 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:50,426 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:50,427 - INFO - Execution 2
+2024-06-25 18:54:50,609 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:50,610 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:50,719 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:50,719 - INFO -     Conflicts resolved with classical resolutions: 11
+2024-06-25 18:54:50,750 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:50,750 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:51,086 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:51,086 - INFO -     Conflicts resolved with classical resolutions: 48
+2024-06-25 18:54:51,086 - INFO - Execution time for subqubo solver: 0.59s
+2024-06-25 18:54:51,159 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:51,159 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:51,159 - INFO - Execution 3
+2024-06-25 18:54:51,349 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:51,349 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:51,460 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:51,460 - INFO -     Conflicts resolved with classical resolutions: 7
+2024-06-25 18:54:51,491 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:51,491 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:51,831 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:51,831 - INFO -     Conflicts resolved with classical resolutions: 48
+2024-06-25 18:54:51,831 - INFO - Execution time for subqubo solver: 0.60s
+2024-06-25 18:54:51,903 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:51,904 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:51,904 - INFO - Execution 4
+2024-06-25 18:54:52,095 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,096 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:52,202 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,202 - INFO -     Conflicts resolved with classical resolutions: 3
+2024-06-25 18:54:52,233 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,233 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:52,568 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:52,568 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:54:52,568 - INFO - Execution time for subqubo solver: 0.59s
+2024-06-25 18:54:52,640 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:52,640 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:52,640 - INFO - Execution 5
+2024-06-25 18:54:52,839 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,839 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:54:52,949 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,949 - INFO -     Conflicts resolved with classical resolutions: 10
+2024-06-25 18:54:52,980 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:52,980 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:53,521 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:53,521 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 18:54:53,522 - INFO - Execution time for subqubo solver: 0.80s
+2024-06-25 18:54:53,593 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:53,593 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:53,593 - INFO - Execution 6
+2024-06-25 18:54:53,798 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:53,798 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:53,908 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:53,908 - INFO -     Conflicts resolved with classical resolutions: 9
+2024-06-25 18:54:53,939 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:53,939 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:54,275 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:54,275 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 18:54:54,275 - INFO - Execution time for subqubo solver: 0.59s
+2024-06-25 18:54:54,347 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:54,347 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:54,347 - INFO - Execution 7
+2024-06-25 18:54:54,553 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:54,553 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:54,662 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:54,662 - INFO -     Conflicts resolved with classical resolutions: 6
+2024-06-25 18:54:54,693 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:54,693 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:55,029 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:55,029 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 18:54:55,029 - INFO - Execution time for subqubo solver: 0.59s
+2024-06-25 18:54:55,101 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:55,101 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:55,101 - INFO - Execution 8
+2024-06-25 18:54:55,347 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:55,347 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:54:55,457 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:55,457 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:54:55,487 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:55,487 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:56,000 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:56,001 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 18:54:56,001 - INFO - Execution time for subqubo solver: 0.80s
+2024-06-25 18:54:56,073 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:56,073 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:56,073 - INFO - Execution 9
+2024-06-25 18:54:56,290 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:56,290 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:56,407 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:56,407 - INFO -     Conflicts resolved with classical resolutions: 12
+2024-06-25 18:54:56,442 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:56,442 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:56,786 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:56,786 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:56,786 - INFO - Execution time for subqubo solver: 0.61s
+2024-06-25 18:54:56,936 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:56,936 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:56,937 - INFO - Execution 10
+2024-06-25 18:54:57,212 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:57,212 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:54:57,337 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:57,338 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:54:57,373 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:57,373 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:57,733 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:57,733 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 18:54:57,733 - INFO - Execution time for subqubo solver: 0.65s
+2024-06-25 18:54:57,806 - INFO - 
+count    256.000000
+mean      -7.000000
+std        1.874493
+min      -10.000000
+25%       -8.000000
+50%       -7.000000
+75%       -6.000000
+max        0.000000
+Name: energy, dtype: float64
+2024-06-25 18:54:57,806 - INFO - The best proposed solution has energy -10.0
+2024-06-25 18:54:57,806 - INFO - TEST 8 VARS, CUT DIM 2
+2024-06-25 18:54:57,806 - INFO - VARIABLES: 8
+2024-06-25 18:54:57,806 - INFO - Execution 1
+2024-06-25 18:54:57,806 - INFO - INTERACTIONS: 45
+2024-06-25 18:54:57,947 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:57,947 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:54:58,032 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:58,032 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:54:58,072 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:58,072 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:59,389 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:59,390 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:54:59,390 - INFO - Execution time for subqubo solver: 1.58s
+2024-06-25 18:54:59,481 - INFO - 
+count    256.000000
+mean       1.929892
+std        1.442685
+min       -0.655130
+25%        0.857305
+50%        1.838930
+75%        2.921430
+max        5.964160
+Name: energy, dtype: float64
+2024-06-25 18:54:59,481 - INFO - The best proposed solution has energy -0.65513
+2024-06-25 18:54:59,481 - INFO - Execution 2
+2024-06-25 18:54:59,481 - INFO - INTERACTIONS: 49
+2024-06-25 18:54:59,587 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:59,587 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:59,672 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:59,672 - INFO -     Conflicts resolved with classical resolutions: 5
+2024-06-25 18:54:59,713 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:54:59,713 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:54:59,894 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:54:59,894 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:54:59,894 - INFO - Execution time for subqubo solver: 0.41s
+2024-06-25 18:54:59,955 - INFO - 
+count    256.000000
+mean       3.326481
+std        1.793154
+min       -0.010790
+25%        2.054877
+50%        3.067155
+75%        4.434500
+max        8.807610
+Name: energy, dtype: float64
+2024-06-25 18:54:59,955 - INFO - The best proposed solution has energy -0.01079
+2024-06-25 18:54:59,955 - INFO - Execution 3
+2024-06-25 18:54:59,955 - INFO - INTERACTIONS: 43
+2024-06-25 18:55:00,092 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:00,092 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:00,190 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:00,190 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:00,230 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:00,230 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:00,900 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:00,901 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:00,901 - INFO - Execution time for subqubo solver: 0.94s
+2024-06-25 18:55:00,991 - INFO - 
+count    256.000000
+mean      -1.232707
+std        2.784573
+min      -12.183500
+25%       -2.704075
+50%       -0.635410
+75%        0.858667
+max        3.085400
+Name: energy, dtype: float64
+2024-06-25 18:55:00,991 - INFO - The best proposed solution has energy -12.1835
+2024-06-25 18:55:00,991 - INFO - Execution 4
+2024-06-25 18:55:00,991 - INFO - INTERACTIONS: 44
+2024-06-25 18:55:01,128 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,128 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:55:01,219 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,219 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:01,259 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,259 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:01,603 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:01,603 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:01,603 - INFO - Execution time for subqubo solver: 0.61s
+2024-06-25 18:55:01,666 - INFO - 
+count    256.000000
+mean       2.004291
+std        1.849140
+min       -1.918010
+25%        0.666162
+50%        1.920900
+75%        3.289410
+max        6.761240
+Name: energy, dtype: float64
+2024-06-25 18:55:01,666 - INFO - The best proposed solution has energy -1.91801
+2024-06-25 18:55:01,666 - INFO - Execution 5
+2024-06-25 18:55:01,666 - INFO - INTERACTIONS: 9
+2024-06-25 18:55:01,755 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,755 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:01,811 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,811 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:01,852 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:01,852 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,049 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:02,049 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:02,050 - INFO - Execution time for subqubo solver: 0.38s
+2024-06-25 18:55:02,110 - INFO - 
+count    256.000000
+mean       3.277870
+std        1.928606
+min       -0.077860
+25%        1.860628
+50%        2.860295
+75%        4.605622
+max        9.080280
+Name: energy, dtype: float64
+2024-06-25 18:55:02,110 - INFO - The best proposed solution has energy -0.07786
+2024-06-25 18:55:02,110 - INFO - Execution 6
+2024-06-25 18:55:02,110 - INFO - INTERACTIONS: 15
+2024-06-25 18:55:02,207 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,207 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,267 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,267 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:02,308 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,308 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,491 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:02,491 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:02,491 - INFO - Execution time for subqubo solver: 0.38s
+2024-06-25 18:55:02,555 - INFO - 
+count    256.000000
+mean       3.072186
+std        1.659784
+min        0.000000
+25%        1.752892
+50%        2.788500
+75%        4.188152
+max        7.971630
+Name: energy, dtype: float64
+2024-06-25 18:55:02,555 - INFO - The best proposed solution has energy 0.0
+2024-06-25 18:55:02,555 - INFO - Execution 7
+2024-06-25 18:55:02,556 - INFO - INTERACTIONS: 56
+2024-06-25 18:55:02,691 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,691 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,748 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,748 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,789 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:02,790 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:02,971 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:02,971 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:02,971 - INFO - Execution time for subqubo solver: 0.41s
+2024-06-25 18:55:03,031 - INFO - 
+count    256.000000
+mean       1.865531
+std        1.646709
+min       -1.506940
+25%        0.713195
+50%        1.637935
+75%        2.818175
+max        6.855470
+Name: energy, dtype: float64
+2024-06-25 18:55:03,031 - INFO - The best proposed solution has energy -1.38223
+2024-06-25 18:55:03,031 - INFO - Execution 8
+2024-06-25 18:55:03,031 - INFO - INTERACTIONS: 23
+2024-06-25 18:55:03,166 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:03,166 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:03,258 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:03,259 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:03,298 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:03,299 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:03,943 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:03,943 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:03,943 - INFO - Execution time for subqubo solver: 0.91s
+2024-06-25 18:55:04,015 - INFO - 
+count    256.000000
+mean       0.634137
+std        1.516030
+min       -3.557060
+25%       -0.360470
+50%        0.848625
+75%        1.756142
+max        3.748590
+Name: energy, dtype: float64
+2024-06-25 18:55:04,015 - INFO - The best proposed solution has energy -3.55706
+2024-06-25 18:55:04,015 - INFO - Execution 9
+2024-06-25 18:55:04,015 - INFO - INTERACTIONS: 33
+2024-06-25 18:55:04,148 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,148 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:04,238 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,239 - INFO -     Conflicts resolved with classical resolutions: 5
+2024-06-25 18:55:04,279 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,279 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:04,465 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:04,465 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:04,465 - INFO - Execution time for subqubo solver: 0.45s
+2024-06-25 18:55:04,525 - INFO - 
+count    256.000000
+mean       1.784166
+std        1.795016
+min       -2.180720
+25%        0.532393
+50%        1.552980
+75%        3.044050
+max        6.743670
+Name: energy, dtype: float64
+2024-06-25 18:55:04,525 - INFO - The best proposed solution has energy -2.18072
+2024-06-25 18:55:04,525 - INFO - Execution 10
+2024-06-25 18:55:04,525 - INFO - INTERACTIONS: 41
+2024-06-25 18:55:04,659 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,659 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:04,716 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,716 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:04,756 - INFO - Dimension 4, merged successfully.
+2024-06-25 18:55:04,756 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 18:55:04,939 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:04,939 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:04,939 - INFO - Execution time for subqubo solver: 0.41s
+2024-06-25 18:55:04,999 - INFO - 
+count    256.000000
+mean       2.245376
+std        1.675785
+min       -1.154500
+25%        1.116437
+50%        2.132895
+75%        3.312920
+max        7.485290
+Name: energy, dtype: float64
+2024-06-25 18:55:04,999 - INFO - The best proposed solution has energy -1.1545
+2024-06-25 18:55:04,999 - INFO - TEST 8 VARS, CUT DIM 4
+2024-06-25 18:55:04,999 - INFO - VARIABLES: 8
+2024-06-25 18:55:04,999 - INFO - Execution 1
+2024-06-25 18:55:04,999 - INFO - INTERACTIONS: 57
+2024-06-25 18:55:05,253 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:05,253 - INFO -     Conflicts resolved with classical resolutions: 16
+2024-06-25 18:55:05,253 - INFO - Execution time for subqubo solver: 0.25s
+2024-06-25 18:55:05,292 - INFO - 
+count    256.000000
+mean       1.471078
+std        2.318296
+min       -4.857990
+25%       -0.043635
+50%        1.545830
+75%        3.005335
+max        7.061840
+Name: energy, dtype: float64
+2024-06-25 18:55:05,292 - INFO - The best proposed solution has energy 2.17516
+2024-06-25 18:55:05,292 - INFO - Execution 2
+2024-06-25 18:55:05,292 - INFO - INTERACTIONS: 12
+2024-06-25 18:55:05,473 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:05,473 - INFO -     Conflicts resolved with classical resolutions: 16
+2024-06-25 18:55:05,473 - INFO - Execution time for subqubo solver: 0.18s
+2024-06-25 18:55:05,513 - INFO - 
+count    256.000000
+mean       0.936496
+std        1.170690
+min       -1.960540
+25%        0.133268
+50%        0.960370
+75%        1.703325
+max        3.607170
+Name: energy, dtype: float64
+2024-06-25 18:55:05,513 - INFO - The best proposed solution has energy -1.11994
+2024-06-25 18:55:05,513 - INFO - Execution 3
+2024-06-25 18:55:05,513 - INFO - INTERACTIONS: 19
+2024-06-25 18:55:05,715 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:05,716 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:05,716 - INFO - Execution time for subqubo solver: 0.20s
+2024-06-25 18:55:05,754 - INFO - 
+count    256.000000
+mean       1.763631
+std        1.386536
+min       -1.218380
+25%        0.756452
+50%        1.602245
+75%        2.619917
+max        5.962880
+Name: energy, dtype: float64
+2024-06-25 18:55:05,755 - INFO - The best proposed solution has energy 0.22127
+2024-06-25 18:55:05,755 - INFO - Execution 4
+2024-06-25 18:55:05,755 - INFO - INTERACTIONS: 62
+2024-06-25 18:55:05,985 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:05,985 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:05,985 - INFO - Execution time for subqubo solver: 0.23s
+2024-06-25 18:55:06,023 - INFO - 
+count    256.000000
+mean       2.106431
+std        1.871785
+min       -2.407320
+25%        0.745920
+50%        2.005440
+75%        3.456505
+max        7.281060
+Name: energy, dtype: float64
+2024-06-25 18:55:06,023 - INFO - The best proposed solution has energy -0.78869
+2024-06-25 18:55:06,023 - INFO - Execution 5
+2024-06-25 18:55:06,023 - INFO - INTERACTIONS: 43
+2024-06-25 18:55:06,278 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:06,278 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:06,278 - INFO - Execution time for subqubo solver: 0.25s
+2024-06-25 18:55:06,316 - INFO - 
+count    256.000000
+mean       0.411408
+std        1.685635
+min       -3.948890
+25%       -0.847485
+50%        0.630390
+75%        1.588485
+max        3.605560
+Name: energy, dtype: float64
+2024-06-25 18:55:06,316 - INFO - The best proposed solution has energy -2.25959
+2024-06-25 18:55:06,316 - INFO - Execution 6
+2024-06-25 18:55:06,316 - INFO - INTERACTIONS: 24
+2024-06-25 18:55:06,526 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:06,526 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:06,526 - INFO - Execution time for subqubo solver: 0.21s
+2024-06-25 18:55:06,565 - INFO - 
+count    256.000000
+mean       1.212198
+std        1.160595
+min       -1.585960
+25%        0.406703
+50%        1.270500
+75%        2.088623
+max        3.977090
+Name: energy, dtype: float64
+2024-06-25 18:55:06,565 - INFO - The best proposed solution has energy 0.02802
+2024-06-25 18:55:06,565 - INFO - Execution 7
+2024-06-25 18:55:06,565 - INFO - INTERACTIONS: 54
+2024-06-25 18:55:06,818 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:06,818 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:06,818 - INFO - Execution time for subqubo solver: 0.25s
+2024-06-25 18:55:06,855 - INFO - 
+count    256.000000
+mean       3.027648
+std        1.714821
+min       -0.175580
+25%        1.681863
+50%        2.861830
+75%        4.108772
+max        8.305430
+Name: energy, dtype: float64
+2024-06-25 18:55:06,856 - INFO - The best proposed solution has energy 1.08365
+2024-06-25 18:55:06,856 - INFO - Execution 8
+2024-06-25 18:55:06,856 - INFO - INTERACTIONS: 10
+2024-06-25 18:55:07,039 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:07,039 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:07,039 - INFO - Execution time for subqubo solver: 0.18s
+2024-06-25 18:55:07,078 - INFO - 
+count    256.000000
+mean       1.249662
+std        1.346778
+min       -0.659430
+25%        0.137832
+50%        0.823355
+75%        2.236313
+max        4.888310
+Name: energy, dtype: float64
+2024-06-25 18:55:07,078 - INFO - The best proposed solution has energy -0.53035
+2024-06-25 18:55:07,078 - INFO - Execution 9
+2024-06-25 18:55:07,078 - INFO - INTERACTIONS: 52
+2024-06-25 18:55:07,300 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:07,301 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:55:07,301 - INFO - Execution time for subqubo solver: 0.22s
+2024-06-25 18:55:07,339 - INFO - 
+count    256.000000
+mean       2.878031
+std        1.837821
+min       -0.815800
+25%        1.544148
+50%        2.684005
+75%        4.058468
+max        8.042950
+Name: energy, dtype: float64
+2024-06-25 18:55:07,339 - INFO - The best proposed solution has energy 1.96852
+2024-06-25 18:55:07,339 - INFO - Execution 10
+2024-06-25 18:55:07,339 - INFO - INTERACTIONS: 58
+2024-06-25 18:55:07,592 - INFO - Dimension 8, merged successfully.
+2024-06-25 18:55:07,592 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:55:07,592 - INFO - Execution time for subqubo solver: 0.25s
+2024-06-25 18:55:07,630 - INFO - 
+count    256.000000
+mean       2.933089
+std        2.031030
+min       -0.823850
+25%        1.425480
+50%        2.733175
+75%        4.366555
+max        9.347310
+Name: energy, dtype: float64
+2024-06-25 18:55:07,631 - INFO - The best proposed solution has energy 0.0
+2024-06-25 18:55:07,631 - INFO - TEST 16 VARS, CUT DIM 8
+2024-06-25 18:55:07,631 - INFO - VARIABLES: 16
+2024-06-25 18:55:07,631 - INFO - Execution 1
+2024-06-25 18:55:07,631 - INFO - INTERACTIONS: 36
+2024-06-25 18:55:08,094 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:08,094 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 18:55:08,094 - INFO - Execution time for subqubo solver: 0.37s
+2024-06-25 18:55:17,399 - INFO - 
+count    65536.000000
+mean         3.791092
+std          2.116756
+min         -1.646210
+25%          2.176050
+50%          3.453745
+75%          5.335807
+max         10.716740
+Name: energy, dtype: float64
+2024-06-25 18:55:17,399 - INFO - The best proposed solution has energy 0.88045
+2024-06-25 18:55:17,399 - INFO - Execution 2
+2024-06-25 18:55:17,399 - INFO - INTERACTIONS: 110
+2024-06-25 18:55:18,284 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:18,284 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:18,284 - INFO - Execution time for subqubo solver: 0.77s
+2024-06-25 18:55:27,522 - INFO - 
+count    65536.000000
+mean         4.390104
+std          3.205178
+min         -5.301980
+25%          2.111207
+50%          4.154130
+75%          6.454397
+max         15.599830
+Name: energy, dtype: float64
+2024-06-25 18:55:27,522 - INFO - The best proposed solution has energy -0.9868
+2024-06-25 18:55:27,522 - INFO - Execution 3
+2024-06-25 18:55:27,523 - INFO - INTERACTIONS: 196
+2024-06-25 18:55:28,523 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:28,523 - INFO -     Conflicts resolved with classical resolutions: 256
+2024-06-25 18:55:28,523 - INFO - Execution time for subqubo solver: 0.88s
+2024-06-25 18:55:37,841 - INFO - 
+count    65536.000000
+mean         1.155819
+std          3.987746
+min        -14.591810
+25%         -1.532432
+50%          1.193530
+75%          3.933747
+max         12.681740
+Name: energy, dtype: float64
+2024-06-25 18:55:37,842 - INFO - The best proposed solution has energy 3.24089
+2024-06-25 18:55:37,842 - INFO - Execution 4
+2024-06-25 18:55:37,842 - INFO - INTERACTIONS: 167
+2024-06-25 18:55:38,844 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:38,844 - INFO -     Conflicts resolved with classical resolutions: 256
+2024-06-25 18:55:38,845 - INFO - Execution time for subqubo solver: 0.88s
+2024-06-25 18:55:48,118 - INFO - 
+count    65536.000000
+mean         4.386397
+std          3.926735
+min         -9.743010
+25%          1.675045
+50%          4.211270
+75%          6.992023
+max         18.322560
+Name: energy, dtype: float64
+2024-06-25 18:55:48,118 - INFO - The best proposed solution has energy 5.88765
+2024-06-25 18:55:48,118 - INFO - Execution 5
+2024-06-25 18:55:48,118 - INFO - INTERACTIONS: 20
+2024-06-25 18:55:48,555 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:48,556 - INFO -     Conflicts resolved with classical resolutions: 2
+2024-06-25 18:55:48,556 - INFO - Execution time for subqubo solver: 0.35s
+2024-06-25 18:55:57,720 - INFO - 
+count    65536.000000
+mean         6.649032
+std          2.839294
+min         -0.320740
+25%          4.459698
+50%          6.112745
+75%          8.714897
+max         17.219900
+Name: energy, dtype: float64
+2024-06-25 18:55:57,720 - INFO - The best proposed solution has energy 0.0
+2024-06-25 18:55:57,720 - INFO - Execution 6
+2024-06-25 18:55:57,720 - INFO - INTERACTIONS: 111
+2024-06-25 18:55:58,649 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:55:58,650 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:55:58,651 - INFO - Execution time for subqubo solver: 0.81s
+2024-06-25 18:56:08,144 - INFO - 
+count    65536.000000
+mean         1.891897
+std          3.688889
+min        -13.131380
+25%         -0.547840
+50%          1.992770
+75%          4.445773
+max         13.469580
+Name: energy, dtype: float64
+2024-06-25 18:56:08,144 - INFO - The best proposed solution has energy -0.50687
+2024-06-25 18:56:08,144 - INFO - Execution 7
+2024-06-25 18:56:08,144 - INFO - INTERACTIONS: 75
+2024-06-25 18:56:08,855 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:56:08,855 - INFO -     Conflicts resolved with classical resolutions: 128
+2024-06-25 18:56:08,855 - INFO - Execution time for subqubo solver: 0.61s
+2024-06-25 18:56:18,104 - INFO - 
+count    65536.000000
+mean         4.397440
+std          2.397300
+min         -1.831360
+25%          2.642148
+50%          4.173755
+75%          5.944407
+max         13.917470
+Name: energy, dtype: float64
+2024-06-25 18:56:18,104 - INFO - The best proposed solution has energy 0.44959
+2024-06-25 18:56:18,104 - INFO - Execution 8
+2024-06-25 18:56:18,104 - INFO - INTERACTIONS: 69
+2024-06-25 18:56:18,719 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:56:18,720 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 18:56:18,720 - INFO - Execution time for subqubo solver: 0.52s
+2024-06-25 18:56:30,832 - INFO - 
+count    65536.000000
+mean         2.949082
+std          1.775370
+min         -2.747520
+25%          1.694722
+50%          2.865255
+75%          4.164960
+max          9.118320
+Name: energy, dtype: float64
+2024-06-25 18:56:30,833 - INFO - The best proposed solution has energy 2.4208
+2024-06-25 18:56:30,833 - INFO - Execution 9
+2024-06-25 18:56:30,833 - INFO - INTERACTIONS: 215
+2024-06-25 18:56:31,620 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:56:31,620 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 18:56:31,621 - INFO - Execution time for subqubo solver: 0.68s
+2024-06-25 18:56:40,943 - INFO - 
+count    65536.000000
+mean         4.953285
+std          4.133056
+min         -7.258110
+25%          2.003055
+50%          4.658020
+75%          7.631070
+max         20.305450
+Name: energy, dtype: float64
+2024-06-25 18:56:40,944 - INFO - The best proposed solution has energy 1.48974
+2024-06-25 18:56:40,944 - INFO - Execution 10
+2024-06-25 18:56:40,944 - INFO - INTERACTIONS: 55
+2024-06-25 18:56:41,583 - INFO - Dimension 16, merged successfully.
+2024-06-25 18:56:41,583 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 18:56:41,583 - INFO - Execution time for subqubo solver: 0.54s
+2024-06-25 18:56:50,815 - INFO - 
+count    65536.000000
+mean         1.766905
+std          2.096335
+min         -3.919520
+25%          0.250025
+50%          1.615815
+75%          3.150625
+max          9.958150
+Name: energy, dtype: float64
+2024-06-25 18:56:50,815 - INFO - The best proposed solution has energy -0.57769
+2024-06-25 19:47:10,749 - INFO - TEST 16 VARS, CUT DIM 4
+2024-06-25 19:47:10,749 - INFO - VARIABLES: 16
+2024-06-25 19:47:10,749 - INFO - Execution 1
+2024-06-25 19:47:10,749 - INFO - INTERACTIONS: 44
+2024-06-25 19:47:11,241 - INFO - Dimension 8, merged successfully.
+2024-06-25 19:47:11,241 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 19:47:11,632 - INFO - Dimension 8, merged successfully.
+2024-06-25 19:47:11,632 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 19:47:12,156 - INFO - Dimension 8, merged successfully.
+2024-06-25 19:47:12,156 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 20:43:54,553 - INFO - Dimension 16, merged successfully.
+2024-06-25 20:43:54,554 - INFO -     Conflicts resolved with classical resolutions: 32768
+2024-06-25 20:43:54,554 - INFO - Execution time for subqubo solver: 3403.63s
+2024-06-25 20:44:55,750 - INFO -
+count    65536.000000
+mean         3.844132
+std          1.916197
+min         -1.589000
+25%          2.484225
+50%          3.758815
+75%          5.111388
+max         11.139810
+Name: energy, dtype: float64
+2024-06-25 20:44:55,758 - INFO - The best proposed solution has energy -1.589
+2024-06-25 20:44:55,758 - INFO - Execution 2
+2024-06-25 20:44:55,758 - INFO - INTERACTIONS: 203
+2024-06-25 20:44:56,561 - INFO - Dimension 8, merged successfully.
+2024-06-25 20:44:56,561 - INFO -     Conflicts resolved with classical resolutions: 4
+2024-06-25 20:44:57,163 - INFO - Dimension 8, merged successfully.
+2024-06-25 20:44:57,163 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 20:44:57,697 - INFO - Dimension 8, merged successfully.
+2024-06-25 20:44:57,697 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 21:13:14,780 - INFO - Dimension 16, merged successfully.
+2024-06-25 21:13:14,781 - INFO -     Conflicts resolved with classical resolutions: 32768
+2024-06-25 21:13:14,781 - INFO - Execution time for subqubo solver: 1698.87s
+2024-06-25 21:14:08,045 - INFO -
+count    65536.000000
+mean         5.573277
+std          4.488490
+min         -5.892040
+25%          2.094512
+50%          5.131575
+75%          8.691588
+max         21.314370
+Name: energy, dtype: float64
+2024-06-25 21:14:08,051 - INFO - The best proposed solution has energy -5.89204
+2024-06-25 21:14:08,051 - INFO - Execution 3
+2024-06-25 21:14:08,051 - INFO - INTERACTIONS: 109
+2024-06-25 21:14:08,860 - INFO - Dimension 8, merged successfully.
+2024-06-25 21:14:08,860 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 21:14:09,490 - INFO - Dimension 8, merged successfully.
+2024-06-25 21:14:09,490 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 21:14:10,027 - INFO - Dimension 8, merged successfully.
+2024-06-25 21:14:10,027 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 22:20:14,029 - INFO - Dimension 16, merged successfully.
+2024-06-25 22:20:14,030 - INFO -     Conflicts resolved with classical resolutions: 32768
+2024-06-25 22:20:14,031 - INFO - Execution time for subqubo solver: 3965.82s
+2024-06-25 22:21:30,410 - INFO -
+count    65536.000000
+mean         6.714443
+std          4.065811
+min         -4.038400
+25%          3.725410
+50%          6.262670
+75%          9.294622
+max         22.144920
+Name: energy, dtype: float64
+2024-06-25 22:21:30,422 - INFO - The best proposed solution has energy -4.0384
+2024-06-25 22:21:30,422 - INFO - Execution 4
+2024-06-25 22:21:30,423 - INFO - INTERACTIONS: 120
+2024-06-25 22:21:31,272 - INFO - Dimension 8, merged successfully.
+2024-06-25 22:21:31,272 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 22:21:31,941 - INFO - Dimension 8, merged successfully.
+2024-06-25 22:21:31,941 - INFO -     Conflicts resolved with classical resolutions: 64
+2024-06-25 22:21:32,477 - INFO - Dimension 8, merged successfully.
+2024-06-25 22:21:32,477 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-25 23:27:25,727 - INFO - Dimension 16, merged successfully.
+2024-06-25 23:27:25,728 - INFO -     Conflicts resolved with classical resolutions: 32768
+2024-06-25 23:27:25,729 - INFO - Execution time for subqubo solver: 3955.14s
+2024-06-25 23:28:41,737 - INFO -
+count    65536.000000
+mean         5.755168
+std          5.035111
+min        -12.192200
+25%          2.255678
+50%          5.521910
+75%          9.023790
+max         22.572050
+Name: energy, dtype: float64
+2024-06-25 23:28:41,749 - INFO - The best proposed solution has energy -12.01499
+2024-06-25 23:28:41,749 - INFO - Execution 5
+2024-06-25 23:28:41,750 - INFO - INTERACTIONS: 116
+2024-06-25 23:28:42,559 - INFO - Dimension 8, merged successfully.
+2024-06-25 23:28:42,559 - INFO -     Conflicts resolved with classical resolutions: 8
+2024-06-25 23:28:42,971 - INFO - Dimension 8, merged successfully.
+2024-06-25 23:28:42,972 - INFO -     Conflicts resolved with classical resolutions: 32
+2024-06-25 23:28:43,491 - INFO - Dimension 8, merged successfully.
+2024-06-25 23:28:43,491 - INFO -     Conflicts resolved with classical resolutions: 0
+2024-06-26 00:25:07,770 - INFO - Dimension 16, merged successfully.
+2024-06-26 00:25:07,770 - INFO -     Conflicts resolved with classical resolutions: 32768
+2024-06-26 00:25:07,771 - INFO - Execution time for subqubo solver: 3385.86s
+2024-06-26 00:26:08,236 - INFO -
+count    65536.000000
+mean         2.732309
+std          3.864050
+min        -11.486760
+25%          0.226538
+50%          2.762585
+75%          5.323387
+max         16.327530
+Name: energy, dtype: float64
+2024-06-26 00:26:08,245 - INFO - The best proposed solution has energy -11.48676

@@ -1,11 +1,17 @@
-import itertools
-from typing import Callable
-
+import logging
+import os
+from typing import List
 import numpy as np
 from dwave.preprocessing import Presolver
 from sklearn.base import BaseEstimator, ClassifierMixin
 import dimod
 import dwave.system.samplers as dwavesampler
+from util.kernel import rbf_kernel_pair
+from util.model_generation import construct_svm_model, load_svm_model
+import math
+import pandas as pd
+
+log = logging.getLogger('qsvm')
 
 
 class QSVM(BaseEstimator, ClassifierMixin):
@@ -35,32 +41,33 @@ class QSVM(BaseEstimator, ClassifierMixin):
     In this case constraint (1) can be omitted because the value range is specified at the variable creation stage
     """
 
-    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
-        self.big_c = big_c
-        self.kernel = kernel
-        self.support_vectors_labels = None
-        self.support_vectors_alphas = None
-        self.support_vectors_examples = None
-        self.b = None
+    def __init__(self, big_c: int, lazy_loading_path: str = None):
+        self.big_c: int = big_c
+        self.support_vectors_labels: List[np.array] = []
+        self.support_vectors_alphas: List[np.array] = []
+        self.support_vectors_examples: List[np.array] = []
+        self.b: List[float] = []
+        self.ensemble_dim: int
+        self.lazy_loading_path = lazy_loading_path
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
-        n_samples, n_features = examples.shape
-        N = range(n_samples)
-        cqm = dimod.ConstrainedQuadraticModel()
-        alphas = [dimod.Integer(label=f'alpha_{i}', lower_bound=0, upper_bound=self.big_c) for i in range(len(labels))]
-        gamma = 1 / n_features
-        kernel_matrix = np.array([[self.kernel(x1, x2, gamma) for x1 in examples] for x2 in examples])
-
-        cqm.set_objective(0.5 * sum(labels[i] * alphas[i] * kernel_matrix[i, j] * labels[j] * alphas[j]
-                                    for i, j in itertools.product(N, N)) - sum(alphas))
-        cqm.add_constraint_from_comparison(sum(alpha * label for label, alpha in zip(labels, alphas)) >= 0)
+        if self.lazy_loading_path is None:
+            model, kernel_matrix = construct_svm_model(examples, labels, self.big_c, round_to_int=True)
+            model.write('qsvm.lp')
+            cqm = dimod.lp.load('qsvm.lp')
+            os.remove('qsvm.lp')
+        else:
+            cqm, kernel_matrix = load_svm_model(self.lazy_loading_path)
         presolve = Presolver(cqm)
-        print('Is model pre-solvable?'.upper(), presolve.apply())
+        log.info(f'Is model pre-solvable? {presolve.apply()}'.upper())
         reduced_cqm = presolve.detach_model()
+        log.info('Solving'.upper())
         solver = dwavesampler.LeapHybridCQMSampler()
-        # solver.properties['parameters'] = {'num_reads': 100, 'time_limit': 20}
-        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM')
+        log.info(f'Min time required on QPU: {math.ceil(solver.min_time_limit(reduced_cqm))}s'.upper())
+        reduced_sampleset = solver.sample_cqm(reduced_cqm, label='QSVM',
+                                              time_limit=math.ceil(solver.min_time_limit(reduced_cqm)))
         sampleset = dimod.SampleSet.from_samples_cqm(presolve.restore_samples(reduced_sampleset.samples()), cqm)
+        log.info('Extracting support vectors'.upper())
         self.__extract_solution(examples, labels, kernel_matrix, sampleset)
 
     def __extract_solution(self, examples: np.ndarray, labels: np.ndarray,
@@ -68,28 +75,34 @@ class QSVM(BaseEstimator, ClassifierMixin):
         df = sampleset.to_pandas_dataframe()
         df = df.loc[(df['is_feasible']) & (df['is_satisfied'])]
         df = df.drop(['is_feasible', 'is_satisfied', 'num_occurrences'], axis=1)
-        selected = df.nsmallest(1, 'energy')
-        selected = selected.drop(['energy'], axis=1)
+        # selected = df.loc[df['energy'] == min(df['energy'])]
+        selected = pd.DataFrame([df.loc[df['energy'].idxmin()]])
+        selected = selected.drop('energy', axis=1)
+        self.ensemble_dim = len(selected)
         for _, row in selected.iterrows():
             indices, alphas = [], []
             for i in range(len(row)):
-                col = f'alpha_{i}'
-                if 0 < row[col] < 20:
+                if 0 < row[f'x{i + 2}'] < self.big_c:
                     indices.append(i)
-                    alphas.append(int(row[col]))
-            self.support_vectors_examples = examples[indices]
-            self.support_vectors_alphas = np.array(alphas)
-            self.support_vectors_labels = labels[indices]
-            self.b = np.average([labels[original_i] - sum(alphas[real_j] * labels[original_j]
-                                                          * kernel_matrix[original_i, original_j]
-                                                          for real_j, original_j in enumerate(indices))
-                                 for real_i, original_i in enumerate(indices)])
+                    alphas.append(int(row[f'x{i + 2}']))
+            self.support_vectors_examples.append(examples[indices])
+            self.support_vectors_alphas.append(np.array(alphas))
+            self.support_vectors_labels.append(labels[indices])
+            self.b.append(np.average([labels[original_i] - sum(alphas[real_j] * labels[original_j]
+                                                               * kernel_matrix[original_i, original_j]
+                                                               for real_j, original_j in enumerate(indices))
+                                      for real_i, original_i in enumerate(indices)]))
 
     def predict(self, examples: np.ndarray) -> np.ndarray:
         if any(x is None for x in [self.support_vectors_examples, self.support_vectors_labels,
                                    self.support_vectors_alphas, self.b]):
             raise Exception('You need to fit before predicting.')
-        return np.array([np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
-                                     * self.kernel(self.support_vectors_examples[i], example, 1 / examples.shape[1])
-                                     for i in range(len(self.support_vectors_alphas))) + self.b)
-                         for example in examples])
+        predictions = np.ndarray(shape=(examples.shape[0], self.ensemble_dim))
+
+        for i in range(examples.shape[0]):
+            for j in range(self.ensemble_dim):
+                predictions[i, j] = np.sign(sum(self.support_vectors_alphas[j][k] * self.support_vectors_labels[j][k]
+                                                * rbf_kernel_pair(self.support_vectors_examples[j][k],
+                                                                  examples[i], 1 / examples.shape[1])
+                                                for k in range(len(self.support_vectors_alphas[j]))) + self.b[j])
+        return np.sign(predictions).astype(int)

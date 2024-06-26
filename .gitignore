@@ -1,8 +1,48 @@
-data
-*.ipynb
-*.png
-__pycache__/
-.env
+# Python VENV
 .venv
+__pycache__
+
+# Private config
+.env
+
+# Imgs
+*.png
+*.svg
+!report/extra/img/*.*
+
+# Dev Env
 .idea
+
+# Extra
 sketches
+
+# Logs
+*.log
+!minor_embedding/outputs/same_pos.log
+!minor_embedding/outputs/same_shape.log
+!execution.log
+!complete_performance_test.log
+!complete_dataset.log
+!subqubo.log
+
+# LaTeX files
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.pdf
+*.gz
+*.bbl
+*.bcf
+*.blg
+*.lof
+*.lot
+*.xml
+*.toc
+
+# Generated data
+data
+remote
+
+# LP files
+*.lp

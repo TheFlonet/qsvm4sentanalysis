@@ -1,9 +1,11 @@
-import itertools
-from typing import Callable
-
+import logging
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 import pyomo.environ as pyo
+from util.kernel import rbf_kernel_pair
+from util.model_generation import construct_svm_model
+
+log = logging.getLogger('qsvm')
 
 
 class CSVM(BaseEstimator, ClassifierMixin):
@@ -26,30 +28,20 @@ class CSVM(BaseEstimator, ClassifierMixin):
     - C is a bound on the error
     """
 
-    def __init__(self, big_c: int, kernel: Callable[[np.ndarray, np.ndarray, float], np.ndarray]):
+    def __init__(self, big_c: int):
         self.big_c = big_c
-        self.kernel = kernel
         self.support_vectors_labels = None
         self.support_vectors_alphas = None
         self.support_vectors_examples = None
         self.b = None
 
     def fit(self, examples: np.ndarray, labels: np.ndarray) -> None:
-        n_samples, n_features = examples.shape
+        n_samples, _ = examples.shape
         N = range(n_samples)
-        model = pyo.ConcreteModel()
-        model.alpha = pyo.Var(N, domain=pyo.NonNegativeReals)
-        gamma = 1 / examples.shape[1]
-        kernel_matrix = np.array([[self.kernel(x1, x2, gamma) for x1 in examples] for x2 in examples])
-
-        model.objective = pyo.Objective(rule=lambda w_model: (
-                sum(w_model.alpha[i] for i in N)
-                - 0.5 * sum(labels[i] * w_model.alpha[i] * kernel_matrix[i, j] * labels[j] * w_model.alpha[j]
-                            for i, j in itertools.product(N, N))), sense=pyo.maximize)
-        model.constraint1 = pyo.Constraint(rule=lambda w_model: sum(w_model.alpha[i] * labels[i] for i in N) == 0)
-        model.constraint2 = pyo.Constraint(N, rule=lambda w_model, i: w_model.alpha[i] <= self.big_c)
-        solver = pyo.SolverFactory('gurobi')
-        results = solver.solve(model, tee=False)
+        model, kernel_matrix = construct_svm_model(examples, labels, self.big_c)
+        solver = pyo.SolverFactory('cplex_direct')
+        log.info('Solving'.upper())
+        results = solver.solve(model, tee=True)
 
         if results.solver.termination_condition == pyo.TerminationCondition.optimal:
             alphas = np.vectorize(round)(np.array([model.alpha[i].value for i in N]), ndigits=5)
@@ -68,6 +60,6 @@ class CSVM(BaseEstimator, ClassifierMixin):
             raise Exception('You need to fit before predicting.')
         gamma = 1 / examples.shape[1]
         return np.array([np.sign(sum(self.support_vectors_alphas[i] * self.support_vectors_labels[i]
-                                     * self.kernel(self.support_vectors_examples[i], example, gamma)
+                                     * rbf_kernel_pair(self.support_vectors_examples[i], example, gamma)
                                      for i in range(len(self.support_vectors_alphas))) + self.b)
                          for example in examples])

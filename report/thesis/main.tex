@@ -1,0 +1,57 @@
+\documentclass[11pt, draft]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\usepackage{lipsum}
+% \usepackage[showframe]{geometry}
+\usepackage{lineno}
+\linenumbers
+\usepackage[obeyDraft]{todonotes}
+\newcommand\note[1]{\todo[inline]{#1}}
+\usepackage[style=numeric-comp]{biblatex}
+\addbibresource{bibliography.bib}
+\setlength{\columnsep}{4.5cm}
+
+\begin{document}
+
+\pagenumbering{gobble}
+\input{cover}
+\newpage
+
+\vfill
+\section*{Statement of Originality}
+I declare to be responsible for the content I’m presenting in order to obtain the final degree, not to have plagiarized in all or part of, the work produced by others and having cited original sources in consistent way with current plagiarism regulations and copyright. I am also aware that in case of false declaration, I could incur in law penalties and my admission to final exam could be denied.
+\newpage
+
+\input{acknowledgments}
+
+\pagenumbering{arabic}
+\newpage
+
+\input{chapters/0_abstract}
+\newpage
+
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
+
+\pagestyle{fancy}
+\input{chapters/1_introduction}
+
+\input{chapters/2_starting_theory}
+
+\input{chapters/3_qsvm}
+
+\input{chapters/4_minor_embedding}
+
+\input{chapters/5_subqubo}
+
+\input{chapters/6_conclusion.tex}
+
+%\printbibliography
+
+\end{document}
