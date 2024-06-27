@@ -39,6 +39,8 @@ sketches
 *.lot
 *.xml
 *.toc
+*.nav
+*.snm
 
 # Generated data
 data
