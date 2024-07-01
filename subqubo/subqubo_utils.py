@@ -1,12 +1,8 @@
-import itertools
 import logging
 from collections import defaultdict
 from typing import List, Tuple, Any
-import networkx as nx
 import numpy as np
 import pandas as pd
-from dimod import SampleSet
-from dimod.views.samples import SampleView
 from dwave.samplers import SimulatedAnnealingSampler
 from subqubo.QUBO import QUBO
 
@@ -70,8 +66,10 @@ def __combine_rows(row1: pd.Series, row2: pd.Series) -> List[float | Any]:
             else:
                 combined_row.append(np.nan)
         else:
-            if pd.isna(val2):
+            if pd.isna(val2) and not pd.isna(val1):
                 combined_row.append(val1)
+            elif pd.isna(val1) and not pd.isna(val2):
+                combined_row.append(val2)
             elif val1 == val2:
                 combined_row.append(val1)
             else:
@@ -89,16 +87,14 @@ def __combine_ul_lr(ul: QUBO, lr: QUBO) -> pd.DataFrame:
     merge = merge.drop(['energy_x', 'energy_y', 'tmp'], axis=1)
     ul.solutions.drop('tmp', axis=1, inplace=True)
     lr.solutions.drop('tmp', axis=1, inplace=True)
-    merge = __fill_with_nan(pd.DataFrame(columns=all_indices + ['energy']), merge)
-
-    return __expand_df(merge, keep_energy=True)
+    return __fill_with_nan(pd.Index(all_indices + ['energy']), merge)
 
 
-def __fill_with_nan(schema: pd.DataFrame, df_to_fill: pd.DataFrame) -> pd.DataFrame:
-    missing_columns = set(schema.columns) - set(df_to_fill.columns)
+def __fill_with_nan(schema: pd.Index, df_to_fill: pd.DataFrame) -> pd.DataFrame:
+    missing_columns = set(schema) - set(df_to_fill.columns)
     for col in missing_columns:
         df_to_fill[col] = np.nan
-    return df_to_fill[schema.columns]
+    return df_to_fill[schema]
 
 
 def __get_closest_assignments(starting_sols: pd.DataFrame, ur_qubo_filled: pd.DataFrame) -> pd.DataFrame:
@@ -113,37 +109,35 @@ def __get_closest_assignments(starting_sols: pd.DataFrame, ur_qubo_filled: pd.Da
     return pd.DataFrame(closest_rows).reset_index(drop=True)
 
 
-def __expand_df(df: pd.DataFrame, keep_energy: bool) -> pd.DataFrame:
-    complete_rows = df.dropna().copy()
-    incomplete_rows = df[df.isna().any(axis=1)].copy()
-    result_rows = complete_rows.to_dict('records')
+def __search_best_row(row: pd.Series, qubo_matrix: np.ndarray) -> Tuple[pd.Series, int]:
+    nan_indices = row.index[row.isna()]
+    n = len(nan_indices)
+    best_row = row.copy()
+    min_energy = np.inf
+    trials = 0
 
-    for idx, row in incomplete_rows.iterrows():
-        nan_columns = row.index[row.isna()]
-        non_nan_part = row.drop(nan_columns)
-        combinations = list(itertools.product([0, 1], repeat=len(nan_columns)))
+    for i in range(2 ** n):
+        trials += 1
+        binary_combination = [int(x) for x in list(f'{i:0{n}b}')]
+        temp_row = row.copy()
+        temp_row[nan_indices] = binary_combination
+        energy = temp_row.values @ qubo_matrix @ temp_row.values.T
+        if energy < min_energy:
+            min_energy = energy
+            best_row = temp_row
 
-        for combination in combinations:
-            new_values = dict(zip(nan_columns, combination))
-            new_row = pd.Series({**non_nan_part.to_dict(), **new_values})
-            new_row['energy'] = df.at[idx, 'energy'] if keep_energy else np.nan
-            result_rows.append(new_row.to_dict())
-
-    result_df = pd.DataFrame(result_rows)
-    result_df = result_df.drop_duplicates(subset=result_df.columns[:-1]).reset_index(drop=True)
-
-    return result_df
+    best_row.loc['energy'] = min_energy
+    return best_row, trials
 
 
 def __brute_force(df: pd.DataFrame, qubo_matrix: np.ndarray) -> Tuple[pd.DataFrame, int]:
-    result_df = __expand_df(df, keep_energy=False)
-
+    result_df = df.copy()
     trials = 0
-    for idx, row in result_df.iterrows():
-        if pd.isna(row['energy']):
-            trials += 1
-            x = row.drop('energy').values.astype(int)
-            result_df.at[idx, 'energy'] = x @ qubo_matrix @ x.T
+    for idx, row in result_df.drop(columns=['energy']).iterrows():
+        if row.hasnans:
+            new_row, t = __search_best_row(row, qubo_matrix)
+            trials += t
+            result_df.iloc[idx] = new_row
 
     return result_df.reset_index(drop=True), trials
 
@@ -152,7 +146,7 @@ def __aggregate_solutions(solutions: List[QUBO], qubo: QUBO) -> QUBO:
     # Aggregate upper-left qubo with lower-right
     starting_sols = __combine_ul_lr(solutions[0], solutions[2])
     # Set missing columns in upper-right qubo to NaN
-    ur_qubo_filled = __fill_with_nan(starting_sols, solutions[1].solutions)
+    ur_qubo_filled = __fill_with_nan(starting_sols.columns, solutions[1].solutions)
     # Search the closest assignments between upper-right qubo and merged solution (UL and LR qubos)
     closest_df = __get_closest_assignments(starting_sols, ur_qubo_filled)
 
@@ -174,11 +168,8 @@ def subqubo_solve(sampler: SimulatedAnnealingSampler, qubo: QUBO, dim: int, cut_
     if dim <= cut_dim:
         if len(qubo.qubo_dict) == 0:
             all_indices = sorted(list(set(qubo.rows_idx).union(qubo.cols_idx)))
-            combinations = list(itertools.product([0, 1], repeat=len(all_indices)))
-            binary_vectors_as_lists = [list(vec) for vec in combinations]
-            data = [vec + [0] for vec in binary_vectors_as_lists]
-            column_names = all_indices + ['energy']
-            qubo.solutions = pd.DataFrame(data, columns=column_names)
+            data = [[np.nan for _ in range(len(all_indices) + 1)]]
+            qubo.solutions = pd.DataFrame(data, columns=all_indices + ['energy'])
         else:
             res = (sampler.sample_qubo(qubo.qubo_dict, num_reads=10)
                    .to_pandas_dataframe()
@@ -187,42 +178,11 @@ def subqubo_solve(sampler: SimulatedAnnealingSampler, qubo: QUBO, dim: int, cut_
                    .sort_values(by='energy', ascending=True))
             qubo.solutions = res[res['energy'] == min(res['energy'])]
         return qubo
-    return __aggregate_solutions([subqubo_solve(sampler, q, dim // 2, cut_dim) for q in __split_problem(qubo, dim)],
-                                 qubo)
 
-
-def print_cut_from_sampleset(sampleset: SampleSet) -> None:
-    """
-    Adapted from the example available on the dwave GitHub profile:
-
-    Available here: https://github.com/dwave-examples/maximum-cut/blob/master/maximum_cut.py
-    """
-    print('-' * 60)
-    print(f'{"Set 0":>15s}{"Set 1":>15s}{"Energy":^15s}{"Cut Size":^15s}')
-    print('-' * 60)
-    for sample, E in sampleset.data(fields=['sample', 'energy']):
-        S0 = [k for k, v in sample.items() if v == 0]
-        S1 = [k for k, v in sample.items() if v == 1]
-        print(f'{str(S0):>15s}{str(S1):>15s}{str(E):^15s}{str(int(-1 * E)):^15s}')
-
-
-def draw_cut_from_sample(graph: nx.Graph, sample: SampleView) -> None:
-    """
-    Adapted from the example available on the dwave GitHub profile:
-
-    Available here: https://github.com/dwave-examples/maximum-cut/blob/master/maximum_cut.py
-    """
-    S0 = [node for node in graph.nodes if not sample[node]]
-    S1 = [node for node in graph.nodes if sample[node]]
-    cut_edges = [(u, v) for u, v in graph.edges if sample[u] != sample[v]]
-    uncut_edges = [(u, v) for u, v in graph.edges if sample[u] == sample[v]]
-
-    pos = nx.spectral_layout(graph)
-    nx.draw_networkx_nodes(graph, pos, nodelist=S0, node_color='r')
-    nx.draw_networkx_nodes(graph, pos, nodelist=S1, node_color='c')
-    nx.draw_networkx_edges(graph, pos, edgelist=cut_edges, style='dashdot', alpha=0.5, width=3)
-    nx.draw_networkx_edges(graph, pos, edgelist=uncut_edges, style='solid', width=3)
-    nx.draw_networkx_labels(graph, pos)
+    sub_problems = __split_problem(qubo, dim)
+    sub_problems = [subqubo_solve(sampler, q, dim // 2, cut_dim) for q in sub_problems]
+    sol = __aggregate_solutions(sub_problems, qubo)
+    return sol
 
 
 def __sanitize_df(ground_truth: pd.DataFrame, qubo: QUBO) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -239,6 +199,13 @@ def __sanitize_df(ground_truth: pd.DataFrame, qubo: QUBO) -> Tuple[pd.DataFrame,
 
 def compare_solutions(ground_truth: pd.DataFrame, qubo: QUBO) -> None:
     ground_truth, sol = __sanitize_df(ground_truth, qubo)
+    energy = ground_truth['energy']
 
-    log.info('\n' + str(ground_truth['energy'].describe()))
+    log.info('Ground truth solutions:')
+    log.info(f'Min energy: {energy.min()}')
+    log.info(f'Avg energy: {energy.mean()}')
+    log.info(f'25th percentile energy: {energy.quantile(q=0.25)}')
+    log.info(f'50th percentile energy: {energy.quantile(q=0.50)}')
+    log.info(f'75th percentile energy: {energy.quantile(q=0.75)}')
+    log.info(f'Max energy: {energy.max()}')
     log.info(f'The best proposed solution has energy {min(sol.energy)}')

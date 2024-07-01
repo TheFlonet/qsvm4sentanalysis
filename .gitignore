@@ -15,6 +15,7 @@ __pycache__
 
 # Extra
 sketches
+.DS_Store
 
 # Logs
 *.log

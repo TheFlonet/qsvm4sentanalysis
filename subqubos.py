@@ -28,11 +28,20 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 def tests() -> None:
     test_set = [
         {'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'max_cut'},
-        {'variables': 8, 'cut_dim': 2, 'seed': 1997, 'name': '8 vars, cut dim 2'},
-        {'variables': 8, 'cut_dim': 4, 'seed': 1997, 'name': '8 vars, cut dim 4'},
-        {'variables': 16, 'cut_dim': 8, 'seed': 1997, 'name': '16 vars, cut dim 8'},
-        {'variables': 16, 'cut_dim': 4, 'seed': 1997, 'name': '16 vars, cut dim 4'},
-        # {'variables': 16, 'cut_dim': 2, 'seed': 1997, 'name': '16 vars, cut dim 2'},
+        {'variables': 8, 'cut_dim': 4, 'name': '8 vars, cut dim 4'},
+        {'variables': 8, 'cut_dim': 2, 'name': '8 vars, cut dim 2'},
+        {'variables': 16, 'cut_dim': 8, 'name': '16 vars, cut dim 8'},
+        {'variables': 16, 'cut_dim': 4, 'name': '16 vars, cut dim 4'},
+        {'variables': 16, 'cut_dim': 2, 'name': '16 vars, cut dim 2'},
+        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
+        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
+        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
+        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
+        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
+        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
+        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
+        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
+        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
     ]
 
     for test_dict in test_set:
@@ -46,19 +55,23 @@ def tests() -> None:
                 nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
                 plt.savefig("graph.png", format="PNG")
             else:
-                # random.seed(test_dict['seed'])
                 num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
                 log.info(f'Interactions: {num_interactions}'.upper())
                 qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
                                                             num_interactions=num_interactions,
-                                                            # random_state=test_dict['seed'],
                                                             vartype=dimod.BINARY).to_qubo()[0],
                             [i for i in range(test_dict['variables'])],
                             [i for i in range(test_dict['variables'])])
 
-            direct_solutions = (dimod.ExactSolver().sample_qubo(qubo.qubo_dict).to_pandas_dataframe()
-                                .drop(columns=['num_occurrences']).drop_duplicates()
+            start = time.time()
+            reads = test_dict['variables'] * 2
+            direct_solutions = (dimod.SimulatedAnnealingSampler().sample_qubo(qubo.qubo_dict, num_reads=reads)
+                                .to_pandas_dataframe()
+                                .drop(columns=['num_occurrences'])
+                                .drop_duplicates()
                                 .sort_values(by='energy', ascending=True))
+            end = time.time()
+            log.info(f'Execution time for direct solver (with {reads} readings): {end - start:.2f}s')
             start = time.time()
             subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo,
                                      dim=test_dict['variables'], cut_dim=test_dict['cut_dim'])
