@@ -5,53 +5,38 @@ import random
 from typing import Mapping, Hashable, Tuple
 import dimod
 import networkx as nx
+import numpy as np
 from dimod import SimulatedAnnealingSampler
 from matplotlib import pyplot as plt
 from numpy import floating, integer
 from subqubo.QUBO import QUBO
-from subqubo.subqubo_utils import subqubo_solve, compare_solutions
+from subqubo.subqubo_utils import subqubo_solve, sanitize_df
 import pyomo.environ as pyo
 
 
-def solve_model(qubo, sense):
+def solve_model(qubo: QUBO, sense: pyo.kernel.objective) -> float:
     N = len(qubo.qubo_matrix)
     model = pyo.ConcreteModel()
     model.x = pyo.Var(range(N), within=pyo.Binary)
 
-    def objective_rule(working_model):
-        return sum(
-            qubo.qubo_matrix[i, j] * working_model.x[i] * working_model.x[j]
-            for i in range(N) for j in range(N)
-        )
-
-    model.obj = pyo.Objective(rule=objective_rule, sense=sense)
+    model.obj = pyo.Objective(expr=sum(qubo.qubo_matrix[i, j] * model.x[i] * model.x[j]
+                                       for i in range(N) for j in range(N)), sense=sense)
     solver = pyo.SolverFactory('cplex_direct')
-    result = solver.solve(model, tee=False)
+    _ = solver.solve(model, tee=False)
+    optimized_x = [pyo.value(model.x[i]) for i in range(N)]
 
-    return result, model
-
-
-def solutions_range(qubo: QUBO) -> Tuple[float, float]:
-    N = len(qubo.qubo_matrix)
-
-    min_result, min_model = solve_model(qubo, pyo.minimize)
-    optimized_x = [pyo.value(min_model.x[i]) for i in range(N)]
-    min_value = sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
-
-    max_result, max_model = solve_model(qubo, pyo.maximize)
-    optimized_x = [pyo.value(max_model.x[i]) for i in range(N)]
-    max_value = sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
-
-    return min_value, max_value
+    return sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
 
 
-def measure(variables: int, cut_dim: int, qubo: QUBO):
-    min_sol, max_sol = solutions_range(qubo)
+def measure(variables: int, cut_dim: int, qubo: QUBO) -> None:
+    min_sol, max_sol = solve_model(qubo, pyo.minimize), solve_model(qubo, pyo.maximize)
     start = time.time()
     subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo, dim=variables, cut_dim=cut_dim)
     end = time.time()
     log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
-    compare_solutions(min_sol, max_sol, subqubos)
+
+    log.info(f'Ground truth solutions range from {np.round(min_sol, 5)} and {np.round(max_sol, 5)}')
+    log.info(f'The best proposed solution has energy {min(sanitize_df(subqubos).energy)}')
 
 
 def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
@@ -112,7 +97,7 @@ def test_scale() -> None:
             measure(test_dict['variables'], test_dict['cut_dim'], qubo)
 
 
-def test_cut_dim():
+def test_cut_dim() -> None:
     tests = [
         {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
         {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},

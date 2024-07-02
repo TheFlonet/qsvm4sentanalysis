@@ -185,14 +185,9 @@ def subqubo_solve(sampler: SimulatedAnnealingSampler, qubo: QUBO, dim: int, cut_
     return sol
 
 
-def __sanitize_df(qubo: QUBO) -> pd.DataFrame:
+def sanitize_df(qubo: QUBO) -> pd.DataFrame:
     for idx, row in qubo.solutions.iterrows():
         x = row.drop('energy').values.astype(int)
         qubo.solutions.at[idx, 'energy'] = np.round(x @ qubo.qubo_matrix @ x.T, 5)
 
     return qubo.solutions
-
-
-def compare_solutions(min_sol: float, max_sol: float, qubo: QUBO) -> None:
-    log.info(f'Ground truth solutions range from {np.round(min_sol, 5)} and {np.round(max_sol, 5)}')
-    log.info(f'The best proposed solution has energy {min(__sanitize_df(qubo).energy)}')
