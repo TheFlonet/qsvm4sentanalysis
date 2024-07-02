@@ -10,6 +10,48 @@ from matplotlib import pyplot as plt
 from numpy import floating, integer
 from subqubo.QUBO import QUBO
 from subqubo.subqubo_utils import subqubo_solve, compare_solutions
+import pyomo.environ as pyo
+
+
+def solve_model(qubo, sense):
+    N = len(qubo.qubo_matrix)
+    model = pyo.ConcreteModel()
+    model.x = pyo.Var(range(N), within=pyo.Binary)
+
+    def objective_rule(working_model):
+        return sum(
+            qubo.qubo_matrix[i, j] * working_model.x[i] * working_model.x[j]
+            for i in range(N) for j in range(N)
+        )
+
+    model.obj = pyo.Objective(rule=objective_rule, sense=sense)
+    solver = pyo.SolverFactory('cplex_direct')
+    result = solver.solve(model, tee=False)
+
+    return result, model
+
+
+def solutions_range(qubo: QUBO) -> Tuple[float, float]:
+    N = len(qubo.qubo_matrix)
+
+    min_result, min_model = solve_model(qubo, pyo.minimize)
+    optimized_x = [pyo.value(min_model.x[i]) for i in range(N)]
+    min_value = sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
+
+    max_result, max_model = solve_model(qubo, pyo.maximize)
+    optimized_x = [pyo.value(max_model.x[i]) for i in range(N)]
+    max_value = sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
+
+    return min_value, max_value
+
+
+def measure(variables: int, cut_dim: int, qubo: QUBO):
+    min_sol, max_sol = solutions_range(qubo)
+    start = time.time()
+    subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo, dim=variables, cut_dim=cut_dim)
+    end = time.time()
+    log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
+    compare_solutions(min_sol, max_sol, subqubos)
 
 
 def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
@@ -25,18 +67,22 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
     return graph, qubo
 
 
-def tests() -> None:
+def test_scale() -> None:
     test_set = [
         {'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'max_cut'},
+        {'variables': 8, 'cut_dim': 8, 'name': '8 vars, cut dim 8'},
         {'variables': 8, 'cut_dim': 4, 'name': '8 vars, cut dim 4'},
         {'variables': 8, 'cut_dim': 2, 'name': '8 vars, cut dim 2'},
+        {'variables': 16, 'cut_dim': 16, 'name': '16 vars, cut dim 16'},
         {'variables': 16, 'cut_dim': 8, 'name': '16 vars, cut dim 8'},
         {'variables': 16, 'cut_dim': 4, 'name': '16 vars, cut dim 4'},
         {'variables': 16, 'cut_dim': 2, 'name': '16 vars, cut dim 2'},
+        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
         {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
         {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
         {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
         {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
+        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
         {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
         {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
         {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
@@ -63,21 +109,32 @@ def tests() -> None:
                             [i for i in range(test_dict['variables'])],
                             [i for i in range(test_dict['variables'])])
 
-            start = time.time()
-            reads = test_dict['variables'] * 2
-            direct_solutions = (dimod.SimulatedAnnealingSampler().sample_qubo(qubo.qubo_dict, num_reads=reads)
-                                .to_pandas_dataframe()
-                                .drop(columns=['num_occurrences'])
-                                .drop_duplicates()
-                                .sort_values(by='energy', ascending=True))
-            end = time.time()
-            log.info(f'Execution time for direct solver (with {reads} readings): {end - start:.2f}s')
-            start = time.time()
-            subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo,
-                                     dim=test_dict['variables'], cut_dim=test_dict['cut_dim'])
-            end = time.time()
-            log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
-            compare_solutions(direct_solutions, subqubos)
+            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
+
+
+def test_cut_dim():
+    tests = [
+        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
+        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
+        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
+        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
+        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
+        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'}
+    ]
+
+    for test_dict in tests:
+        log.info(f'Test {test_dict["name"]}'.upper())
+        log.info(f'Variables: {test_dict["variables"]}'.upper())
+        num_interactions = test_dict['variables']
+        while num_interactions <= test_dict['variables'] ** 2:
+            log.info(f'Interactions: {num_interactions}'.upper())
+            qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
+                                                        num_interactions=num_interactions,
+                                                        vartype=dimod.BINARY).to_qubo()[0],
+                        [i for i in range(test_dict['variables'])],
+                        [i for i in range(test_dict['variables'])])
+            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
+            num_interactions *= 2
 
 
 if __name__ == '__main__':
@@ -92,4 +149,7 @@ if __name__ == '__main__':
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
     log.addHandler(file_handler)
-    tests()
+    log.info('SCALE TEST')
+    test_scale()
+    log.info('CUT TEST')
+    test_cut_dim()

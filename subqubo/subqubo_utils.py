@@ -185,27 +185,14 @@ def subqubo_solve(sampler: SimulatedAnnealingSampler, qubo: QUBO, dim: int, cut_
     return sol
 
 
-def __sanitize_df(ground_truth: pd.DataFrame, qubo: QUBO) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    for idx, row in ground_truth.iterrows():
-        x = row.drop('energy').values.astype(int)
-        ground_truth.at[idx, 'energy'] = np.round(x @ qubo.qubo_matrix @ x.T, 5)
-
+def __sanitize_df(qubo: QUBO) -> pd.DataFrame:
     for idx, row in qubo.solutions.iterrows():
         x = row.drop('energy').values.astype(int)
         qubo.solutions.at[idx, 'energy'] = np.round(x @ qubo.qubo_matrix @ x.T, 5)
 
-    return ground_truth, qubo.solutions
+    return qubo.solutions
 
 
-def compare_solutions(ground_truth: pd.DataFrame, qubo: QUBO) -> None:
-    ground_truth, sol = __sanitize_df(ground_truth, qubo)
-    energy = ground_truth['energy']
-
-    log.info('Ground truth solutions:')
-    log.info(f'Min energy: {energy.min()}')
-    log.info(f'Avg energy: {energy.mean()}')
-    log.info(f'25th percentile energy: {energy.quantile(q=0.25)}')
-    log.info(f'50th percentile energy: {energy.quantile(q=0.50)}')
-    log.info(f'75th percentile energy: {energy.quantile(q=0.75)}')
-    log.info(f'Max energy: {energy.max()}')
-    log.info(f'The best proposed solution has energy {min(sol.energy)}')
+def compare_solutions(min_sol: float, max_sol: float, qubo: QUBO) -> None:
+    log.info(f'Ground truth solutions range from {np.round(min_sol, 5)} and {np.round(max_sol, 5)}')
+    log.info(f'The best proposed solution has energy {min(__sanitize_df(qubo).energy)}')
