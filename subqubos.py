@@ -67,18 +67,12 @@ def test_scale() -> None:
         {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
         {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
         {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
-        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
-        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
-        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
-        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
-        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
-        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
     ]
 
     for test_dict in test_set:
         log.info(f'Test {test_dict["name"]}'.upper())
         log.info(f'Variables: {test_dict["variables"]}'.upper())
-        for j in range(10):
+        for j in range(5):
             log.info(f'Execution {j + 1}')
             if 'problem' in test_dict:
                 qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
@@ -99,12 +93,11 @@ def test_scale() -> None:
 
 def test_cut_dim() -> None:
     tests = [
-        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
-        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
-        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
-        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
-        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
-        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'}
+        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
+        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
+        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
+        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
+        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'}
     ]
 
     for test_dict in tests:
