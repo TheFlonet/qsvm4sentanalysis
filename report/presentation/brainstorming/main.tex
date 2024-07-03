@@ -1,10 +1,10 @@
 \documentclass[aspectratio=169]{beamer}
 \usepackage{graphicx}
-\usepackage[italian]{babel}
+\usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{tikz}
 
-\usetheme[progressbar=frametitle]{metropolis}
+\usetheme[sectionpage=progressbar, progressbar=frametitle]{metropolis}
 \title{Quantum Approaches to Sentiment Analysis}
 \author{\emph{Candidate}: Mario Bifulco}
 \date{\emph{Supervisor}: Luca Roversi}
@@ -19,27 +19,25 @@
 
 \section{Quantum Support Vector Machine for Sentiment Analysis}
 
-\begin{frame}
-    \frametitle{Why use non-classical architectures?}
+\begin{frame}\frametitle{Why use non-classical architectures?}
 
     \begin{columns}
-        \begin{column}{0.3\textwidth}
+        \begin{column}{0.4\textwidth}
             \begin{itemize}
-                \item Ampliamento dei problemi trattabili
-                \item Reversibilità delle procedure di calcolo
+                \item Enlargement of addressable problems
+                \item Reversibility of calculation procedures
             \end{itemize}
         \end{column}
-        \begin{column}{0.7\textwidth}
+        \begin{column}{0.6\textwidth}
             \begin{flushright}
-                \includegraphics[height=0.9\textheight]{bqp_complexity.png}
+                \includegraphics[height=0.8\textheight]{bqp_complexity.png}
             \end{flushright}
         \end{column}
     \end{columns}
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Why Adiabatic quantum computing?}
+\begin{frame}\frametitle{Why Adiabatic quantum computing?}
 
     \begin{columns}
         \begin{column}{0.6\textwidth}
@@ -49,49 +47,46 @@
         \end{column}
         \begin{column}{0.4\textwidth}
             \begin{itemize}
-                \item Ricerca di minimi globali
-                \item Effetto tunnel per superare minimi locali
+                \item Searching for Global Minima
+                \item Tunnel effect to overcome local minima
             \end{itemize}
         \end{column}
     \end{columns}
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Why Support Vector Machine?}
+\begin{frame}\frametitle{Why Support Vector Machine?}
 
     \begin{itemize}
-        \item Problema di ottimizzazione quadratico
-        \item Formulazione naturale in CSP
-        \item Classificazione binaria di punti su uno spazio multidimensionale
+        \item Quadratic Optimisation Problem
+        \item Natural formulation in CSP
+        \item Binary classification of points on a multidimensional space
     \end{itemize}
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Empirical comparison}
+\begin{frame}\frametitle{Empirical comparison}
 
-    Confronto sul task di Sentiment Analysis tramite il dataset TweetEval
+    Comparison on the Sentiment Analysis task using the TweetEval dataset
 
     \begin{itemize}
-        \item Solver classico (CPU)
-        \item Solver ibrido (QPU + CPU)
-        \item Architetture Transformer (GPU)
+        \item Classical Solver (CPU)
+        \item Hybrid Solver (QPU + CPU)
+        \item Architecture Transformer (GPU)
     \end{itemize}
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Qualitative analysis}
+\begin{frame}\frametitle{Qualitative analysis}
 
-    Risultati medi su 10 esecuzioni:
+    Average results over 10 runs:
 
     \begin{table}
         \centering
         \begin{tabular}{c|c|c|c}
             & CPLEX & D-Wave & RoBERTa \\ \hline
             F1-Score (\%) & 76.9 & 76.1 & 94.3 \\ \hline
-            Train time (s) & 267.4 & 327.8\footnote{Solo 40s vengono impiegati dal solver per risolvere il problema} & /\footnote{È stato utilizzato il modello pre-trained sul dataset TweetEval} \\ \hline
+            Train time (s) & 267.4 & 327.8\footnote{Only 40s are used by the solver to complete the problem} & /\footnote{The pre-trained model on TweetEval dataset was used} \\ \hline
             Eval time (s) & 2.2 & 33.9 & 136.8
         \end{tabular}
     \end{table}
@@ -100,15 +95,14 @@
 
 \section{Balancing QPU and CPU \\execution time}
 
-\begin{frame}
-    \frametitle{Usage of QPU}
+\begin{frame}\frametitle{Usage of QPU}
 
     \begin{columns}
         \begin{column}{0.4\textwidth}
             \begin{itemize}
-                \item Solo lo 0.08\% del tempo è speso sulla QPU
-                \item Il boost prestazionale deriva dal quantum annealing
-                \item È possibile trasformare il problema per risolverlo nativamente in QPU?
+                \item Only 0.08\% of the time is spent on the QPU
+                \item The performance boost comes from quantum annealing
+                \item Is it possible to transform the problem to solve it natively in the QPU?
             \end{itemize}
         \end{column}
         \begin{column}{0.6\textwidth}
@@ -120,8 +114,7 @@
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{The problem of the minor embedding algorithm}
+\begin{frame}\frametitle{The problem of the minor embedding algorithm}
 
     \begin{columns}
         \begin{column}{0.4\textwidth}
@@ -141,13 +134,12 @@
     \end{columns}
 
     \begin{center}
-        Mapping del grafo che descrive il problema verso il grafo Pegasus.        
+        Mapping from problem graph to Pegasus graph.
     \end{center}
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Embedding Search Times}
+\begin{frame}\frametitle{Embedding Search Times}
 
     \begin{table}
         \centering
@@ -163,32 +155,77 @@
     \end{table}
 
     \begin{center}
-        La QPU Pegasus ha un numero di 5627 QuBit
+        The Pegasus QPU has 5627 QuBit
     \end{center}
 
 \end{frame}
 
 \section{Developing an hybrid solver}
 
-\begin{frame}
-    \frametitle{Algebric decomposition of QUBO problems}
+\begin{frame}\frametitle{QUBO problem structure}
 
-    
+    The QPU cannot process CPS directly, it must be transformed into QUBO form:
 
-\end{frame}
+    $$\arg\min_x x^TQx$$
+    $$x_i \in \{0, 1\} \forall i$$
 
-\begin{frame}
-    \frametitle{Results}
-
-    
+    Where $Q$ is an upper triangular square matrix
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Future works}
+\begin{frame}\frametitle{Algebric decomposition of QUBO problems}
 
-    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \begin{tikzpicture}
+                    \draw (0,0) rectangle (6,6);
+            
+                    \draw (0.1,3) -- (5.9,3);
+                    \draw (3,0.1) -- (3,5.9);
+            
+                    \draw (3.1,4.5) -- (5.9,4.5);
+                    \draw (4.5,3.1) -- (4.5,5.9);
+            
+                    \draw (4.6,5.25) -- (5.9,5.25);
+                    \draw (5.25,4.6) -- (5.25,5.9);
+                \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Dividing the matrix recursively generates tractable-sized sub-problems
+                \item It is required to combine partial solutions into the final result
+            \end{itemize}
+        \end{column}
+    \end{columns}
 
 \end{frame}
+
+\begin{frame}\frametitle{Results}
+
+    The tests conducted showed:
+
+    \begin{itemize}
+        \item The time to produce a solution is comparable
+        \item The time to compute the embedding of the graph is significantly reduced
+        \item The solution deviates on average from the optimum by 25\%
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Future works}
+
+    \begin{center}
+        More dynamic partitioning strategy into sub-problems 
+            
+        Improved solution on classical architectures
+            
+        Implementation of different strategies for generating sub-problems
+    \end{center}
+
+\end{frame}
+
+\section{Thanks for your attention}
 
 \end{document}
