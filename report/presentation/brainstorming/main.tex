@@ -16,8 +16,6 @@
     \titlepage
 \end{frame}
 
-\section{Quantum Support Vector Machine for Sentiment Analysis}
-
 \begin{frame}\frametitle{Why use non-classical architectures?}
 
     \begin{columns}
@@ -53,6 +51,8 @@
     \end{columns}
 
 \end{frame}
+
+\section{Quantum Support Vector Machine for Sentiment Analysis}
 
 \begin{frame}\frametitle{Why Support Vector Machine?}
 
@@ -163,7 +163,7 @@
 
 \begin{frame}\frametitle{QUBO problem structure}
 
-    The QPU cannot process CPS directly, it must be transformed into QUBO form:
+    The QPU cannot process CSP directly, it must be transformed into QUBO form:
 
     $$\arg\min_x x^TQx$$
     $$x_i \in \{0, 1\} \forall i$$
@@ -203,13 +203,20 @@
 
 \begin{frame}\frametitle{Results}
 
-    The tests conducted showed:
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            The tests conducted showed:
 
-    \begin{itemize}
-        \item The time to produce a solution is comparable
-        \item The time to compute the embedding of the graph is significantly reduced
-        \item The solution deviates on average from the optimum by 25\%
-    \end{itemize}
+            \begin{itemize}
+                \item The time to produce a solution is comparable
+                \item The time to compute the embedding of the graph is significantly reduced
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            \begin{flushright}
+                \includegraphics[width=\textwidth]{distribution.png}            \end{flushright}
+        \end{column}
+    \end{columns}
 
 \end{frame}
 
