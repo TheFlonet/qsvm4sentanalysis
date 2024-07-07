@@ -1,19 +1,15 @@
-\documentclass[11pt, draft]{article}
+\documentclass[11pt, oneside]{book}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{multicol}
 \usepackage{graphicx}
-\usepackage{fancyhdr}
-\setlength{\headheight}{14pt}
-\usepackage{lipsum}
 % \usepackage[showframe]{geometry}
 \usepackage{lineno}
 \linenumbers
-\usepackage[obeyDraft]{todonotes}
-\newcommand\note[1]{\todo[inline]{#1}}
+% \usepackage[obeyDraft]{todonotes}
+% \newcommand\note[1]{\todo[inline]{#1}}
 \usepackage[style=numeric-comp]{biblatex}
 \addbibresource{bibliography.bib}
-\setlength{\columnsep}{4.5cm}
 
 \begin{document}
 
@@ -31,27 +27,71 @@ I declare to be responsible for the content I’m presenting in order to obtain 
 \pagenumbering{arabic}
 \newpage
 
-\input{chapters/0_abstract}
+\section*{Abstract}
 \newpage
 
 \tableofcontents
-\listoftables
-\listoffigures
+% \listoftables
+% \listoffigures
 \newpage
 
-\pagestyle{fancy}
-\input{chapters/1_introduction}
+\chapter{Introduction}
 
-\input{chapters/2_starting_theory}
+\chapter{Theoretical framework}
+\section{Sentiment analysis}
+\section{Support vector machine}
+\section{Adiabatic quantum computing}
 
-\input{chapters/3_qsvm}
+\part{Quantum SVM for Sentiment Analysis}
 
-\input{chapters/4_minor_embedding}
+\chapter{Motivations for the experimental setting}
+\section{Advantages of using machine learning}
+\section{Advantages of a quantum architecture}
 
-\input{chapters/5_subqubo}
+\chapter{Problem posing}
+\section{Rewriting as a minimization problem}
+\section{Limitations on the domain covered}
 
-\input{chapters/6_conclusion.tex}
+\chapter{Testing framework}
+\section{Dataset used}
+\section{Pre-processing strategy}
+\section{Generating sentence embeddings}
 
-%\printbibliography
+\chapter{Results}
+\section{Classification methodologies compared}
+\section{Performance analysis}
+\section{Analysis of required resources}
+
+\part{Maximizing quantum boost}
+
+\chapter{In-depth analysis of solving times using a hybrid solver}
+\section{QPU usage}
+
+\chapter{Using the QPU directly}
+\section{Minor Embedding algorithm}
+\section{NP-completeness of the algorithm}
+
+\chapter{Limitations in the direct use of the QPU}
+\section{Testing with growing problems}
+\section{Results}
+
+\part{Developing an Hybrid Solver}
+
+\chapter{The underlying idea of a hybrid solver}
+
+\chapter{Proposed algorithm}
+\section{QUBO formulation of a problem}
+\section{Algebraic properties}
+\section{QUBO splitting algorithm}
+
+\chapter{Effectiveness of the proposed methodology}
+
+\part{Discussion and Conclusion}
+
+\chapter{Conclusion}
+
+\chapter{Future works}
+
+% \printbibliography
 
 \end{document}
