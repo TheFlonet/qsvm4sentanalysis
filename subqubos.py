@@ -9,8 +9,10 @@ import numpy as np
 from dimod import SimulatedAnnealingSampler
 from matplotlib import pyplot as plt
 from numpy import floating, integer
+
+from subqubo.QSplitSampler import QSplitSampler
 from subqubo.QUBO import QUBO
-from subqubo.subqubo_utils import subqubo_solve, sanitize_df
+from subqubo.subqubo_utils import sanitize_df
 import pyomo.environ as pyo
 
 
@@ -31,7 +33,8 @@ def solve_model(qubo: QUBO, sense: pyo.kernel.objective) -> float:
 def measure(variables: int, cut_dim: int, qubo: QUBO) -> None:
     min_sol, max_sol = solve_model(qubo, pyo.minimize), solve_model(qubo, pyo.maximize)
     start = time.time()
-    subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo, dim=variables, cut_dim=cut_dim)
+    sampler = QSplitSampler(SimulatedAnnealingSampler(), cut_dim)
+    subqubos = sampler.run(qubo, variables)
     end = time.time()
     log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
 
