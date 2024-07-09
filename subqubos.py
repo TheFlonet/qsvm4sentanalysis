@@ -1,46 +1,41 @@
 import logging
 import time
 from collections import defaultdict
-import random
-from typing import Mapping, Hashable, Tuple
+from typing import Mapping, Hashable, Tuple, Dict, List
 import dimod
 import networkx as nx
 import numpy as np
+import pandas as pd
 from dimod import SimulatedAnnealingSampler
 from matplotlib import pyplot as plt
 from numpy import floating, integer
-
 from subqubo.QSplitSampler import QSplitSampler
 from subqubo.QUBO import QUBO
 from subqubo.subqubo_utils import sanitize_df
-import pyomo.environ as pyo
 
 
-def solve_model(qubo: QUBO, sense: pyo.kernel.objective) -> float:
-    N = len(qubo.qubo_matrix)
-    model = pyo.ConcreteModel()
-    model.x = pyo.Var(range(N), within=pyo.Binary)
-
-    model.obj = pyo.Objective(expr=sum(qubo.qubo_matrix[i, j] * model.x[i] * model.x[j]
-                                       for i in range(N) for j in range(N)), sense=sense)
-    solver = pyo.SolverFactory('cplex_direct')
-    _ = solver.solve(model, tee=False)
-    optimized_x = [pyo.value(model.x[i]) for i in range(N)]
-
-    return sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
-
-
-def measure(variables: int, cut_dim: int, qubo: QUBO) -> None:
-    min_sol, max_sol = solve_model(qubo, pyo.minimize), solve_model(qubo, pyo.maximize)
+def measure(problem: Dict, interactions: int, trial: int, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
+    direct_solutions = (dimod.RandomSampler().sample_qubo(qubo.qubo_dict, num_reads=100_000)
+                        .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
     start = time.time()
-    sampler = QSplitSampler(SimulatedAnnealingSampler(), cut_dim)
-    subqubos = sampler.run(qubo, variables)
+    sampler = QSplitSampler(SimulatedAnnealingSampler(), problem['cut_dim'])
+    subqubos = sampler.run(qubo, problem['variables'])
     end = time.time()
-    log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
 
-    normalized_sol = ((min(sanitize_df(subqubos).energy) - min_sol) / (max_sol - min_sol))
+    res['Name'].append(problem['name'])
+    res['Trial'].append(trial)
+    res['Variables'].append(problem['variables'])
+    res['Cut dim'].append(problem['cut_dim'])
+    res['Interactions'].append(interactions)
+    res['Time (s)'].append(np.round(end - start, 5))
+    res['Proposed solution'].append(np.round(min(sanitize_df(subqubos).energy), 5))
+    res['Real sample min'].append(np.round(direct_solutions['energy'].min(), 5))
+    res['Real sample 25'].append(np.round(direct_solutions.quantile(q=0.25)['energy'], 5))
+    res['Real sample mean'].append(np.round(direct_solutions['energy'].mean(), 5))
+    res['Real sample 75'].append(np.round(direct_solutions.quantile(q=0.75)['energy'], 5))
+    res['Real sample max'].append(np.round(direct_solutions['energy'].max(), 5))
 
-    log.info(f'The best proposed solution (normalized in [0-1]) has energy {np.round(normalized_sol, 5)}')
+    return res
 
 
 def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
@@ -57,73 +52,39 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 
 
 def test_scale() -> None:
-    test_set = [
-        {'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'max_cut'},
-        {'variables': 8, 'cut_dim': 8, 'name': '8 vars, cut dim 8'},
-        {'variables': 8, 'cut_dim': 4, 'name': '8 vars, cut dim 4'},
-        {'variables': 8, 'cut_dim': 2, 'name': '8 vars, cut dim 2'},
-        {'variables': 16, 'cut_dim': 16, 'name': '16 vars, cut dim 16'},
-        {'variables': 16, 'cut_dim': 8, 'name': '16 vars, cut dim 8'},
-        {'variables': 16, 'cut_dim': 4, 'name': '16 vars, cut dim 4'},
-        {'variables': 16, 'cut_dim': 2, 'name': '16 vars, cut dim 2'},
-        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
-        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
-        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
-        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
-        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
-        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
-        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
-        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
-        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
-        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
-        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
-    ]
+    test_set = [{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}]
+    for variables in [8, 16, 32, 64]:
+        for cut_dim in [2, 4, 8, 16, 32, 64]:
+            if cut_dim <= variables:
+                test_set.append({'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'})
+    res = {
+        'Name': [], 'Trial': [], 'Variables': [], 'Cut dim': [], 'Interactions': [], 'Time (s)': [],
+        'Proposed solution': [], 'Real sample min': [], 'Real sample 25': [],
+        'Real sample mean': [], 'Real sample 75': [], 'Real sample max': []
+    }
 
     for test_dict in test_set:
         log.info(f'Test {test_dict["name"]}'.upper())
-        log.info(f'Variables: {test_dict["variables"]}'.upper())
         for j in range(5):
             log.info(f'Execution {j + 1}')
             if 'problem' in test_dict:
                 qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
                             rows_idx=[i + 1 for i in range(8)])
+                num_interactions = 14
                 nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
                 plt.savefig("graph.png", format="PNG")
+                res = measure(test_dict, num_interactions, j, qubo, res)
             else:
-                num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
-                log.info(f'Interactions: {num_interactions}'.upper())
-                qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
-                                                            num_interactions=num_interactions,
-                                                            vartype=dimod.BINARY).to_qubo()[0],
-                            [i for i in range(test_dict['variables'])],
-                            [i for i in range(test_dict['variables'])])
-
-            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
-
-
-def test_cut_dim() -> None:
-    tests = [
-        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
-        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
-        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
-        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
-        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
-        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
-    ]
-
-    for test_dict in tests:
-        log.info(f'Test {test_dict["name"]}'.upper())
-        log.info(f'Variables: {test_dict["variables"]}'.upper())
-        num_interactions = test_dict['variables']
-        while num_interactions <= test_dict['variables'] ** 2:
-            log.info(f'Interactions: {num_interactions}'.upper())
-            qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
-                                                        num_interactions=num_interactions,
-                                                        vartype=dimod.BINARY).to_qubo()[0],
-                        [i for i in range(test_dict['variables'])],
-                        [i for i in range(test_dict['variables'])])
-            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
-            num_interactions *= 2
+                num_interactions = test_dict['variables']
+                while num_interactions <= test_dict['variables'] ** 2:
+                    qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
+                                                                num_interactions=num_interactions,
+                                                                vartype=dimod.BINARY).to_qubo()[0],
+                                [i for i in range(test_dict['variables'])],
+                                [i for i in range(test_dict['variables'])])
+                    res = measure(test_dict, num_interactions, j, qubo, res)
+                    num_interactions *= 4
+    pd.DataFrame(res).to_csv("results.csv", index=False)
 
 
 if __name__ == '__main__':
@@ -134,11 +95,5 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    file_handler = logging.FileHandler('subqubo.log')
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(formatter)
-    log.addHandler(file_handler)
     log.info('SCALE TEST')
     test_scale()
-    log.info('CUT TEST')
-    test_cut_dim()
