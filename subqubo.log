@@ -1,478 +1,553 @@
-2024-07-08 17:06:18,134 - INFO - SCALE TEST
-2024-07-08 17:06:18,134 - INFO - TEST MAX_CUT
-2024-07-08 17:06:18,134 - INFO - VARIABLES: 8
-2024-07-08 17:06:18,134 - INFO - Execution 1
-2024-07-08 17:06:18,890 - INFO - Execution time for subqubo solver: 0.49s
-2024-07-08 17:06:18,890 - INFO - Ground truth solutions range from -10.0 and 0.0
-2024-07-08 17:06:18,891 - INFO - The best proposed solution has energy 0.0
-2024-07-08 17:06:18,891 - INFO - Execution 2
-2024-07-08 17:06:19,455 - INFO - Execution time for subqubo solver: 0.43s
-2024-07-08 17:06:19,455 - INFO - Ground truth solutions range from -10.0 and 0.0
-2024-07-08 17:06:19,456 - INFO - The best proposed solution has energy 0.0
-2024-07-08 17:06:19,456 - INFO - Execution 3
-2024-07-08 17:06:19,900 - INFO - Execution time for subqubo solver: 0.35s
-2024-07-08 17:06:19,900 - INFO - Ground truth solutions range from -10.0 and 0.0
-2024-07-08 17:06:19,900 - INFO - The best proposed solution has energy -2.0
-2024-07-08 17:06:19,900 - INFO - Execution 4
-2024-07-08 17:06:20,342 - INFO - Execution time for subqubo solver: 0.35s
-2024-07-08 17:06:20,343 - INFO - Ground truth solutions range from -10.0 and 0.0
-2024-07-08 17:06:20,343 - INFO - The best proposed solution has energy 0.0
-2024-07-08 17:06:20,343 - INFO - Execution 5
-2024-07-08 17:06:20,791 - INFO - Execution time for subqubo solver: 0.35s
-2024-07-08 17:06:20,791 - INFO - Ground truth solutions range from -10.0 and 0.0
-2024-07-08 17:06:20,792 - INFO - The best proposed solution has energy -2.0
-2024-07-08 17:06:20,792 - INFO - TEST 8 VARS, CUT DIM 8
-2024-07-08 17:06:20,792 - INFO - VARIABLES: 8
-2024-07-08 17:06:20,792 - INFO - Execution 1
-2024-07-08 17:06:20,792 - INFO - INTERACTIONS: 26
-2024-07-08 17:06:21,022 - INFO - Execution time for subqubo solver: 0.22s
-2024-07-08 17:06:21,022 - INFO - Ground truth solutions range from -2.91136 and 6.84992
-2024-07-08 17:06:21,022 - INFO - The best proposed solution has energy -2.91136
-2024-07-08 17:06:21,022 - INFO - Execution 2
-2024-07-08 17:06:21,022 - INFO - INTERACTIONS: 63
-2024-07-08 17:06:21,307 - INFO - Execution time for subqubo solver: 0.27s
-2024-07-08 17:06:21,307 - INFO - Ground truth solutions range from -0.81195 and 6.656
-2024-07-08 17:06:21,308 - INFO - The best proposed solution has energy -0.81195
-2024-07-08 17:06:21,308 - INFO - Execution 3
-2024-07-08 17:06:21,308 - INFO - INTERACTIONS: 11
-2024-07-08 17:06:21,466 - INFO - Execution time for subqubo solver: 0.15s
-2024-07-08 17:06:21,466 - INFO - Ground truth solutions range from -0.26571 and 5.82079
-2024-07-08 17:06:21,467 - INFO - The best proposed solution has energy -0.26571
-2024-07-08 17:06:21,467 - INFO - Execution 4
-2024-07-08 17:06:21,467 - INFO - INTERACTIONS: 40
-2024-07-08 17:06:21,633 - INFO - Execution time for subqubo solver: 0.16s
-2024-07-08 17:06:21,633 - INFO - Ground truth solutions range from -0.90967 and 9.39521
-2024-07-08 17:06:21,634 - INFO - The best proposed solution has energy -0.90967
-2024-07-08 17:06:21,634 - INFO - Execution 5
-2024-07-08 17:06:21,634 - INFO - INTERACTIONS: 62
-2024-07-08 17:06:21,879 - INFO - Execution time for subqubo solver: 0.24s
-2024-07-08 17:06:21,879 - INFO - Ground truth solutions range from -2.51621 and 7.97547
-2024-07-08 17:06:21,879 - INFO - The best proposed solution has energy -2.51621
-2024-07-08 17:06:21,879 - INFO - TEST 8 VARS, CUT DIM 4
-2024-07-08 17:06:21,879 - INFO - VARIABLES: 8
-2024-07-08 17:06:21,879 - INFO - Execution 1
-2024-07-08 17:06:21,879 - INFO - INTERACTIONS: 54
-2024-07-08 17:06:22,199 - INFO - Execution time for subqubo solver: 0.31s
-2024-07-08 17:06:22,199 - INFO - Ground truth solutions range from -0.88282 and 9.10801
-2024-07-08 17:06:22,200 - INFO - The best proposed solution has energy -0.07459
-2024-07-08 17:06:22,200 - INFO - Execution 2
-2024-07-08 17:06:22,200 - INFO - INTERACTIONS: 55
-2024-07-08 17:06:22,552 - INFO - Execution time for subqubo solver: 0.33s
-2024-07-08 17:06:22,552 - INFO - Ground truth solutions range from 0.0 and 8.27139
-2024-07-08 17:06:22,552 - INFO - The best proposed solution has energy 0.0
-2024-07-08 17:06:22,552 - INFO - Execution 3
-2024-07-08 17:06:22,552 - INFO - INTERACTIONS: 63
-2024-07-08 17:06:22,829 - INFO - Execution time for subqubo solver: 0.27s
-2024-07-08 17:06:22,829 - INFO - Ground truth solutions range from -1.11707 and 10.88712
-2024-07-08 17:06:22,830 - INFO - The best proposed solution has energy -0.38643
-2024-07-08 17:06:22,830 - INFO - Execution 4
-2024-07-08 17:06:22,830 - INFO - INTERACTIONS: 58
-2024-07-08 17:06:23,186 - INFO - Execution time for subqubo solver: 0.35s
-2024-07-08 17:06:23,187 - INFO - Ground truth solutions range from -1.0741 and 5.77792
-2024-07-08 17:06:23,187 - INFO - The best proposed solution has energy -1.0741
-2024-07-08 17:06:23,187 - INFO - Execution 5
-2024-07-08 17:06:23,187 - INFO - INTERACTIONS: 10
-2024-07-08 17:06:23,402 - INFO - Execution time for subqubo solver: 0.20s
-2024-07-08 17:06:23,402 - INFO - Ground truth solutions range from -0.3246 and 5.22121
-2024-07-08 17:06:23,402 - INFO - The best proposed solution has energy 0.0
-2024-07-08 17:06:23,402 - INFO - TEST 8 VARS, CUT DIM 2
-2024-07-08 17:06:23,402 - INFO - VARIABLES: 8
-2024-07-08 17:06:23,402 - INFO - Execution 1
-2024-07-08 17:06:23,402 - INFO - INTERACTIONS: 13
-2024-07-08 17:06:23,718 - INFO - Execution time for subqubo solver: 0.30s
-2024-07-08 17:06:23,718 - INFO - Ground truth solutions range from -1.80151 and 4.41438
-2024-07-08 17:06:23,718 - INFO - The best proposed solution has energy -1.80151
-2024-07-08 17:06:23,718 - INFO - Execution 2
-2024-07-08 17:06:23,718 - INFO - INTERACTIONS: 27
-2024-07-08 17:06:23,989 - INFO - Execution time for subqubo solver: 0.26s
-2024-07-08 17:06:23,989 - INFO - Ground truth solutions range from -1.57515 and 7.03626
-2024-07-08 17:06:23,989 - INFO - The best proposed solution has energy 0.00402
-2024-07-08 17:06:23,989 - INFO - Execution 3
-2024-07-08 17:06:23,989 - INFO - INTERACTIONS: 46
-2024-07-08 17:06:24,252 - INFO - Execution time for subqubo solver: 0.25s
-2024-07-08 17:06:24,252 - INFO - Ground truth solutions range from -1.45137 and 6.01936
-2024-07-08 17:06:24,253 - INFO - The best proposed solution has energy 1.92772
-2024-07-08 17:06:24,253 - INFO - Execution 4
-2024-07-08 17:06:24,253 - INFO - INTERACTIONS: 54
-2024-07-08 17:06:24,553 - INFO - Execution time for subqubo solver: 0.29s
-2024-07-08 17:06:24,553 - INFO - Ground truth solutions range from -1.07962 and 9.11235
-2024-07-08 17:06:24,553 - INFO - The best proposed solution has energy 1.12717
-2024-07-08 17:06:24,553 - INFO - Execution 5
-2024-07-08 17:06:24,553 - INFO - INTERACTIONS: 57
-2024-07-08 17:06:24,796 - INFO - Execution time for subqubo solver: 0.23s
-2024-07-08 17:06:24,796 - INFO - Ground truth solutions range from -1.31152 and 7.47859
-2024-07-08 17:06:24,796 - INFO - The best proposed solution has energy -0.07966
-2024-07-08 17:06:24,796 - INFO - TEST 16 VARS, CUT DIM 16
-2024-07-08 17:06:24,796 - INFO - VARIABLES: 16
-2024-07-08 17:06:24,796 - INFO - Execution 1
-2024-07-08 17:06:24,796 - INFO - INTERACTIONS: 253
-2024-07-08 17:06:25,689 - INFO - Execution time for subqubo solver: 0.87s
-2024-07-08 17:06:25,689 - INFO - Ground truth solutions range from -4.26109 and 21.14362
-2024-07-08 17:06:25,690 - INFO - The best proposed solution has energy -4.26109
-2024-07-08 17:06:25,690 - INFO - Execution 2
-2024-07-08 17:06:25,690 - INFO - INTERACTIONS: 96
-2024-07-08 17:06:26,314 - INFO - Execution time for subqubo solver: 0.60s
-2024-07-08 17:06:26,314 - INFO - Ground truth solutions range from -3.3822 and 15.9027
-2024-07-08 17:06:26,314 - INFO - The best proposed solution has energy -3.3822
-2024-07-08 17:06:26,314 - INFO - Execution 3
-2024-07-08 17:06:26,314 - INFO - INTERACTIONS: 166
-2024-07-08 17:06:27,141 - INFO - Execution time for subqubo solver: 0.81s
-2024-07-08 17:06:27,141 - INFO - Ground truth solutions range from -7.39755 and 20.09164
-2024-07-08 17:06:27,141 - INFO - The best proposed solution has energy -7.39755
-2024-07-08 17:06:27,141 - INFO - Execution 4
-2024-07-08 17:06:27,141 - INFO - INTERACTIONS: 110
-2024-07-08 17:06:27,793 - INFO - Execution time for subqubo solver: 0.63s
-2024-07-08 17:06:27,793 - INFO - Ground truth solutions range from -4.26947 and 17.64512
-2024-07-08 17:06:27,794 - INFO - The best proposed solution has energy -4.26947
-2024-07-08 17:06:27,794 - INFO - Execution 5
-2024-07-08 17:06:27,794 - INFO - INTERACTIONS: 208
-2024-07-08 17:06:28,537 - INFO - Execution time for subqubo solver: 0.73s
-2024-07-08 17:06:28,537 - INFO - Ground truth solutions range from -13.59007 and 19.45291
-2024-07-08 17:06:28,538 - INFO - The best proposed solution has energy -13.59007
-2024-07-08 17:06:28,538 - INFO - TEST 16 VARS, CUT DIM 8
-2024-07-08 17:06:28,538 - INFO - VARIABLES: 16
-2024-07-08 17:06:28,538 - INFO - Execution 1
-2024-07-08 17:06:28,538 - INFO - INTERACTIONS: 41
-2024-07-08 17:06:29,193 - INFO - Execution time for subqubo solver: 0.64s
-2024-07-08 17:06:29,194 - INFO - Ground truth solutions range from -3.64043 and 13.05255
-2024-07-08 17:06:29,194 - INFO - The best proposed solution has energy 1.47516
-2024-07-08 17:06:29,194 - INFO - Execution 2
-2024-07-08 17:06:29,194 - INFO - INTERACTIONS: 235
-2024-07-08 17:06:30,164 - INFO - Execution time for subqubo solver: 0.94s
-2024-07-08 17:06:30,164 - INFO - Ground truth solutions range from -7.37525 and 21.93215
-2024-07-08 17:06:30,164 - INFO - The best proposed solution has energy -3.79567
-2024-07-08 17:06:30,164 - INFO - Execution 3
-2024-07-08 17:06:30,164 - INFO - INTERACTIONS: 83
-2024-07-08 17:06:30,886 - INFO - Execution time for subqubo solver: 0.70s
-2024-07-08 17:06:30,887 - INFO - Ground truth solutions range from -1.76163 and 13.97208
-2024-07-08 17:06:30,887 - INFO - The best proposed solution has energy 0.96359
-2024-07-08 17:06:30,887 - INFO - Execution 4
-2024-07-08 17:06:30,887 - INFO - INTERACTIONS: 75
-2024-07-08 17:06:31,635 - INFO - Execution time for subqubo solver: 0.72s
-2024-07-08 17:06:31,635 - INFO - Ground truth solutions range from -5.38301 and 7.74086
-2024-07-08 17:06:31,635 - INFO - The best proposed solution has energy -3.71809
-2024-07-08 17:06:31,635 - INFO - Execution 5
-2024-07-08 17:06:31,635 - INFO - INTERACTIONS: 92
-2024-07-08 17:06:32,712 - INFO - Execution time for subqubo solver: 1.05s
-2024-07-08 17:06:32,712 - INFO - Ground truth solutions range from -8.90541 and 10.6747
-2024-07-08 17:06:32,712 - INFO - The best proposed solution has energy -6.18732
-2024-07-08 17:06:32,712 - INFO - TEST 16 VARS, CUT DIM 4
-2024-07-08 17:06:32,712 - INFO - VARIABLES: 16
-2024-07-08 17:06:32,712 - INFO - Execution 1
-2024-07-08 17:06:32,712 - INFO - INTERACTIONS: 69
-2024-07-08 17:06:33,389 - INFO - Execution time for subqubo solver: 0.66s
-2024-07-08 17:06:33,389 - INFO - Ground truth solutions range from -3.36471 and 11.1577
-2024-07-08 17:06:33,389 - INFO - The best proposed solution has energy 0.98159
-2024-07-08 17:06:33,389 - INFO - Execution 2
-2024-07-08 17:06:33,389 - INFO - INTERACTIONS: 206
-2024-07-08 17:06:34,167 - INFO - Execution time for subqubo solver: 0.76s
-2024-07-08 17:06:34,167 - INFO - Ground truth solutions range from -11.6928 and 22.24193
-2024-07-08 17:06:34,167 - INFO - The best proposed solution has energy -1.37531
-2024-07-08 17:06:34,167 - INFO - Execution 3
-2024-07-08 17:06:34,167 - INFO - INTERACTIONS: 91
-2024-07-08 17:06:34,868 - INFO - Execution time for subqubo solver: 0.68s
-2024-07-08 17:06:34,868 - INFO - Ground truth solutions range from -7.71355 and 10.95561
-2024-07-08 17:06:34,868 - INFO - The best proposed solution has energy -1.0205
-2024-07-08 17:06:34,869 - INFO - Execution 4
-2024-07-08 17:06:34,869 - INFO - INTERACTIONS: 77
-2024-07-08 17:06:35,743 - INFO - Execution time for subqubo solver: 0.85s
-2024-07-08 17:06:35,743 - INFO - Ground truth solutions range from -5.1204 and 13.88441
-2024-07-08 17:06:35,744 - INFO - The best proposed solution has energy 0.89245
-2024-07-08 17:06:35,744 - INFO - Execution 5
-2024-07-08 17:06:35,744 - INFO - INTERACTIONS: 163
-2024-07-08 17:06:36,550 - INFO - Execution time for subqubo solver: 0.79s
-2024-07-08 17:06:36,550 - INFO - Ground truth solutions range from -7.65407 and 27.20582
-2024-07-08 17:06:36,550 - INFO - The best proposed solution has energy 9.8436
-2024-07-08 17:06:36,550 - INFO - TEST 16 VARS, CUT DIM 2
-2024-07-08 17:06:36,550 - INFO - VARIABLES: 16
-2024-07-08 17:06:36,550 - INFO - Execution 1
-2024-07-08 17:06:36,550 - INFO - INTERACTIONS: 205
-2024-07-08 17:06:37,837 - INFO - Execution time for subqubo solver: 1.27s
-2024-07-08 17:06:37,838 - INFO - Ground truth solutions range from -5.51612 and 18.67688
-2024-07-08 17:06:37,838 - INFO - The best proposed solution has energy -1.19927
-2024-07-08 17:06:37,838 - INFO - Execution 2
-2024-07-08 17:06:37,838 - INFO - INTERACTIONS: 83
-2024-07-08 17:06:39,346 - INFO - Execution time for subqubo solver: 1.49s
-2024-07-08 17:06:39,346 - INFO - Ground truth solutions range from -8.23003 and 9.6585
-2024-07-08 17:06:39,346 - INFO - The best proposed solution has energy 1.15175
-2024-07-08 17:06:39,346 - INFO - Execution 3
-2024-07-08 17:06:39,346 - INFO - INTERACTIONS: 145
-2024-07-08 17:06:40,689 - INFO - Execution time for subqubo solver: 1.32s
-2024-07-08 17:06:40,690 - INFO - Ground truth solutions range from -11.17898 and 23.46681
-2024-07-08 17:06:40,690 - INFO - The best proposed solution has energy 5.50894
-2024-07-08 17:06:40,690 - INFO - Execution 4
-2024-07-08 17:06:40,690 - INFO - INTERACTIONS: 181
-2024-07-08 17:06:42,850 - INFO - Execution time for subqubo solver: 2.14s
-2024-07-08 17:06:42,850 - INFO - Ground truth solutions range from -3.07255 and 25.92121
-2024-07-08 17:06:42,851 - INFO - The best proposed solution has energy 0.55625
-2024-07-08 17:06:42,851 - INFO - Execution 5
-2024-07-08 17:06:42,851 - INFO - INTERACTIONS: 191
-2024-07-08 17:06:45,882 - INFO - Execution time for subqubo solver: 3.01s
-2024-07-08 17:06:45,882 - INFO - Ground truth solutions range from -24.76978 and 15.542
-2024-07-08 17:06:45,883 - INFO - The best proposed solution has energy -1.59025
-2024-07-08 17:06:45,883 - INFO - TEST 32 VARS, CUT DIM 32
-2024-07-08 17:06:45,883 - INFO - VARIABLES: 32
-2024-07-08 17:06:45,883 - INFO - Execution 1
-2024-07-08 17:06:45,883 - INFO - INTERACTIONS: 797
-2024-07-08 17:06:49,334 - INFO - Execution time for subqubo solver: 3.34s
-2024-07-08 17:06:49,335 - INFO - Ground truth solutions range from -61.9309 and 45.96101
-2024-07-08 17:06:49,335 - INFO - The best proposed solution has energy -61.9309
-2024-07-08 17:06:49,335 - INFO - Execution 2
-2024-07-08 17:06:49,335 - INFO - INTERACTIONS: 365
-2024-07-08 17:06:51,559 - INFO - Execution time for subqubo solver: 2.16s
-2024-07-08 17:06:51,559 - INFO - Ground truth solutions range from -15.80235 and 31.43399
-2024-07-08 17:06:51,559 - INFO - The best proposed solution has energy -15.80235
-2024-07-08 17:06:51,559 - INFO - Execution 3
-2024-07-08 17:06:51,559 - INFO - INTERACTIONS: 790
-2024-07-08 17:06:54,845 - INFO - Execution time for subqubo solver: 3.19s
-2024-07-08 17:06:54,845 - INFO - Ground truth solutions range from -43.11472 and 57.71129
-2024-07-08 17:06:54,845 - INFO - The best proposed solution has energy -43.11472
-2024-07-08 17:06:54,845 - INFO - Execution 4
-2024-07-08 17:06:54,845 - INFO - INTERACTIONS: 45
-2024-07-08 17:06:55,428 - INFO - Execution time for subqubo solver: 0.53s
-2024-07-08 17:06:55,428 - INFO - Ground truth solutions range from -1.80927 and 25.78433
-2024-07-08 17:06:55,428 - INFO - The best proposed solution has energy -1.80927
-2024-07-08 17:06:55,428 - INFO - Execution 5
-2024-07-08 17:06:55,428 - INFO - INTERACTIONS: 223
-2024-07-08 17:06:56,908 - INFO - Execution time for subqubo solver: 1.42s
-2024-07-08 17:06:56,908 - INFO - Ground truth solutions range from -7.2969 and 24.32718
-2024-07-08 17:06:56,908 - INFO - The best proposed solution has energy -7.2969
-2024-07-08 17:06:56,908 - INFO - TEST 32 VARS, CUT DIM 16
-2024-07-08 17:06:56,908 - INFO - VARIABLES: 32
-2024-07-08 17:06:56,908 - INFO - Execution 1
-2024-07-08 17:06:56,908 - INFO - INTERACTIONS: 522
-2024-07-08 17:07:00,293 - INFO - Execution time for subqubo solver: 3.32s
-2024-07-08 17:07:00,293 - INFO - Ground truth solutions range from -24.10462 and 82.28691
-2024-07-08 17:07:00,293 - INFO - The best proposed solution has energy -15.35646
-2024-07-08 17:07:00,293 - INFO - Execution 2
-2024-07-08 17:07:00,294 - INFO - INTERACTIONS: 167
-2024-07-08 17:07:01,844 - INFO - Execution time for subqubo solver: 1.50s
-2024-07-08 17:07:01,844 - INFO - Ground truth solutions range from -4.99159 and 29.98638
-2024-07-08 17:07:01,845 - INFO - The best proposed solution has energy 0.33276
-2024-07-08 17:07:01,845 - INFO - Execution 3
-2024-07-08 17:07:01,845 - INFO - INTERACTIONS: 493
-2024-07-08 17:07:05,239 - INFO - Execution time for subqubo solver: 3.23s
-2024-07-08 17:07:05,239 - INFO - Ground truth solutions range from -13.84288 and 115.49108
-2024-07-08 17:07:05,239 - INFO - The best proposed solution has energy 3.62921
-2024-07-08 17:07:05,240 - INFO - Execution 4
-2024-07-08 17:07:05,240 - INFO - INTERACTIONS: 764
-2024-07-08 17:07:08,124 - INFO - Execution time for subqubo solver: 2.81s
-2024-07-08 17:07:08,124 - INFO - Ground truth solutions range from -36.7706 and 59.95306
-2024-07-08 17:07:08,125 - INFO - The best proposed solution has energy -4.00267
-2024-07-08 17:07:08,125 - INFO - Execution 5
-2024-07-08 17:07:08,125 - INFO - INTERACTIONS: 37
-2024-07-08 17:07:09,105 - INFO - Execution time for subqubo solver: 0.93s
-2024-07-08 17:07:09,105 - INFO - Ground truth solutions range from -0.12082 and 31.70493
-2024-07-08 17:07:09,106 - INFO - The best proposed solution has energy 0.66367
-2024-07-08 17:07:09,106 - INFO - TEST 32 VARS, CUT DIM 8
-2024-07-08 17:07:09,106 - INFO - VARIABLES: 32
-2024-07-08 17:07:09,106 - INFO - Execution 1
-2024-07-08 17:07:09,106 - INFO - INTERACTIONS: 822
-2024-07-08 17:07:11,893 - INFO - Execution time for subqubo solver: 2.68s
-2024-07-08 17:07:11,893 - INFO - Ground truth solutions range from -52.90437 and 42.94851
-2024-07-08 17:07:11,894 - INFO - The best proposed solution has energy -27.923
-2024-07-08 17:07:11,894 - INFO - Execution 2
-2024-07-08 17:07:11,894 - INFO - INTERACTIONS: 480
-2024-07-08 17:07:14,634 - INFO - Execution time for subqubo solver: 2.63s
-2024-07-08 17:07:14,635 - INFO - Ground truth solutions range from -29.00782 and 50.25668
-2024-07-08 17:07:14,635 - INFO - The best proposed solution has energy 10.26338
-2024-07-08 17:07:14,635 - INFO - Execution 3
-2024-07-08 17:07:14,635 - INFO - INTERACTIONS: 641
-2024-07-08 17:07:17,013 - INFO - Execution time for subqubo solver: 2.31s
-2024-07-08 17:07:17,013 - INFO - Ground truth solutions range from -48.30193 and 86.70853
-2024-07-08 17:07:17,013 - INFO - The best proposed solution has energy 18.53072
-2024-07-08 17:07:17,013 - INFO - Execution 4
-2024-07-08 17:07:17,013 - INFO - INTERACTIONS: 443
-2024-07-08 17:07:19,527 - INFO - Execution time for subqubo solver: 2.44s
-2024-07-08 17:07:19,528 - INFO - Ground truth solutions range from -39.04049 and 36.90569
-2024-07-08 17:07:19,528 - INFO - The best proposed solution has energy -6.38936
-2024-07-08 17:07:19,528 - INFO - Execution 5
-2024-07-08 17:07:19,528 - INFO - INTERACTIONS: 818
-2024-07-08 17:07:22,024 - INFO - Execution time for subqubo solver: 2.42s
-2024-07-08 17:07:22,024 - INFO - Ground truth solutions range from -79.63379 and 50.89254
-2024-07-08 17:07:22,024 - INFO - The best proposed solution has energy -28.11962
-2024-07-08 17:07:22,024 - INFO - TEST 32 VARS, CUT DIM 4
-2024-07-08 17:07:22,024 - INFO - VARIABLES: 32
-2024-07-08 17:07:22,024 - INFO - Execution 1
-2024-07-08 17:07:22,024 - INFO - INTERACTIONS: 523
-2024-07-08 17:07:25,346 - INFO - Execution time for subqubo solver: 3.24s
-2024-07-08 17:07:25,346 - INFO - Ground truth solutions range from -94.99582 and 43.03647
-2024-07-08 17:07:25,346 - INFO - The best proposed solution has energy -9.75016
-2024-07-08 17:07:25,346 - INFO - Execution 2
-2024-07-08 17:07:25,346 - INFO - INTERACTIONS: 295
-2024-07-08 17:07:28,510 - INFO - Execution time for subqubo solver: 3.10s
-2024-07-08 17:07:28,510 - INFO - Ground truth solutions range from -10.9333 and 28.04352
-2024-07-08 17:07:28,511 - INFO - The best proposed solution has energy -0.63342
-2024-07-08 17:07:28,511 - INFO - Execution 3
-2024-07-08 17:07:28,511 - INFO - INTERACTIONS: 39
-2024-07-08 17:07:33,623 - INFO - Execution time for subqubo solver: 5.07s
-2024-07-08 17:07:33,623 - INFO - Ground truth solutions range from -1.53491 and 28.16816
-2024-07-08 17:07:33,623 - INFO - The best proposed solution has energy 1.39453
-2024-07-08 17:07:33,623 - INFO - Execution 4
-2024-07-08 17:07:33,624 - INFO - INTERACTIONS: 570
-2024-07-08 17:07:38,821 - INFO - Execution time for subqubo solver: 5.09s
-2024-07-08 17:07:38,822 - INFO - Ground truth solutions range from -50.46198 and 56.31134
-2024-07-08 17:07:38,822 - INFO - The best proposed solution has energy 11.90174
-2024-07-08 17:07:38,822 - INFO - Execution 5
-2024-07-08 17:07:38,822 - INFO - INTERACTIONS: 54
-2024-07-08 17:07:43,578 - INFO - Execution time for subqubo solver: 4.71s
-2024-07-08 17:07:43,578 - INFO - Ground truth solutions range from -2.28688 and 21.65712
-2024-07-08 17:07:43,578 - INFO - The best proposed solution has energy 1.22394
-2024-07-08 17:07:43,578 - INFO - TEST 32 VARS, CUT DIM 2
-2024-07-08 17:07:43,579 - INFO - VARIABLES: 32
-2024-07-08 17:07:43,579 - INFO - Execution 1
-2024-07-08 17:07:43,579 - INFO - INTERACTIONS: 941
-2024-07-08 17:07:50,212 - INFO - Execution time for subqubo solver: 6.55s
-2024-07-08 17:07:50,213 - INFO - Ground truth solutions range from -64.16592 and 98.26453
-2024-07-08 17:07:50,213 - INFO - The best proposed solution has energy -0.68388
-2024-07-08 17:07:50,213 - INFO - Execution 2
-2024-07-08 17:07:50,213 - INFO - INTERACTIONS: 334
-2024-07-08 17:07:54,877 - INFO - Execution time for subqubo solver: 4.51s
-2024-07-08 17:07:54,877 - INFO - Ground truth solutions range from -6.61019 and 44.75716
-2024-07-08 17:07:54,877 - INFO - The best proposed solution has energy 10.28772
-2024-07-08 17:07:54,877 - INFO - Execution 3
-2024-07-08 17:07:54,878 - INFO - INTERACTIONS: 976
-2024-07-08 17:08:02,869 - INFO - Execution time for subqubo solver: 7.91s
-2024-07-08 17:08:02,869 - INFO - Ground truth solutions range from -61.58397 and 42.09128
-2024-07-08 17:08:02,870 - INFO - The best proposed solution has energy -11.67314
-2024-07-08 17:08:02,870 - INFO - Execution 4
-2024-07-08 17:08:02,870 - INFO - INTERACTIONS: 384
-2024-07-08 17:08:08,091 - INFO - Execution time for subqubo solver: 5.10s
-2024-07-08 17:08:08,091 - INFO - Ground truth solutions range from -11.2312 and 38.2591
-2024-07-08 17:08:08,091 - INFO - The best proposed solution has energy 8.76202
-2024-07-08 17:08:08,091 - INFO - Execution 5
-2024-07-08 17:08:08,092 - INFO - INTERACTIONS: 254
-2024-07-08 17:08:13,143 - INFO - Execution time for subqubo solver: 4.99s
-2024-07-08 17:08:13,143 - INFO - Ground truth solutions range from -10.88341 and 30.30713
-2024-07-08 17:08:13,144 - INFO - The best proposed solution has energy -0.95461
-2024-07-08 17:08:13,144 - INFO - CUT TEST
-2024-07-08 17:08:13,144 - INFO - TEST 32 VARS, CUT DIM 32
-2024-07-08 17:08:13,144 - INFO - VARIABLES: 32
-2024-07-08 17:08:13,144 - INFO - INTERACTIONS: 32
-2024-07-08 17:08:13,665 - INFO - Execution time for subqubo solver: 0.48s
-2024-07-08 17:08:13,665 - INFO - Ground truth solutions range from -0.71604 and 32.48507
-2024-07-08 17:08:13,665 - INFO - The best proposed solution has energy -0.71604
-2024-07-08 17:08:13,665 - INFO - INTERACTIONS: 64
-2024-07-08 17:08:14,420 - INFO - Execution time for subqubo solver: 0.70s
-2024-07-08 17:08:14,420 - INFO - Ground truth solutions range from -2.46604 and 18.61165
-2024-07-08 17:08:14,420 - INFO - The best proposed solution has energy -2.39424
-2024-07-08 17:08:14,420 - INFO - INTERACTIONS: 128
-2024-07-08 17:08:15,368 - INFO - Execution time for subqubo solver: 0.89s
-2024-07-08 17:08:15,368 - INFO - Ground truth solutions range from -4.60818 and 14.80073
-2024-07-08 17:08:15,369 - INFO - The best proposed solution has energy -4.26272
-2024-07-08 17:08:15,369 - INFO - INTERACTIONS: 256
-2024-07-08 17:08:17,006 - INFO - Execution time for subqubo solver: 1.54s
-2024-07-08 17:08:17,006 - INFO - Ground truth solutions range from -18.98392 and 13.71857
-2024-07-08 17:08:17,007 - INFO - The best proposed solution has energy -18.98392
-2024-07-08 17:08:17,007 - INFO - INTERACTIONS: 512
-2024-07-08 17:08:20,334 - INFO - Execution time for subqubo solver: 3.25s
-2024-07-08 17:08:20,334 - INFO - Ground truth solutions range from -53.75053 and 53.54478
-2024-07-08 17:08:20,335 - INFO - The best proposed solution has energy -53.75053
-2024-07-08 17:08:20,336 - INFO - INTERACTIONS: 1024
-2024-07-08 17:08:23,761 - INFO - Execution time for subqubo solver: 3.36s
-2024-07-08 17:08:23,761 - INFO - Ground truth solutions range from -116.73131 and 39.16482
-2024-07-08 17:08:23,761 - INFO - The best proposed solution has energy -116.73131
-2024-07-08 17:08:23,761 - INFO - TEST 32 VARS, CUT DIM 16
-2024-07-08 17:08:23,761 - INFO - VARIABLES: 32
-2024-07-08 17:08:23,762 - INFO - INTERACTIONS: 32
-2024-07-08 17:08:24,755 - INFO - Execution time for subqubo solver: 0.95s
-2024-07-08 17:08:24,755 - INFO - Ground truth solutions range from 0.0 and 31.24956
-2024-07-08 17:08:24,756 - INFO - The best proposed solution has energy 0.75656
-2024-07-08 17:08:24,756 - INFO - INTERACTIONS: 64
-2024-07-08 17:08:25,900 - INFO - Execution time for subqubo solver: 1.10s
-2024-07-08 17:08:25,900 - INFO - Ground truth solutions range from -1.29016 and 20.19165
-2024-07-08 17:08:25,901 - INFO - The best proposed solution has energy 1.77794
-2024-07-08 17:08:25,901 - INFO - INTERACTIONS: 128
-2024-07-08 17:08:27,536 - INFO - Execution time for subqubo solver: 1.58s
-2024-07-08 17:08:27,536 - INFO - Ground truth solutions range from -7.76893 and 17.70027
-2024-07-08 17:08:27,536 - INFO - The best proposed solution has energy -4.00434
-2024-07-08 17:08:27,536 - INFO - INTERACTIONS: 256
-2024-07-08 17:08:29,430 - INFO - Execution time for subqubo solver: 1.83s
-2024-07-08 17:08:29,430 - INFO - Ground truth solutions range from -5.7599 and 26.89144
-2024-07-08 17:08:29,431 - INFO - The best proposed solution has energy -0.31372
-2024-07-08 17:08:29,431 - INFO - INTERACTIONS: 512
-2024-07-08 17:08:32,692 - INFO - Execution time for subqubo solver: 3.19s
-2024-07-08 17:08:32,693 - INFO - Ground truth solutions range from -23.83145 and 77.18499
-2024-07-08 17:08:32,693 - INFO - The best proposed solution has energy -10.95605
-2024-07-08 17:08:32,693 - INFO - INTERACTIONS: 1024
-2024-07-08 17:08:36,170 - INFO - Execution time for subqubo solver: 3.34s
-2024-07-08 17:08:36,170 - INFO - Ground truth solutions range from -25.76565 and 78.35001
-2024-07-08 17:08:36,170 - INFO - The best proposed solution has energy 1.04385
-2024-07-08 17:08:36,170 - INFO - TEST 32 VARS, CUT DIM 8
-2024-07-08 17:08:36,170 - INFO - VARIABLES: 32
-2024-07-08 17:08:36,170 - INFO - INTERACTIONS: 32
-2024-07-08 17:08:39,838 - INFO - Execution time for subqubo solver: 3.58s
-2024-07-08 17:08:39,838 - INFO - Ground truth solutions range from 0.0 and 27.68513
-2024-07-08 17:08:39,838 - INFO - The best proposed solution has energy 2.86536
-2024-07-08 17:08:39,838 - INFO - INTERACTIONS: 64
-2024-07-08 17:08:42,328 - INFO - Execution time for subqubo solver: 2.44s
-2024-07-08 17:08:42,329 - INFO - Ground truth solutions range from -2.03391 and 16.91944
-2024-07-08 17:08:42,329 - INFO - The best proposed solution has energy 0.91533
-2024-07-08 17:08:42,329 - INFO - INTERACTIONS: 128
-2024-07-08 17:08:43,861 - INFO - Execution time for subqubo solver: 1.49s
-2024-07-08 17:08:43,861 - INFO - Ground truth solutions range from -8.72135 and 18.58276
-2024-07-08 17:08:43,861 - INFO - The best proposed solution has energy 2.80208
-2024-07-08 17:08:43,861 - INFO - INTERACTIONS: 256
-2024-07-08 17:08:45,841 - INFO - Execution time for subqubo solver: 1.93s
-2024-07-08 17:08:45,841 - INFO - Ground truth solutions range from -26.66064 and 25.14104
-2024-07-08 17:08:45,841 - INFO - The best proposed solution has energy -1.38509
-2024-07-08 17:08:45,841 - INFO - INTERACTIONS: 512
-2024-07-08 17:08:48,400 - INFO - Execution time for subqubo solver: 2.49s
-2024-07-08 17:08:48,400 - INFO - Ground truth solutions range from -29.19179 and 63.32823
-2024-07-08 17:08:48,401 - INFO - The best proposed solution has energy -1.54293
-2024-07-08 17:08:48,401 - INFO - INTERACTIONS: 1024
-2024-07-08 17:08:50,649 - INFO - Execution time for subqubo solver: 2.17s
-2024-07-08 17:08:50,649 - INFO - Ground truth solutions range from -72.85709 and 85.00967
-2024-07-08 17:08:50,649 - INFO - The best proposed solution has energy 12.3298
-2024-07-08 17:08:50,649 - INFO - TEST 32 VARS, CUT DIM 4
-2024-07-08 17:08:50,649 - INFO - VARIABLES: 32
-2024-07-08 17:08:50,649 - INFO - INTERACTIONS: 32
-2024-07-08 17:08:55,471 - INFO - Execution time for subqubo solver: 4.78s
-2024-07-08 17:08:55,471 - INFO - Ground truth solutions range from -0.35827 and 32.8666
-2024-07-08 17:08:55,472 - INFO - The best proposed solution has energy 3.60243
-2024-07-08 17:08:55,472 - INFO - INTERACTIONS: 64
-2024-07-08 17:08:59,742 - INFO - Execution time for subqubo solver: 4.22s
-2024-07-08 17:08:59,742 - INFO - Ground truth solutions range from -1.5596 and 30.14769
-2024-07-08 17:08:59,743 - INFO - The best proposed solution has energy 3.91695
-2024-07-08 17:08:59,743 - INFO - INTERACTIONS: 128
-2024-07-08 17:09:04,466 - INFO - Execution time for subqubo solver: 4.67s
-2024-07-08 17:09:04,466 - INFO - Ground truth solutions range from -6.06243 and 22.57945
-2024-07-08 17:09:04,466 - INFO - The best proposed solution has energy 2.8008
-2024-07-08 17:09:04,467 - INFO - INTERACTIONS: 256
-2024-07-08 17:09:07,782 - INFO - Execution time for subqubo solver: 3.24s
-2024-07-08 17:09:07,783 - INFO - Ground truth solutions range from -17.22214 and 23.00192
-2024-07-08 17:09:07,783 - INFO - The best proposed solution has energy -4.87047
-2024-07-08 17:09:07,783 - INFO - INTERACTIONS: 512
-2024-07-08 17:09:11,186 - INFO - Execution time for subqubo solver: 3.28s
-2024-07-08 17:09:11,186 - INFO - Ground truth solutions range from -37.61845 and 54.48837
-2024-07-08 17:09:11,186 - INFO - The best proposed solution has energy 20.8772
-2024-07-08 17:09:11,186 - INFO - INTERACTIONS: 1024
-2024-07-08 17:09:14,765 - INFO - Execution time for subqubo solver: 3.43s
-2024-07-08 17:09:14,765 - INFO - Ground truth solutions range from -18.83338 and 71.85046
-2024-07-08 17:09:14,765 - INFO - The best proposed solution has energy 1.64361
-2024-07-08 17:09:14,765 - INFO - TEST 32 VARS, CUT DIM 2
-2024-07-08 17:09:14,765 - INFO - VARIABLES: 32
-2024-07-08 17:09:14,765 - INFO - INTERACTIONS: 32
-2024-07-08 17:09:21,201 - INFO - Execution time for subqubo solver: 6.39s
-2024-07-08 17:09:21,203 - INFO - Ground truth solutions range from -0.17984 and 31.185
-2024-07-08 17:09:21,204 - INFO - The best proposed solution has energy 2.4197
-2024-07-08 17:09:21,204 - INFO - INTERACTIONS: 64
-2024-07-08 17:09:27,725 - INFO - Execution time for subqubo solver: 6.47s
-2024-07-08 17:09:27,726 - INFO - Ground truth solutions range from -1.78044 and 20.60126
-2024-07-08 17:09:27,727 - INFO - The best proposed solution has energy 6.79252
-2024-07-08 17:09:27,727 - INFO - INTERACTIONS: 128
-2024-07-08 17:09:32,557 - INFO - Execution time for subqubo solver: 4.77s
-2024-07-08 17:09:32,558 - INFO - Ground truth solutions range from -8.16781 and 21.55693
-2024-07-08 17:09:32,558 - INFO - The best proposed solution has energy 2.09269
-2024-07-08 17:09:32,558 - INFO - INTERACTIONS: 256
-2024-07-08 17:09:38,083 - INFO - Execution time for subqubo solver: 5.47s
-2024-07-08 17:09:38,083 - INFO - Ground truth solutions range from -13.602 and 23.70134
-2024-07-08 17:09:38,083 - INFO - The best proposed solution has energy -1.13205
-2024-07-08 17:09:38,083 - INFO - INTERACTIONS: 512
-2024-07-08 17:09:44,380 - INFO - Execution time for subqubo solver: 6.23s
-2024-07-08 17:09:44,380 - INFO - Ground truth solutions range from -34.45947 and 58.88444
-2024-07-08 17:09:44,380 - INFO - The best proposed solution has energy 12.45097
-2024-07-08 17:09:44,380 - INFO - INTERACTIONS: 1024
-2024-07-08 17:09:49,557 - INFO - Execution time for subqubo solver: 5.09s
-2024-07-08 17:09:49,558 - INFO - Ground truth solutions range from -42.34458 and 69.50629
-2024-07-08 17:09:49,558 - INFO - The best proposed solution has energy 2.21596
+2024-07-09 08:40:13,205 - INFO - SCALE TEST
+2024-07-09 08:40:13,205 - INFO - TEST MAX_CUT
+2024-07-09 08:40:13,205 - INFO - VARIABLES: 8
+2024-07-09 08:40:13,206 - INFO - Execution 1
+2024-07-09 08:40:13,788 - INFO - Execution time for subqubo solver: 0.37s
+2024-07-09 08:40:13,788 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.8
+2024-07-09 08:40:13,789 - INFO - Execution 2
+2024-07-09 08:40:14,363 - INFO - Execution time for subqubo solver: 0.39s
+2024-07-09 08:40:14,363 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.8
+2024-07-09 08:40:14,364 - INFO - Execution 3
+2024-07-09 08:40:14,827 - INFO - Execution time for subqubo solver: 0.35s
+2024-07-09 08:40:14,828 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.8
+2024-07-09 08:40:14,828 - INFO - Execution 4
+2024-07-09 08:40:15,273 - INFO - Execution time for subqubo solver: 0.35s
+2024-07-09 08:40:15,273 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.8
+2024-07-09 08:40:15,274 - INFO - Execution 5
+2024-07-09 08:40:15,747 - INFO - Execution time for subqubo solver: 0.35s
+2024-07-09 08:40:15,748 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.8
+2024-07-09 08:40:15,748 - INFO - TEST 8 VARS, CUT DIM 8
+2024-07-09 08:40:15,748 - INFO - VARIABLES: 8
+2024-07-09 08:40:15,748 - INFO - Execution 1
+2024-07-09 08:40:15,748 - INFO - INTERACTIONS: 14
+2024-07-09 08:40:15,909 - INFO - Execution time for subqubo solver: 0.15s
+2024-07-09 08:40:15,909 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:15,909 - INFO - Execution 2
+2024-07-09 08:40:15,909 - INFO - INTERACTIONS: 33
+2024-07-09 08:40:16,159 - INFO - Execution time for subqubo solver: 0.24s
+2024-07-09 08:40:16,159 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:16,159 - INFO - Execution 3
+2024-07-09 08:40:16,159 - INFO - INTERACTIONS: 44
+2024-07-09 08:40:16,410 - INFO - Execution time for subqubo solver: 0.24s
+2024-07-09 08:40:16,411 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:16,411 - INFO - Execution 4
+2024-07-09 08:40:16,411 - INFO - INTERACTIONS: 53
+2024-07-09 08:40:16,688 - INFO - Execution time for subqubo solver: 0.27s
+2024-07-09 08:40:16,688 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:16,688 - INFO - Execution 5
+2024-07-09 08:40:16,688 - INFO - INTERACTIONS: 20
+2024-07-09 08:40:16,884 - INFO - Execution time for subqubo solver: 0.19s
+2024-07-09 08:40:16,884 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.01311
+2024-07-09 08:40:16,884 - INFO - TEST 8 VARS, CUT DIM 4
+2024-07-09 08:40:16,884 - INFO - VARIABLES: 8
+2024-07-09 08:40:16,884 - INFO - Execution 1
+2024-07-09 08:40:16,884 - INFO - INTERACTIONS: 54
+2024-07-09 08:40:17,218 - INFO - Execution time for subqubo solver: 0.32s
+2024-07-09 08:40:17,219 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.00237
+2024-07-09 08:40:17,219 - INFO - Execution 2
+2024-07-09 08:40:17,219 - INFO - INTERACTIONS: 14
+2024-07-09 08:40:17,454 - INFO - Execution time for subqubo solver: 0.22s
+2024-07-09 08:40:17,454 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.18261
+2024-07-09 08:40:17,454 - INFO - Execution 3
+2024-07-09 08:40:17,454 - INFO - INTERACTIONS: 21
+2024-07-09 08:40:17,684 - INFO - Execution time for subqubo solver: 0.22s
+2024-07-09 08:40:17,685 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.01789
+2024-07-09 08:40:17,685 - INFO - Execution 4
+2024-07-09 08:40:17,685 - INFO - INTERACTIONS: 45
+2024-07-09 08:40:18,019 - INFO - Execution time for subqubo solver: 0.32s
+2024-07-09 08:40:18,020 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.17999
+2024-07-09 08:40:18,020 - INFO - Execution 5
+2024-07-09 08:40:18,020 - INFO - INTERACTIONS: 31
+2024-07-09 08:40:18,298 - INFO - Execution time for subqubo solver: 0.27s
+2024-07-09 08:40:18,299 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.42023
+2024-07-09 08:40:18,299 - INFO - TEST 8 VARS, CUT DIM 2
+2024-07-09 08:40:18,299 - INFO - VARIABLES: 8
+2024-07-09 08:40:18,299 - INFO - Execution 1
+2024-07-09 08:40:18,299 - INFO - INTERACTIONS: 60
+2024-07-09 08:40:18,562 - INFO - Execution time for subqubo solver: 0.25s
+2024-07-09 08:40:18,563 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.12017
+2024-07-09 08:40:18,563 - INFO - Execution 2
+2024-07-09 08:40:18,563 - INFO - INTERACTIONS: 21
+2024-07-09 08:40:18,822 - INFO - Execution time for subqubo solver: 0.25s
+2024-07-09 08:40:18,822 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.12867
+2024-07-09 08:40:18,822 - INFO - Execution 3
+2024-07-09 08:40:18,822 - INFO - INTERACTIONS: 30
+2024-07-09 08:40:19,154 - INFO - Execution time for subqubo solver: 0.32s
+2024-07-09 08:40:19,155 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.21458
+2024-07-09 08:40:19,155 - INFO - Execution 4
+2024-07-09 08:40:19,155 - INFO - INTERACTIONS: 10
+2024-07-09 08:40:19,416 - INFO - Execution time for subqubo solver: 0.25s
+2024-07-09 08:40:19,416 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0366
+2024-07-09 08:40:19,416 - INFO - Execution 5
+2024-07-09 08:40:19,416 - INFO - INTERACTIONS: 11
+2024-07-09 08:40:19,682 - INFO - Execution time for subqubo solver: 0.26s
+2024-07-09 08:40:19,682 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.16581
+2024-07-09 08:40:19,682 - INFO - TEST 16 VARS, CUT DIM 16
+2024-07-09 08:40:19,682 - INFO - VARIABLES: 16
+2024-07-09 08:40:19,682 - INFO - Execution 1
+2024-07-09 08:40:19,682 - INFO - INTERACTIONS: 66
+2024-07-09 08:40:20,303 - INFO - Execution time for subqubo solver: 0.59s
+2024-07-09 08:40:20,303 - INFO - The best proposed solution (normalized in [0-1]) has energy 0
+2024-07-09 08:40:20,303 - INFO - Execution 2
+2024-07-09 08:40:20,303 - INFO - INTERACTIONS: 147
+2024-07-09 08:40:21,150 - INFO - Execution time for subqubo solver: 0.83s
+2024-07-09 08:40:21,151 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:21,151 - INFO - Execution 3
+2024-07-09 08:40:21,151 - INFO - INTERACTIONS: 83
+2024-07-09 08:40:21,828 - INFO - Execution time for subqubo solver: 0.65s
+2024-07-09 08:40:21,828 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:21,828 - INFO - Execution 4
+2024-07-09 08:40:21,828 - INFO - INTERACTIONS: 65
+2024-07-09 08:40:22,299 - INFO - Execution time for subqubo solver: 0.45s
+2024-07-09 08:40:22,300 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0021
+2024-07-09 08:40:22,300 - INFO - Execution 5
+2024-07-09 08:40:22,300 - INFO - INTERACTIONS: 246
+2024-07-09 08:40:23,101 - INFO - Execution time for subqubo solver: 0.78s
+2024-07-09 08:40:23,101 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:23,101 - INFO - TEST 16 VARS, CUT DIM 8
+2024-07-09 08:40:23,102 - INFO - VARIABLES: 16
+2024-07-09 08:40:23,102 - INFO - Execution 1
+2024-07-09 08:40:23,102 - INFO - INTERACTIONS: 237
+2024-07-09 08:40:24,011 - INFO - Execution time for subqubo solver: 0.89s
+2024-07-09 08:40:24,011 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.21988
+2024-07-09 08:40:24,011 - INFO - Execution 2
+2024-07-09 08:40:24,011 - INFO - INTERACTIONS: 194
+2024-07-09 08:40:25,160 - INFO - Execution time for subqubo solver: 1.12s
+2024-07-09 08:40:25,160 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.23084
+2024-07-09 08:40:25,160 - INFO - Execution 3
+2024-07-09 08:40:25,160 - INFO - INTERACTIONS: 158
+2024-07-09 08:40:26,001 - INFO - Execution time for subqubo solver: 0.82s
+2024-07-09 08:40:26,002 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.26671
+2024-07-09 08:40:26,002 - INFO - Execution 4
+2024-07-09 08:40:26,002 - INFO - INTERACTIONS: 242
+2024-07-09 08:40:27,084 - INFO - Execution time for subqubo solver: 1.06s
+2024-07-09 08:40:27,085 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.10591
+2024-07-09 08:40:27,085 - INFO - Execution 5
+2024-07-09 08:40:27,085 - INFO - INTERACTIONS: 251
+2024-07-09 08:40:28,007 - INFO - Execution time for subqubo solver: 0.90s
+2024-07-09 08:40:28,008 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25064
+2024-07-09 08:40:28,008 - INFO - TEST 16 VARS, CUT DIM 4
+2024-07-09 08:40:28,008 - INFO - VARIABLES: 16
+2024-07-09 08:40:28,008 - INFO - Execution 1
+2024-07-09 08:40:28,008 - INFO - INTERACTIONS: 127
+2024-07-09 08:40:28,885 - INFO - Execution time for subqubo solver: 0.85s
+2024-07-09 08:40:28,885 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.18571
+2024-07-09 08:40:28,885 - INFO - Execution 2
+2024-07-09 08:40:28,885 - INFO - INTERACTIONS: 174
+2024-07-09 08:40:29,766 - INFO - Execution time for subqubo solver: 0.86s
+2024-07-09 08:40:29,767 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.13912
+2024-07-09 08:40:29,767 - INFO - Execution 3
+2024-07-09 08:40:29,767 - INFO - INTERACTIONS: 172
+2024-07-09 08:40:30,526 - INFO - Execution time for subqubo solver: 0.73s
+2024-07-09 08:40:30,526 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.29009
+2024-07-09 08:40:30,526 - INFO - Execution 4
+2024-07-09 08:40:30,527 - INFO - INTERACTIONS: 219
+2024-07-09 08:40:31,313 - INFO - Execution time for subqubo solver: 0.76s
+2024-07-09 08:40:31,313 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38496
+2024-07-09 08:40:31,313 - INFO - Execution 5
+2024-07-09 08:40:31,313 - INFO - INTERACTIONS: 124
+2024-07-09 08:40:32,098 - INFO - Execution time for subqubo solver: 0.76s
+2024-07-09 08:40:32,098 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.30209
+2024-07-09 08:40:32,098 - INFO - TEST 16 VARS, CUT DIM 2
+2024-07-09 08:40:32,098 - INFO - VARIABLES: 16
+2024-07-09 08:40:32,098 - INFO - Execution 1
+2024-07-09 08:40:32,098 - INFO - INTERACTIONS: 182
+2024-07-09 08:40:33,236 - INFO - Execution time for subqubo solver: 1.12s
+2024-07-09 08:40:33,237 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.36377
+2024-07-09 08:40:33,237 - INFO - Execution 2
+2024-07-09 08:40:33,237 - INFO - INTERACTIONS: 193
+2024-07-09 08:40:34,665 - INFO - Execution time for subqubo solver: 1.41s
+2024-07-09 08:40:34,665 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.22344
+2024-07-09 08:40:34,665 - INFO - Execution 3
+2024-07-09 08:40:34,665 - INFO - INTERACTIONS: 203
+2024-07-09 08:40:35,828 - INFO - Execution time for subqubo solver: 1.14s
+2024-07-09 08:40:35,828 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.6584
+2024-07-09 08:40:35,828 - INFO - Execution 4
+2024-07-09 08:40:35,828 - INFO - INTERACTIONS: 203
+2024-07-09 08:40:37,859 - INFO - Execution time for subqubo solver: 2.00s
+2024-07-09 08:40:37,859 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.5493
+2024-07-09 08:40:37,859 - INFO - Execution 5
+2024-07-09 08:40:37,859 - INFO - INTERACTIONS: 234
+2024-07-09 08:40:39,182 - INFO - Execution time for subqubo solver: 1.30s
+2024-07-09 08:40:39,182 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.33876
+2024-07-09 08:40:39,182 - INFO - TEST 32 VARS, CUT DIM 32
+2024-07-09 08:40:39,182 - INFO - VARIABLES: 32
+2024-07-09 08:40:39,182 - INFO - Execution 1
+2024-07-09 08:40:39,182 - INFO - INTERACTIONS: 997
+2024-07-09 08:40:42,391 - INFO - Execution time for subqubo solver: 3.00s
+2024-07-09 08:40:42,392 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:42,392 - INFO - Execution 2
+2024-07-09 08:40:42,392 - INFO - INTERACTIONS: 587
+2024-07-09 08:40:45,941 - INFO - Execution time for subqubo solver: 3.46s
+2024-07-09 08:40:45,941 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:45,941 - INFO - Execution 3
+2024-07-09 08:40:45,941 - INFO - INTERACTIONS: 963
+2024-07-09 08:40:49,295 - INFO - Execution time for subqubo solver: 3.26s
+2024-07-09 08:40:49,296 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:49,296 - INFO - Execution 4
+2024-07-09 08:40:49,296 - INFO - INTERACTIONS: 39
+2024-07-09 08:40:49,840 - INFO - Execution time for subqubo solver: 0.50s
+2024-07-09 08:40:49,841 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:49,841 - INFO - Execution 5
+2024-07-09 08:40:49,841 - INFO - INTERACTIONS: 670
+2024-07-09 08:40:53,368 - INFO - Execution time for subqubo solver: 3.44s
+2024-07-09 08:40:53,368 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:40:53,368 - INFO - TEST 32 VARS, CUT DIM 16
+2024-07-09 08:40:53,368 - INFO - VARIABLES: 32
+2024-07-09 08:40:53,368 - INFO - Execution 1
+2024-07-09 08:40:53,368 - INFO - INTERACTIONS: 818
+2024-07-09 08:40:56,595 - INFO - Execution time for subqubo solver: 3.17s
+2024-07-09 08:40:56,595 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.18112
+2024-07-09 08:40:56,595 - INFO - Execution 2
+2024-07-09 08:40:56,595 - INFO - INTERACTIONS: 40
+2024-07-09 08:40:57,576 - INFO - Execution time for subqubo solver: 0.94s
+2024-07-09 08:40:57,576 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.05448
+2024-07-09 08:40:57,576 - INFO - Execution 3
+2024-07-09 08:40:57,576 - INFO - INTERACTIONS: 849
+2024-07-09 08:41:01,199 - INFO - Execution time for subqubo solver: 3.51s
+2024-07-09 08:41:01,199 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.31122
+2024-07-09 08:41:01,199 - INFO - Execution 4
+2024-07-09 08:41:01,199 - INFO - INTERACTIONS: 642
+2024-07-09 08:41:05,289 - INFO - Execution time for subqubo solver: 4.01s
+2024-07-09 08:41:05,290 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.13384
+2024-07-09 08:41:05,290 - INFO - Execution 5
+2024-07-09 08:41:05,290 - INFO - INTERACTIONS: 123
+2024-07-09 08:41:06,745 - INFO - Execution time for subqubo solver: 1.37s
+2024-07-09 08:41:06,746 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.35155
+2024-07-09 08:41:06,746 - INFO - TEST 32 VARS, CUT DIM 8
+2024-07-09 08:41:06,746 - INFO - VARIABLES: 32
+2024-07-09 08:41:06,746 - INFO - Execution 1
+2024-07-09 08:41:06,746 - INFO - INTERACTIONS: 332
+2024-07-09 08:41:09,313 - INFO - Execution time for subqubo solver: 2.51s
+2024-07-09 08:41:09,313 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.30451
+2024-07-09 08:41:09,313 - INFO - Execution 2
+2024-07-09 08:41:09,313 - INFO - INTERACTIONS: 348
+2024-07-09 08:41:11,743 - INFO - Execution time for subqubo solver: 2.36s
+2024-07-09 08:41:11,743 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.20115
+2024-07-09 08:41:11,743 - INFO - Execution 3
+2024-07-09 08:41:11,743 - INFO - INTERACTIONS: 409
+2024-07-09 08:41:14,344 - INFO - Execution time for subqubo solver: 2.52s
+2024-07-09 08:41:14,345 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.5381
+2024-07-09 08:41:14,345 - INFO - Execution 4
+2024-07-09 08:41:14,345 - INFO - INTERACTIONS: 948
+2024-07-09 08:41:17,098 - INFO - Execution time for subqubo solver: 2.67s
+2024-07-09 08:41:17,098 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.66665
+2024-07-09 08:41:17,098 - INFO - Execution 5
+2024-07-09 08:41:17,098 - INFO - INTERACTIONS: 524
+2024-07-09 08:41:19,528 - INFO - Execution time for subqubo solver: 2.37s
+2024-07-09 08:41:19,529 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.33604
+2024-07-09 08:41:19,529 - INFO - TEST 32 VARS, CUT DIM 4
+2024-07-09 08:41:19,529 - INFO - VARIABLES: 32
+2024-07-09 08:41:19,529 - INFO - Execution 1
+2024-07-09 08:41:19,529 - INFO - INTERACTIONS: 95
+2024-07-09 08:41:25,152 - INFO - Execution time for subqubo solver: 5.58s
+2024-07-09 08:41:25,152 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.26816
+2024-07-09 08:41:25,152 - INFO - Execution 2
+2024-07-09 08:41:25,152 - INFO - INTERACTIONS: 404
+2024-07-09 08:41:28,515 - INFO - Execution time for subqubo solver: 3.24s
+2024-07-09 08:41:28,515 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.4682
+2024-07-09 08:41:28,515 - INFO - Execution 3
+2024-07-09 08:41:28,515 - INFO - INTERACTIONS: 202
+2024-07-09 08:41:31,526 - INFO - Execution time for subqubo solver: 2.96s
+2024-07-09 08:41:31,526 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.20813
+2024-07-09 08:41:31,526 - INFO - Execution 4
+2024-07-09 08:41:31,526 - INFO - INTERACTIONS: 50
+2024-07-09 08:41:36,046 - INFO - Execution time for subqubo solver: 4.44s
+2024-07-09 08:41:36,046 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.08822
+2024-07-09 08:41:36,046 - INFO - Execution 5
+2024-07-09 08:41:36,046 - INFO - INTERACTIONS: 609
+2024-07-09 08:41:40,049 - INFO - Execution time for subqubo solver: 3.90s
+2024-07-09 08:41:40,049 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.30658
+2024-07-09 08:41:40,049 - INFO - TEST 32 VARS, CUT DIM 2
+2024-07-09 08:41:40,049 - INFO - VARIABLES: 32
+2024-07-09 08:41:40,049 - INFO - Execution 1
+2024-07-09 08:41:40,049 - INFO - INTERACTIONS: 422
+2024-07-09 08:41:44,924 - INFO - Execution time for subqubo solver: 4.78s
+2024-07-09 08:41:44,925 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.29373
+2024-07-09 08:41:44,925 - INFO - Execution 2
+2024-07-09 08:41:44,925 - INFO - INTERACTIONS: 133
+2024-07-09 08:41:49,474 - INFO - Execution time for subqubo solver: 4.50s
+2024-07-09 08:41:49,474 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.35089
+2024-07-09 08:41:49,474 - INFO - Execution 3
+2024-07-09 08:41:49,475 - INFO - INTERACTIONS: 886
+2024-07-09 08:41:54,076 - INFO - Execution time for subqubo solver: 4.54s
+2024-07-09 08:41:54,076 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.37858
+2024-07-09 08:41:54,076 - INFO - Execution 4
+2024-07-09 08:41:54,076 - INFO - INTERACTIONS: 871
+2024-07-09 08:41:59,050 - INFO - Execution time for subqubo solver: 4.89s
+2024-07-09 08:41:59,050 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38722
+2024-07-09 08:41:59,050 - INFO - Execution 5
+2024-07-09 08:41:59,050 - INFO - INTERACTIONS: 1021
+2024-07-09 08:42:05,075 - INFO - Execution time for subqubo solver: 5.85s
+2024-07-09 08:42:05,075 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25565
+2024-07-09 08:42:05,075 - INFO - TEST 64 VARS, CUT DIM 64
+2024-07-09 08:42:05,075 - INFO - VARIABLES: 64
+2024-07-09 08:42:05,075 - INFO - Execution 1
+2024-07-09 08:42:05,075 - INFO - INTERACTIONS: 843
+2024-07-09 08:42:10,774 - INFO - Execution time for subqubo solver: 5.33s
+2024-07-09 08:42:10,774 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:42:10,775 - INFO - Execution 2
+2024-07-09 08:42:10,775 - INFO - INTERACTIONS: 3215
+2024-07-09 08:42:23,231 - INFO - Execution time for subqubo solver: 12.19s
+2024-07-09 08:42:23,232 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:42:23,232 - INFO - Execution 3
+2024-07-09 08:42:23,232 - INFO - INTERACTIONS: 3586
+2024-07-09 08:42:35,550 - INFO - Execution time for subqubo solver: 11.92s
+2024-07-09 08:42:35,550 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:42:35,550 - INFO - Execution 4
+2024-07-09 08:42:35,550 - INFO - INTERACTIONS: 703
+2024-07-09 08:42:40,508 - INFO - Execution time for subqubo solver: 4.58s
+2024-07-09 08:42:40,508 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:42:40,508 - INFO - Execution 5
+2024-07-09 08:42:40,508 - INFO - INTERACTIONS: 450
+2024-07-09 08:42:44,166 - INFO - Execution time for subqubo solver: 3.38s
+2024-07-09 08:42:44,166 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:42:44,166 - INFO - TEST 64 VARS, CUT DIM 32
+2024-07-09 08:42:44,166 - INFO - VARIABLES: 64
+2024-07-09 08:42:44,166 - INFO - Execution 1
+2024-07-09 08:42:44,166 - INFO - INTERACTIONS: 3731
+2024-07-09 08:42:58,939 - INFO - Execution time for subqubo solver: 14.40s
+2024-07-09 08:42:58,939 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.05908
+2024-07-09 08:42:58,939 - INFO - Execution 2
+2024-07-09 08:42:58,939 - INFO - INTERACTIONS: 387
+2024-07-09 08:43:02,562 - INFO - Execution time for subqubo solver: 3.43s
+2024-07-09 08:43:02,562 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38656
+2024-07-09 08:43:02,562 - INFO - Execution 3
+2024-07-09 08:43:02,562 - INFO - INTERACTIONS: 111
+2024-07-09 08:43:04,921 - INFO - Execution time for subqubo solver: 2.21s
+2024-07-09 08:43:04,922 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.07334
+2024-07-09 08:43:04,922 - INFO - Execution 4
+2024-07-09 08:43:04,922 - INFO - INTERACTIONS: 3917
+2024-07-09 08:43:19,565 - INFO - Execution time for subqubo solver: 14.30s
+2024-07-09 08:43:19,566 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.18443
+2024-07-09 08:43:19,566 - INFO - Execution 5
+2024-07-09 08:43:19,566 - INFO - INTERACTIONS: 4035
+2024-07-09 08:43:34,607 - INFO - Execution time for subqubo solver: 14.66s
+2024-07-09 08:43:34,607 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.32544
+2024-07-09 08:43:34,607 - INFO - TEST 64 VARS, CUT DIM 16
+2024-07-09 08:43:34,607 - INFO - VARIABLES: 64
+2024-07-09 08:43:34,607 - INFO - Execution 1
+2024-07-09 08:43:34,607 - INFO - INTERACTIONS: 2210
+2024-07-09 08:43:44,178 - INFO - Execution time for subqubo solver: 9.24s
+2024-07-09 08:43:44,178 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.43187
+2024-07-09 08:43:44,178 - INFO - Execution 2
+2024-07-09 08:43:44,178 - INFO - INTERACTIONS: 1851
+2024-07-09 08:43:53,184 - INFO - Execution time for subqubo solver: 8.66s
+2024-07-09 08:43:53,184 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.41313
+2024-07-09 08:43:53,184 - INFO - Execution 3
+2024-07-09 08:43:53,184 - INFO - INTERACTIONS: 2320
+2024-07-09 08:44:01,380 - INFO - Execution time for subqubo solver: 7.92s
+2024-07-09 08:44:01,380 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.36325
+2024-07-09 08:44:01,380 - INFO - Execution 4
+2024-07-09 08:44:01,380 - INFO - INTERACTIONS: 3034
+2024-07-09 08:44:10,408 - INFO - Execution time for subqubo solver: 8.64s
+2024-07-09 08:44:10,408 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.30262
+2024-07-09 08:44:10,408 - INFO - Execution 5
+2024-07-09 08:44:10,408 - INFO - INTERACTIONS: 3117
+2024-07-09 08:44:18,705 - INFO - Execution time for subqubo solver: 8.02s
+2024-07-09 08:44:18,705 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.3431
+2024-07-09 08:44:18,705 - INFO - TEST 64 VARS, CUT DIM 8
+2024-07-09 08:44:18,705 - INFO - VARIABLES: 64
+2024-07-09 08:44:18,705 - INFO - Execution 1
+2024-07-09 08:44:18,705 - INFO - INTERACTIONS: 2854
+2024-07-09 08:44:30,489 - INFO - Execution time for subqubo solver: 11.42s
+2024-07-09 08:44:30,490 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.42527
+2024-07-09 08:44:30,490 - INFO - Execution 2
+2024-07-09 08:44:30,490 - INFO - INTERACTIONS: 1456
+2024-07-09 08:44:41,581 - INFO - Execution time for subqubo solver: 10.72s
+2024-07-09 08:44:41,582 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.47275
+2024-07-09 08:44:41,582 - INFO - Execution 3
+2024-07-09 08:44:41,582 - INFO - INTERACTIONS: 2056
+2024-07-09 08:44:53,239 - INFO - Execution time for subqubo solver: 11.09s
+2024-07-09 08:44:53,239 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.4213
+2024-07-09 08:44:53,239 - INFO - Execution 4
+2024-07-09 08:44:53,239 - INFO - INTERACTIONS: 1127
+2024-07-09 08:45:08,799 - INFO - Execution time for subqubo solver: 15.18s
+2024-07-09 08:45:08,799 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.43208
+2024-07-09 08:45:08,799 - INFO - Execution 5
+2024-07-09 08:45:08,799 - INFO - INTERACTIONS: 3719
+2024-07-09 08:45:20,698 - INFO - Execution time for subqubo solver: 11.37s
+2024-07-09 08:45:20,699 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25957
+2024-07-09 08:45:20,699 - INFO - TEST 64 VARS, CUT DIM 4
+2024-07-09 08:45:20,699 - INFO - VARIABLES: 64
+2024-07-09 08:45:20,699 - INFO - Execution 1
+2024-07-09 08:45:20,699 - INFO - INTERACTIONS: 222
+2024-07-09 08:45:34,786 - INFO - Execution time for subqubo solver: 13.93s
+2024-07-09 08:45:34,786 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.19357
+2024-07-09 08:45:34,786 - INFO - Execution 2
+2024-07-09 08:45:34,786 - INFO - INTERACTIONS: 2029
+2024-07-09 08:45:54,194 - INFO - Execution time for subqubo solver: 18.73s
+2024-07-09 08:45:54,195 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.37644
+2024-07-09 08:45:54,195 - INFO - Execution 3
+2024-07-09 08:45:54,195 - INFO - INTERACTIONS: 2652
+2024-07-09 08:46:07,127 - INFO - Execution time for subqubo solver: 12.57s
+2024-07-09 08:46:07,127 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.37198
+2024-07-09 08:46:07,127 - INFO - Execution 4
+2024-07-09 08:46:07,127 - INFO - INTERACTIONS: 1915
+2024-07-09 08:46:30,611 - INFO - Execution time for subqubo solver: 23.04s
+2024-07-09 08:46:30,611 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.26364
+2024-07-09 08:46:30,611 - INFO - Execution 5
+2024-07-09 08:46:30,611 - INFO - INTERACTIONS: 2485
+2024-07-09 08:46:50,385 - INFO - Execution time for subqubo solver: 19.53s
+2024-07-09 08:46:50,385 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.35556
+2024-07-09 08:46:50,385 - INFO - TEST 64 VARS, CUT DIM 2
+2024-07-09 08:46:50,385 - INFO - VARIABLES: 64
+2024-07-09 08:46:50,385 - INFO - Execution 1
+2024-07-09 08:46:50,385 - INFO - INTERACTIONS: 396
+2024-07-09 08:47:09,842 - INFO - Execution time for subqubo solver: 19.23s
+2024-07-09 08:47:09,842 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.4148
+2024-07-09 08:47:09,843 - INFO - Execution 2
+2024-07-09 08:47:09,843 - INFO - INTERACTIONS: 2116
+2024-07-09 08:47:28,256 - INFO - Execution time for subqubo solver: 17.98s
+2024-07-09 08:47:28,256 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.32654
+2024-07-09 08:47:28,257 - INFO - Execution 3
+2024-07-09 08:47:28,257 - INFO - INTERACTIONS: 2335
+2024-07-09 08:47:49,498 - INFO - Execution time for subqubo solver: 20.94s
+2024-07-09 08:47:49,499 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.36015
+2024-07-09 08:47:49,499 - INFO - Execution 4
+2024-07-09 08:47:49,499 - INFO - INTERACTIONS: 2777
+2024-07-09 08:48:09,822 - INFO - Execution time for subqubo solver: 19.41s
+2024-07-09 08:48:09,822 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.53471
+2024-07-09 08:48:09,823 - INFO - Execution 5
+2024-07-09 08:48:09,823 - INFO - INTERACTIONS: 1784
+2024-07-09 08:48:28,994 - INFO - Execution time for subqubo solver: 18.47s
+2024-07-09 08:48:28,994 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.65332
+2024-07-09 08:48:28,995 - INFO - CUT TEST
+2024-07-09 08:48:28,995 - INFO - TEST 64 VARS, CUT DIM 64
+2024-07-09 08:48:28,995 - INFO - VARIABLES: 64
+2024-07-09 08:48:28,995 - INFO - INTERACTIONS: 64
+2024-07-09 08:48:30,124 - INFO - Execution time for subqubo solver: 0.94s
+2024-07-09 08:48:30,125 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:48:30,125 - INFO - INTERACTIONS: 128
+2024-07-09 08:48:31,658 - INFO - Execution time for subqubo solver: 1.38s
+2024-07-09 08:48:31,659 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.00054
+2024-07-09 08:48:31,659 - INFO - INTERACTIONS: 256
+2024-07-09 08:48:34,047 - INFO - Execution time for subqubo solver: 2.23s
+2024-07-09 08:48:34,047 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.00481
+2024-07-09 08:48:34,047 - INFO - INTERACTIONS: 512
+2024-07-09 08:48:37,868 - INFO - Execution time for subqubo solver: 3.50s
+2024-07-09 08:48:37,869 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:48:37,869 - INFO - INTERACTIONS: 1024
+2024-07-09 08:48:43,475 - INFO - Execution time for subqubo solver: 5.33s
+2024-07-09 08:48:43,475 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:48:43,475 - INFO - INTERACTIONS: 2048
+2024-07-09 08:48:57,744 - INFO - Execution time for subqubo solver: 13.87s
+2024-07-09 08:48:57,744 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:48:57,744 - INFO - INTERACTIONS: 4096
+2024-07-09 08:49:11,221 - INFO - Execution time for subqubo solver: 13.17s
+2024-07-09 08:49:11,221 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.0
+2024-07-09 08:49:11,221 - INFO - TEST 64 VARS, CUT DIM 32
+2024-07-09 08:49:11,221 - INFO - VARIABLES: 64
+2024-07-09 08:49:11,221 - INFO - INTERACTIONS: 64
+2024-07-09 08:49:13,204 - INFO - Execution time for subqubo solver: 1.79s
+2024-07-09 08:49:13,204 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.05426
+2024-07-09 08:49:13,204 - INFO - INTERACTIONS: 128
+2024-07-09 08:49:16,210 - INFO - Execution time for subqubo solver: 2.85s
+2024-07-09 08:49:16,210 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.16471
+2024-07-09 08:49:16,210 - INFO - INTERACTIONS: 256
+2024-07-09 08:49:19,997 - INFO - Execution time for subqubo solver: 3.62s
+2024-07-09 08:49:19,997 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.43494
+2024-07-09 08:49:19,997 - INFO - INTERACTIONS: 512
+2024-07-09 08:49:26,517 - INFO - Execution time for subqubo solver: 6.28s
+2024-07-09 08:49:26,517 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.19825
+2024-07-09 08:49:26,517 - INFO - INTERACTIONS: 1024
+2024-07-09 08:49:34,488 - INFO - Execution time for subqubo solver: 7.68s
+2024-07-09 08:49:34,489 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25269
+2024-07-09 08:49:34,489 - INFO - INTERACTIONS: 2048
+2024-07-09 08:49:47,303 - INFO - Execution time for subqubo solver: 12.38s
+2024-07-09 08:49:47,304 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38218
+2024-07-09 08:49:47,304 - INFO - INTERACTIONS: 4096
+2024-07-09 08:50:01,300 - INFO - Execution time for subqubo solver: 13.69s
+2024-07-09 08:50:01,300 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.27695
+2024-07-09 08:50:01,300 - INFO - TEST 64 VARS, CUT DIM 16
+2024-07-09 08:50:01,300 - INFO - VARIABLES: 64
+2024-07-09 08:50:01,300 - INFO - INTERACTIONS: 64
+2024-07-09 08:50:05,402 - INFO - Execution time for subqubo solver: 3.91s
+2024-07-09 08:50:05,402 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.07008
+2024-07-09 08:50:05,402 - INFO - INTERACTIONS: 128
+2024-07-09 08:50:17,908 - INFO - Execution time for subqubo solver: 12.35s
+2024-07-09 08:50:17,909 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.23764
+2024-07-09 08:50:17,909 - INFO - INTERACTIONS: 256
+2024-07-09 08:50:22,295 - INFO - Execution time for subqubo solver: 4.22s
+2024-07-09 08:50:22,295 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38543
+2024-07-09 08:50:22,295 - INFO - INTERACTIONS: 512
+2024-07-09 08:50:27,645 - INFO - Execution time for subqubo solver: 5.11s
+2024-07-09 08:50:27,646 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25889
+2024-07-09 08:50:27,646 - INFO - INTERACTIONS: 1024
+2024-07-09 08:50:33,613 - INFO - Execution time for subqubo solver: 5.57s
+2024-07-09 08:50:33,613 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.41796
+2024-07-09 08:50:33,613 - INFO - INTERACTIONS: 2048
+2024-07-09 08:50:42,763 - INFO - Execution time for subqubo solver: 8.82s
+2024-07-09 08:50:42,764 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.48392
+2024-07-09 08:50:42,764 - INFO - INTERACTIONS: 4096
+2024-07-09 08:50:51,900 - INFO - Execution time for subqubo solver: 8.85s
+2024-07-09 08:50:51,900 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.44088
+2024-07-09 08:50:51,900 - INFO - TEST 64 VARS, CUT DIM 8
+2024-07-09 08:50:51,900 - INFO - VARIABLES: 64
+2024-07-09 08:50:51,900 - INFO - INTERACTIONS: 64
+2024-07-09 08:51:04,649 - INFO - Execution time for subqubo solver: 12.55s
+2024-07-09 08:51:04,650 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.12296
+2024-07-09 08:51:04,650 - INFO - INTERACTIONS: 128
+2024-07-09 08:51:15,831 - INFO - Execution time for subqubo solver: 11.03s
+2024-07-09 08:51:15,832 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.21066
+2024-07-09 08:51:15,832 - INFO - INTERACTIONS: 256
+2024-07-09 08:51:25,375 - INFO - Execution time for subqubo solver: 9.34s
+2024-07-09 08:51:25,375 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.32428
+2024-07-09 08:51:25,376 - INFO - INTERACTIONS: 512
+2024-07-09 08:51:34,857 - INFO - Execution time for subqubo solver: 9.30s
+2024-07-09 08:51:34,858 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.29828
+2024-07-09 08:51:34,858 - INFO - INTERACTIONS: 1024
+2024-07-09 08:51:44,597 - INFO - Execution time for subqubo solver: 9.43s
+2024-07-09 08:51:44,597 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.62594
+2024-07-09 08:51:44,598 - INFO - INTERACTIONS: 2048
+2024-07-09 08:51:55,518 - INFO - Execution time for subqubo solver: 10.61s
+2024-07-09 08:51:55,518 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.38064
+2024-07-09 08:51:55,518 - INFO - INTERACTIONS: 4096
+2024-07-09 08:52:07,051 - INFO - Execution time for subqubo solver: 11.28s
+2024-07-09 08:52:07,051 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.39567
+2024-07-09 08:52:07,051 - INFO - TEST 64 VARS, CUT DIM 4
+2024-07-09 08:52:07,052 - INFO - VARIABLES: 64
+2024-07-09 08:52:07,052 - INFO - INTERACTIONS: 64
+2024-07-09 08:52:30,636 - INFO - Execution time for subqubo solver: 23.43s
+2024-07-09 08:52:30,636 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.09362
+2024-07-09 08:52:30,636 - INFO - INTERACTIONS: 128
+2024-07-09 08:52:43,075 - INFO - Execution time for subqubo solver: 12.28s
+2024-07-09 08:52:43,075 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.1522
+2024-07-09 08:52:43,075 - INFO - INTERACTIONS: 256
+2024-07-09 08:52:56,913 - INFO - Execution time for subqubo solver: 13.63s
+2024-07-09 08:52:56,913 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.42513
+2024-07-09 08:52:56,913 - INFO - INTERACTIONS: 512
+2024-07-09 08:53:09,906 - INFO - Execution time for subqubo solver: 12.79s
+2024-07-09 08:53:09,906 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.37779
+2024-07-09 08:53:09,906 - INFO - INTERACTIONS: 1024
+2024-07-09 08:53:24,690 - INFO - Execution time for subqubo solver: 14.34s
+2024-07-09 08:53:24,690 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.30432
+2024-07-09 08:53:24,690 - INFO - INTERACTIONS: 2048
+2024-07-09 08:53:38,936 - INFO - Execution time for subqubo solver: 13.98s
+2024-07-09 08:53:38,937 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.41841
+2024-07-09 08:53:38,937 - INFO - INTERACTIONS: 4096
+2024-07-09 08:53:53,999 - INFO - Execution time for subqubo solver: 14.73s
+2024-07-09 08:53:53,999 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.31151
+2024-07-09 08:53:53,999 - INFO - TEST 64 VARS, CUT DIM 2
+2024-07-09 08:53:53,999 - INFO - VARIABLES: 64
+2024-07-09 08:53:53,999 - INFO - INTERACTIONS: 64
+2024-07-09 08:54:18,248 - INFO - Execution time for subqubo solver: 24.10s
+2024-07-09 08:54:18,248 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.17587
+2024-07-09 08:54:18,248 - INFO - INTERACTIONS: 128
+2024-07-09 08:54:43,237 - INFO - Execution time for subqubo solver: 24.79s
+2024-07-09 08:54:43,237 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.25954
+2024-07-09 08:54:43,237 - INFO - INTERACTIONS: 256
+2024-07-09 08:55:03,309 - INFO - Execution time for subqubo solver: 19.91s
+2024-07-09 08:55:03,309 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.14416
+2024-07-09 08:55:03,309 - INFO - INTERACTIONS: 512
+2024-07-09 08:55:22,011 - INFO - Execution time for subqubo solver: 18.44s
+2024-07-09 08:55:22,011 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.34165
+2024-07-09 08:55:22,011 - INFO - INTERACTIONS: 1024
+2024-07-09 08:55:50,080 - INFO - Execution time for subqubo solver: 27.70s
+2024-07-09 08:55:50,081 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.35363
+2024-07-09 08:55:50,081 - INFO - INTERACTIONS: 2048
+2024-07-09 08:56:09,380 - INFO - Execution time for subqubo solver: 18.99s
+2024-07-09 08:56:09,380 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.32325
+2024-07-09 08:56:09,380 - INFO - INTERACTIONS: 4096
+2024-07-09 08:56:26,876 - INFO - Execution time for subqubo solver: 17.23s
+2024-07-09 08:56:26,876 - INFO - The best proposed solution (normalized in [0-1]) has energy 0.47152

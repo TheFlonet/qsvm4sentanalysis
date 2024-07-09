@@ -38,8 +38,9 @@ def measure(variables: int, cut_dim: int, qubo: QUBO) -> None:
     end = time.time()
     log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
 
-    log.info(f'Ground truth solutions range from {np.round(min_sol, 5)} and {np.round(max_sol, 5)}')
-    log.info(f'The best proposed solution has energy {min(sanitize_df(subqubos).energy)}')
+    normalized_sol = ((min(sanitize_df(subqubos).energy) - min_sol) / (max_sol - min_sol))
+
+    log.info(f'The best proposed solution (normalized in [0-1]) has energy {np.round(normalized_sol, 5)}')
 
 
 def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
@@ -70,6 +71,12 @@ def test_scale() -> None:
         {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
         {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
         {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
+        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
+        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
+        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
+        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
+        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
+        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
     ]
 
     for test_dict in test_set:
@@ -96,11 +103,12 @@ def test_scale() -> None:
 
 def test_cut_dim() -> None:
     tests = [
-        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
-        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
-        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
-        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
-        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'}
+        {'variables': 64, 'cut_dim': 64, 'name': '64 vars, cut dim 64'},
+        {'variables': 64, 'cut_dim': 32, 'name': '64 vars, cut dim 32'},
+        {'variables': 64, 'cut_dim': 16, 'name': '64 vars, cut dim 16'},
+        {'variables': 64, 'cut_dim': 8, 'name': '64 vars, cut dim 8'},
+        {'variables': 64, 'cut_dim': 4, 'name': '64 vars, cut dim 4'},
+        {'variables': 64, 'cut_dim': 2, 'name': '64 vars, cut dim 2'},
     ]
 
     for test_dict in tests:

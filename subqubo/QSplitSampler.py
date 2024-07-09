@@ -15,7 +15,7 @@ class QSplitSampler:
         self.sampler = sampler
         self.cut_dim = cut_dim
 
-    def run(self, qubo, dim):
+    def run(self, qubo: QUBO, dim: int) -> QUBO:
         if dim <= self.cut_dim:
             if len(qubo.qubo_dict) == 0:
                 all_indices = sorted(list(set(qubo.rows_idx).union(qubo.cols_idx)))
@@ -64,8 +64,8 @@ class QSplitSampler:
                 for row_idx in nans.index:
                     for col_idx in nans.index:
                         qubo_nans[(row_idx, col_idx)] = qubo.qubo_dict.get((row_idx, col_idx), 0)
-                nans_sol = (self.sampler.sample_qubo(qubo_nans, num_reads=10)
-                                        .to_pandas_dataframe().sort_values(by='energy', ascending=True).iloc[0])
+                nans_sol = self.sampler.sample_qubo(qubo_nans, num_reads=10)
+                nans_sol = nans_sol.to_pandas_dataframe().sort_values(by='energy', ascending=True).iloc[0]
                 df.loc[i, nans.index] = nans_sol.drop('energy')
                 df.loc[i, 'energy'] = nans_sol['energy']
 
