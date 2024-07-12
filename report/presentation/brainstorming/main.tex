@@ -85,7 +85,7 @@
         \begin{tabular}{c|c|c|c}
             & CPLEX & D-Wave & RoBERTa \\ \hline
             F1-Score (\%) & 76.9 & 76.1 & 94.3 \\ \hline
-            Train time (s) & 267.4 & 327.8\footnote{Only 40s are used by the solver to complete the problem} & /\footnote{The pre-trained model on TweetEval dataset was used} \\ \hline
+            Train time (s) & 101.9 & 39.2 & /\footnote{The pre-trained model on TweetEval dataset was used} \\ \hline
             Eval time (s) & 2.2 & 33.9 & 136.8
         \end{tabular}
     \end{table}
@@ -224,8 +224,6 @@
 
     \begin{center}
         More dynamic partitioning strategy into sub-problems 
-            
-        Improved solution on classical architectures
             
         Implementation of different strategies for generating sub-problems
     \end{center}
