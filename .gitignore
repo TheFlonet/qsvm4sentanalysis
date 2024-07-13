@@ -9,6 +9,7 @@ __pycache__
 *.png
 *.svg
 !report/extra/img/*.*
+!report/thesis/figures/*.*
 
 # Dev Env
 .idea
