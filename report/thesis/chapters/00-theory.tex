@@ -123,12 +123,14 @@ Instead of performing the multiplication $x_ix_j$, this multiplication can be su
 
 Kernels can thus be used in the dual formulation of SVMs to generalize classification to datasets with non-linearly separable data.
 
-\begin{align*}
-    \max_\alpha\ & -\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) + \sum_{i=1}^n
-  \alpha_i \\
+\begin{align}
+    \label{svm-obj}
+    \max_\alpha\ & -\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) + \sum_{i=1}^n\alpha_i \\ 
+    \label{svm-c1}
     \text{subject to } & 0 \leq \alpha_i \leq C \quad \forall i: 1\leq i\leq n \\
+    \label{svm-c2}
     & \sum_{i=1}^ny_i\alpha_i=0
-\end{align*}
+\end{align}
 
 \subsubsection{Inference with the Dual Solution}
 
@@ -166,13 +168,13 @@ Although gate-based architecture represents a more generic computational model, 
 
 Adiabatic quantum computing\cite{AQC} (AQC) is not aimed at creating a complete computational system. Instead, its goal is to exploit quantum phenomena to accelerate the optimization of models\cite{AQC2}. Specifically, D-Wave’s implementation of AQC follows these logical steps:
 
-\begin{enumerate}
-  \item Transform the problem into a Quadratic Unconstrained Binary Optimization (QUBO) formulation.
-	\item Convert the objective function into a minimization problem.
-	\item Generate the graph that represents the problem.
-	\item Map this graph onto the qubit graph that forms the Quantum Processing Unit (QPU).
-	\item Use quantum annealing to return the assignment that minimizes the objective function.
-\end{enumerate}
+% \begin{enumerate}
+%   \item Transform the problem into a Quadratic Unconstrained Binary Optimization (QUBO) formulation.
+%   \item Convert the objective function into a minimization problem.
+%   \item Generate the graph that represents the problem.
+%   \item Map this graph onto the qubit graph that forms the Quantum Processing Unit (QPU).
+%   \item Use quantum annealing to return the assignment that minimizes the objective function.
+% \end{enumerate}
 
 This overview is a high-level representation of the steps required to utilize quantum annealing technologies. The complexity of the procedure is not immediately apparent at this level of abstraction, necessitating a detailed analysis of each step for a comprehensive understanding.
 

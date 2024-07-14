@@ -1,3 +1,32 @@
-\chapter{Motivations for the experimental setting}
-\section{Advantages of using machine learning}
+\chapter{Motivations for the experimental setup}
+
+The thesis project began with the intention of assessing the suitability, or unsuitability, of the quantum computing paradigm applied to a plausible case study within the realm of machine learning.
+
+Among the various possibilities, sentiment analysis was chosen as the task. This decision was made because, in its traditional form, this task reduces to a binary classification. Being a preliminary step towards a potentially broader analysis that could combine natural language processing with quantum computing, it was reasonable to start with standard tasks that are well-documented and easy to verify in terms of results.
+
+\section{Advantages of using non-deep learning}
+
+Despite the dominance of deep learning models in the current landscape of computational linguistics research, using non-deep learning models provides greater flexibility for analysis. The hope in using ``simpler'' models is to understand their behaviour better, thus enabling the identification and correction of gross errors to improve performance during inference.
+
+Among the various binary classification models, SVMs are the most promising choice. Other studies have shown that SVMs are the best machine learning model for text-related tasks\cite{ML4NLP}. Furthermore, their natural formulation makes them extremely versatile regarding input data, allowing the use of the most appropriate textual embedding for the chosen context. Additionally, the equivalence between margin optimization in SVMs and certain aspects of the attention mechanism in Transformers can be demonstrated\cite{TransformerSVM}.
+
+Finally, the formulation of SVMs as a constraint satisfaction problem (CSP) allows for potential comparisons with various computational techniques, including:
+
+\begin{itemize}
+    \item Gradient descent,
+	\item Optimization on classical architecture,
+	\item Optimization on quantum architecture,
+\end{itemize}
+in addition to comparisons with the benchmark, i.e.,  state-of-the-art deep learning models.
+
 \section{Advantages of a quantum architecture}
+
+Nearly all artificial intelligence models can be expressed as a minimization problem, particularly in the most commonly used architectures where the goal is to minimize the loss function to reduce the error on the training dataset. Although these processes cannot always be naturally rewritten as CSPs, we can imagine that some parts of the optimization process can be handled based on the objective functions and constraints of the problem.
+
+SVMs lend themselves to a quantum reformulation as they are natively formulated as a constraint satisfaction problem with quadratic components\cite{QSVM}. Analyzing equations \ref{svm-obj}, \ref{svm-c1}, and \ref{svm-c2}, it can be seen that the optimization variables $\alpha$ appear as a quadratic component in the first part of the objective function and as a linear contribution in constraint \ref{svm-c2} and the second part of the objective function. Constraint \ref{svm-c1} can be temporarily ignored as it represents a restriction on the domain of $\alpha$.
+
+Although quantum machines can solve many optimisation problems, it is reasonable to expect better performance in intrinsically quadratic problems. Linear optimisation problems, while expressible, may not have enough intrinsic complexity to justify an architectural change.
+
+Having established why using SVMs on quantum machines could yield significant results, it is appropriate to hypothesize what to expect, to adequately contextualize the results that will be collected.
+
+Quantum solvers promise to tackle optimization problems more efficiently and in less time. Unfortunately, it is not possible to evaluate the impact in terms of energy efficiency of this computing procedure. The power consumption of quantum chips should be negligible\cite{QPUefficiency}, but being part of an opaque system provided by D-Wave, it is not possible to record significant information. For this reason, the subsequent analysis will focus primarily on the time required to solve the optimization problem, seeking to understand if and when using a non-classical architecture can speed up the optimization processes.
