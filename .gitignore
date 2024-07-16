@@ -10,6 +10,7 @@ __pycache__
 *.svg
 !report/extra/img/*.*
 !report/thesis/figures/*.*
+!report/extended-abstract/figures/*.*
 
 # Dev Env
 .idea
@@ -43,6 +44,8 @@ sketches
 *.toc
 *.nav
 *.snm
+*.abs
+*.xmpdata
 
 # Generated data
 data
