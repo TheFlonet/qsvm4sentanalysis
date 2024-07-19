@@ -50,7 +50,7 @@ class QSplitSampler:
 
         return qubo
 
-    def __local_search(self, df: pd.DataFrame, qubo: QUBO):
+    def __local_search(self, df: pd.DataFrame, qubo: QUBO) -> pd.DataFrame:
         for i, row in df.iterrows():
             no_energy = row.drop('energy')
 

@@ -15,7 +15,7 @@ class QUBO:
         self.qubo_matrix: np.ndarray | None = None
         self.__from_dict_to_matrix((len(rows_idx), len(cols_idx)))
 
-    def __is_upper_triangular(self):
+    def __is_upper_triangular(self) -> bool:
         rows, cols = self.qubo_matrix.shape
         if rows != cols:
             return False
@@ -25,7 +25,7 @@ class QUBO:
                     return False
         return True
 
-    def __from_dict_to_matrix(self, dims: Tuple[int, int]):
+    def __from_dict_to_matrix(self, dims: Tuple[int, int]) -> None:
         self.qubo_matrix = np.zeros(dims)
         for k, v in self.qubo_dict.items():
             self.qubo_matrix[(k[0] - 1) % dims[0], (k[1] - 1) % dims[1]] = v
@@ -33,7 +33,7 @@ class QUBO:
             self.qubo_matrix = lu(self.qubo_matrix, permute_l=True)[1]
         self.__from_matrix_to_dict()
 
-    def __from_matrix_to_dict(self):
+    def __from_matrix_to_dict(self) -> None:
         self.qubo_dict = {}
         for i in range(self.qubo_matrix.shape[0]):
             for j in range(self.qubo_matrix.shape[1]):

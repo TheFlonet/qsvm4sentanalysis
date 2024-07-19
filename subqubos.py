@@ -22,7 +22,7 @@ def sanitize_df(qubo: QUBO) -> pd.DataFrame:
 
 
 def measure(problem: Dict, interactions: int, trial: int, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
-    direct_solutions = (dimod.RandomSampler().sample_qubo(qubo.qubo_dict, num_reads=100_000)
+    direct_solutions = (dimod.SimulatedAnnealingSampler().sample_qubo(qubo.qubo_dict, num_reads=100)
                         .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
     start = time.time()
     sampler = QSplitSampler(SimulatedAnnealingSampler(), problem['cut_dim'])
