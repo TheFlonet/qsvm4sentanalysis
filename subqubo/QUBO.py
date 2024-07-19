@@ -28,8 +28,7 @@ class QUBO:
     def __from_dict_to_matrix(self, dims: Tuple[int, int]):
         self.qubo_matrix = np.zeros(dims)
         for k, v in self.qubo_dict.items():
-            row, col = k[0] - 1, k[1] - 1
-            self.qubo_matrix[row % dims[0], col % dims[1]] = v
+            self.qubo_matrix[(k[0] - 1) % dims[0], (k[1] - 1) % dims[1]] = v
         if not self.__is_upper_triangular():
             self.qubo_matrix = lu(self.qubo_matrix, permute_l=True)[1]
         self.__from_matrix_to_dict()

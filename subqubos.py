@@ -11,7 +11,14 @@ from matplotlib import pyplot as plt
 from numpy import floating, integer
 from subqubo.QSplitSampler import QSplitSampler
 from subqubo.QUBO import QUBO
-from subqubo.subqubo_utils import sanitize_df
+
+
+def sanitize_df(qubo: QUBO) -> pd.DataFrame:
+    for idx, row in qubo.solutions.iterrows():
+        x = row.drop('energy').values.astype(int)
+        qubo.solutions.at[idx, 'energy'] = x @ qubo.qubo_matrix @ x.T
+
+    return qubo.solutions
 
 
 def measure(problem: Dict, interactions: int, trial: int, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
@@ -53,8 +60,8 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 
 def test_scale() -> None:
     test_set = [{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}]
-    for variables in [8, 16, 32, 64]:
-        for cut_dim in [2, 4, 8, 16, 32, 64]:
+    for variables in [8, 16, 32, 64, 128]:
+        for cut_dim in [2, 4, 8, 16, 32, 64, 128]:
             if cut_dim <= variables:
                 test_set.append({'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'})
     res = {
@@ -84,7 +91,7 @@ def test_scale() -> None:
                                 [i for i in range(test_dict['variables'])])
                     res = measure(test_dict, num_interactions, j, qubo, res)
                     num_interactions *= 4
-    pd.DataFrame(res).to_csv("results.csv", index=False)
+    pd.DataFrame(res).to_csv("subqubo.csv", index=False)
 
 
 if __name__ == '__main__':
@@ -95,5 +102,4 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    log.info('SCALE TEST')
     test_scale()
