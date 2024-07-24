@@ -65,7 +65,7 @@ class QSplitSampler:
                 nans_sol = self.sampler.sample_qubo(qubo_nans, num_reads=10)
                 nans_sol = nans_sol.to_pandas_dataframe().sort_values(by='energy', ascending=True).iloc[0]
                 df.loc[i, nans.index] = nans_sol.drop('energy')
-                df.loc[i, 'energy'] = nans_sol['energy']
+                df.loc[i, 'energy'] += nans_sol['energy']
 
         return df
 
