@@ -26,6 +26,11 @@ def measure(problem: Dict, interactions: int, qubo: QUBO, res: Dict[str, List]) 
     direct_solutions = (dimod.SimulatedAnnealingSampler().sample_qubo(qubo.qubo_dict, num_reads=10)
                         .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
     end_time = time.time()
+
+    random_solutions = (dimod.RandomSampler()
+                        .sample_qubo(qubo.qubo_dict, num_reads=min(500_000, 2 ** problem['variables']))
+                        .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
+
     start = time.time()
     sampler = QSplitSampler(SimulatedAnnealingSampler(), problem['cut_dim'])
     subqubos = sampler.run(qubo, problem['variables'])
@@ -38,9 +43,9 @@ def measure(problem: Dict, interactions: int, qubo: QUBO, res: Dict[str, List]) 
     res['Time (s)'].append(np.round(end - start, 5))
     res['Proposed solution'].append(np.round(min(sanitize_df(subqubos).energy), 5))
     res['Direct time (s)'].append(np.round(end_time - start_time, 5))
-    res['Real sample min'].append(np.round(direct_solutions['energy'].min(), 5))
-    res['Real sample mean'].append(np.round(direct_solutions['energy'].mean(), 5))
-    res['Real sample max'].append(np.round(direct_solutions['energy'].max(), 5))
+    res['Direct sample solution'].append(np.round(direct_solutions['energy'].min(), 5))
+    res['Sol range (approx)'].append((np.round(random_solutions['energy'].min(), 5),
+                                      np.round(random_solutions['energy'].max(), 5)))
 
     return res
 
@@ -66,7 +71,7 @@ def test_scale() -> None:
     ]
     res = {
         'Name': [], 'Variables': [], 'Cut dim': [], 'Interactions': [], 'Time (s)': [], 'Proposed solution': [],
-        'Direct time (s)': [], 'Real sample min': [], 'Real sample mean': [], 'Real sample max': []
+        'Direct time (s)': [], 'Direct sample solution': [], 'Sol range (approx)': [],
     }
 
     for test_dict in test_set:

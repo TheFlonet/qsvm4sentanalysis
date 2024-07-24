@@ -1,10 +1,8 @@
 import logging
 from collections import defaultdict
-from typing import Tuple
-
+from typing import Tuple, List, Any
 import numpy as np
 import pandas as pd
-
 from subqubo.QUBO import QUBO
 
 log = logging.getLogger('subqubo')
@@ -30,25 +28,74 @@ class QSplitSampler:
                 qubo.solutions = res[res['energy'] == min(res['energy'])]
             return qubo
 
-        ul, ur, lr = self.__split_problem(qubo, dim)
-        ul = self.run(ul, dim // 2)
-        lr = self.run(lr, dim // 2)
-        return self.__aggregate_solutions(ul, lr, ur, qubo)
+        sub_problems = self.__split_problem(qubo, dim)
+        sub_problems = [self.run(q, dim // 2) for q in sub_problems]
+        return self.__aggregate_solutions(sub_problems, qubo)
 
-    def __aggregate_solutions(self, ul: QUBO, lr: QUBO, ur: QUBO, qubo: QUBO) -> QUBO:
+    def __aggregate_solutions(self, solutions: List[QUBO], qubo: QUBO) -> QUBO:
         # Aggregate upper-left qubo with lower-right
-        starting_sols = self.__combine_ul_lr(ul, lr)
+        starting_sols = self.__combine_ul_lr(solutions[0], solutions[2])
+        # Set missing columns in upper-right qubo to NaN
+        ur_qubo_filled = self.__fill_with_nan(starting_sols.columns, solutions[1].solutions)
+        # Search the closest assignments between upper-right qubo and merged solution (UL and LR qubos)
+        closest_df = self.__get_closest_assignments(starting_sols, ur_qubo_filled)
 
-        # Fill nans
-        starting_sols = self.__local_search(starting_sols, qubo)
+        # Combine
+        combined_df = pd.DataFrame([self.__combine_rows(row1, row2) for (_, row1), (_, row2) in
+                                    zip(starting_sols.iterrows(), closest_df.iterrows())],
+                                   columns=starting_sols.columns)
 
-        # Add information from upper right matrix
-        for i, row in starting_sols.iterrows():
-            first, second = np.split(row.drop('energy').values, 2)
-            starting_sols.loc[i, 'energy'] += first.T @ ur.qubo_matrix @ second
-        qubo.solutions = starting_sols.nsmallest(n=10, columns=['energy'])
+        # Conflicts resolution
+        qubo.solutions = (self.__local_search(combined_df, qubo).reset_index(drop=True)
+                          .drop_duplicates().nsmallest(n=10, columns='energy'))
 
         return qubo
+
+    @staticmethod
+    def __combine_rows(row1: pd.Series, row2: pd.Series) -> List[float | Any]:
+        combined_row = []
+        for col in row1.index:
+            val1, val2 = row1[col], row2[col]
+            if col == 'energy':
+                if (np.nan in combined_row) or (np.isnan(val1) and np.isnan(val2)):
+                    combined_row.append(np.nan)
+                elif np.isnan(val1):
+                    combined_row.append(val2)
+                elif np.isnan(val2):
+                    combined_row.append(val1)
+                else:
+                    combined_row.append(val1 + val2)
+            else:
+                if pd.isna(val2) and not pd.isna(val1):
+                    combined_row.append(val1)
+                elif pd.isna(val1) and not pd.isna(val2):
+                    combined_row.append(val2)
+                elif val1 == val2:
+                    combined_row.append(val1)
+                else:
+                    combined_row.append(np.nan)
+        return combined_row
+
+    def __get_closest_assignments(self, starting_sols: pd.DataFrame, ur_qubo_filled: pd.DataFrame) -> pd.DataFrame:
+        closest_rows = []
+        for i, row in starting_sols.iterrows():
+            distances = []
+            for j, sol_row in ur_qubo_filled.iterrows():
+                distance = self.__nan_hamming_distance(row.values, sol_row.values)
+                distances.append(distance)
+            closest_idx = np.argmin(distances)
+            to_append = ur_qubo_filled.iloc[closest_idx].copy()
+            if np.any(to_append.isna()):
+                to_append['energy'] = np.nan
+            closest_rows.append(to_append)
+        return pd.DataFrame(closest_rows).reset_index(drop=True)
+
+    @staticmethod
+    def __nan_hamming_distance(a: np.ndarray, b: np.ndarray) -> float | Any:
+        mask = ~np.isnan(a) & ~np.isnan(b)
+        if np.sum(mask) == 0:
+            return np.inf
+        return np.sum(a[mask] != b[mask]) / np.sum(mask)
 
     def __local_search(self, df: pd.DataFrame, qubo: QUBO) -> pd.DataFrame:
         for i, row in df.iterrows():
