@@ -90,7 +90,7 @@ def test_scale() -> None:
                         [i for i in range(test_dict['variables'])],
                         [i for i in range(test_dict['variables'])])
             res = measure(test_dict, test_dict['variables'] ** 2, qubo, res)
-        pd.DataFrame(res).to_csv("subqubo.csv", index=False)
+    pd.DataFrame(res).to_csv("subqubo.csv", index=False)
 
 
 if __name__ == '__main__':

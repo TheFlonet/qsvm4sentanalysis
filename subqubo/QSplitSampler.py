@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 from typing import Tuple, List, Any
+import dimod
 import numpy as np
 import pandas as pd
 from subqubo.QUBO import QUBO
@@ -9,7 +10,7 @@ log = logging.getLogger('subqubo')
 
 
 class QSplitSampler:
-    def __init__(self, sampler, cut_dim):
+    def __init__(self, sampler: dimod.SimulatedAnnealingSampler, cut_dim: int):
         self.sampler = sampler
         self.cut_dim = cut_dim
 

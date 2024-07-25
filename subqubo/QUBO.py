@@ -1,5 +1,4 @@
 from typing import Mapping, Hashable, List, Tuple
-
 import numpy as np
 import pandas as pd
 from scipy.linalg import lu
@@ -7,7 +6,8 @@ from numpy import floating, integer
 
 
 class QUBO:
-    def __init__(self, qubo_dict, cols_idx, rows_idx):
+    def __init__(self, qubo_dict: Mapping[tuple[Hashable, Hashable], float | floating | integer],
+                 cols_idx: List[int], rows_idx: List[int]):
         self.qubo_dict: Mapping[tuple[Hashable, Hashable], float | floating | integer] = qubo_dict
         self.cols_idx: List[int] = cols_idx
         self.rows_idx: List[int] = rows_idx
