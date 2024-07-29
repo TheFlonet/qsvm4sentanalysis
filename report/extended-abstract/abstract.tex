@@ -5,7 +5,6 @@
 \usepackage[inline]{enumitem}
 \usepackage{tikz}
 \usetikzlibrary{decorations.pathreplacing}
-\usepackage{setspace}
 \usepackage{caption}
 \usepackage{subcaption}
 
@@ -15,7 +14,7 @@
 \copyrightclause{Copyright for this paper by its authors. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).}
 \conference{ITADATA 2024 - BigHPC, Pisa, Italy - 17-19 September 2024}
 \title{Quantum-Classical Sentiment Analysis}
-\author[1]{Mario Bifulco}[email=mario.bifulco@edu.unito.it,url=https://github.com/TheFlonet]
+\author[1]{Mario Bifulco}[email=mario.bifulco@edu.unito.it,url=https://github.com/TheFlonet/qsvm4sentanalysis]
 \author[1]{Luca Roversi}[orcid=0000-0002-1871-6109,email=luca.roversi@unito.it,url=https://www.di.unito.it/~rover/]
 \address[1]{Università degli studi di Torino, Dipartimento di Informatica, Corso Svizzera 185 - 10149 Torino}
 
@@ -34,9 +33,9 @@
 \section{Introduction}
 In natural language processing, the two main challenges in developing new models are the difficulty in acquiring high-quality data and the extensive training times required to make models more expressive\cite{scaling}.
 
-This work focuses on the latter issue. We experiment with unconventional computing architectures, the goal being to assess if and how they can help accelerate training time to obtain more expressive models. To this purpose, our choice is architectures that develop Adiabatic Quantum Computing (AQC). The reason is twofold. On one side AQC by its very nature solves minimization problems in the QUBO form (Quadratic Unconstrained Binary Optimization). On the other, the core of many AI problems is minimizing some functions by looking for the values of specific parameters.
+This work focuses on the latter issue. We experiment with unconventional computing architectures, the goal being to assess if and how they can help accelerate training time to obtain more expressive models. To this purpose, our choice is architectures that develop Adiabatic Quantum Computing (AQC), where the technology proposed by D-Wave is considered a standard. The reason is twofold. On one side AQC by its very nature solves minimization problems in the QUBO form (Quadratic Unconstrained Binary Optimization). On the other, the core of many AI problems is minimizing some functions by looking for the values of specific parameters.
 
-We choose SVM\cite{SVM} over more standard Transformers models because preliminary investigations on using SVM for machine learning took leveraging AQC exists\cite{QSVM} and SVM share some similarities with the attention mechanism of Transformers\cite{TransformerSVM}.
+We choose SVM\cite{SVM} over more standard Transformers models because preliminary investigations on SVMs that leverage AQC already exist\cite{QSVM} and SVM share some similarities with the attention mechanism of Transformers\cite{TransformerSVM}.
 
 Precalling that, among classification tasks in natural language processing, the binary version of Sentiment Analysis (BSA) aims to separate sentences that convey ``positive'' emotions from those that convey ``negative'' emotions. We reduced the BSA to QUBO and evaluated the following:
 \begin{enumerate*}[label=\arabic*)]
@@ -48,27 +47,27 @@ compared to more standard techniques implemented with heuristics and classical a
 
 \section{Quantum Support Vector Machine for Sentiment Analysis}
 
-We choose TweetEval\cite{TweetEval} to verify the effectiveness of SVM for BSA. TweetEval is considered a standard for comparing different models and contains a sufficiently large and representative number of labelled examples. The ``sentiment'' split of TweetEval includes three classes: positive, negative and neutral. We choose to discard all ``neutral'' samples to avoid introducing errors during learning due to examples belonging to non-expressive classes. Additionally, we normalize the quantity of elements in the positive and negative classes to ensure a balanced dataset.
+We choose TweetEval\cite{TweetEval} to verify the effectiveness of SVM for BSA. TweetEval is considered a standard for comparing different models and contains a sufficiently large and representative number of examples, i.e. Tweets extracted from \url{https://x.com/} and labelled automatically. The ``sentiment'' split of TweetEval includes three classes: positive, negative and neutral. We choose to discard all ``neutral'' samples to avoid introducing errors during learning due to examples belonging to non-expressive classes. Additionally, we normalize the quantity of elements in the positive and negative classes to ensure a balanced dataset.
 
 Since SVMs do not natively support text processing, it is necessary to compute embeddings. Among the various possibilities, SentenceBert\cite{SentenceBert} allows for capturing the contextual information of the entire sentence by producing a single embedding.
 
 For comparison with the classical counterpart, we choose:
 \begin{enumerate*}[label=\arabic*)]
-    \item the solver CPLEX\cite{cplex}, without modifying its parameters;
+    \item the CPLEX\cite{cplex} solver, a widely used optimizer for solving both linear and non-linear programming problems;
     \item RoBERTa\cite{ROBERTA}, a deep-learning model based on BERT\cite{BERT} and the attention mechanism\cite{Attention}.
 \end{enumerate*}
-RoBERTa allows for a fair comparison as it is pre-trained on TweetEval.
+RoBERTa allows a fair comparison as the model we use\cite{robertamodel} is fine-tuned on TweetEval.
 
 \begin{table}
     \caption{Classification results}
     \label{tab:classification}
     \begin{tabular}{cccc}
         \toprule
-        & CPLEX & D-Wave & RoBERTa \\
+        & D-Wave & CPLEX & RoBERTa \\
         \midrule
-        F1-Score (\%) & 76.9 & 76.1 & 94.3 \\
-        Train time (s) & 101.9 & 39.2 & / \\
-        Eval time (s) & 2.2 & 33.9 & 136.8 \\
+        F1-Score (\%) & 76.1 & 76.9 & 94.3 \\
+        Train time (s) & 39.2 & 101.9 & / \\
+        Eval time (s) & 33.9 & 2.2 & 136.8 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -96,7 +95,7 @@ Direct access to the QPU is possible provided you manually perform certain pre-p
     \item Search for the minor\cite{ME}\cite{MEdwave} associated with the QUBO problem that can be mapped onto the D-Wave QPU's physical graph architecture, Figure \ref{fig:pegasus}.
 \end{enumerate}
 
-By performing these steps independently, it is possible to bypass D-Wave's proprietary technology to try to maximise QPU usage. The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, Table \ref{tab:embedding} focuses on the time required to compute the minor embedding of the graph representing an SVM. We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 40\% of the available qubits on the QPU. This makes the direct use of the QPU not applicable to real-size problems.
+By performing these steps independently, it is possible to bypass D-Wave's proprietary technology to try to maximise QPU usage. The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, Table \ref{tab:embedding} focuses on the time required to compute the minor embedding of the graph representing an SVM. We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 38\% of the 5600 qubits available on the QPU. This makes the direct use of the QPU not applicable to real-size problems.
 
 \begin{table}
     \caption{Embedding search time}
@@ -117,48 +116,6 @@ Given the practical impossibility of using the QPU directly, it is unavoidable t
 
 \begin{figure}
     \centering
-    \begin{subfigure}[c]{0.45\textwidth}
-        \centering
-        \begin{tikzpicture}[scale=0.54]
-            \draw (0,0) rectangle (8,8);
-        
-            \draw (0,4) -- (8,4);
-            \draw (4,0) -- (4,8);
-            \node at (2,2) {$\emptyset$};
-            
-            \draw (0,6) -- (4,6);
-            \draw (2,8) -- (2,4);
-            \node at (1,5) {$\emptyset$};
-        
-            \draw (4,2) -- (8,2);
-            \draw (6,4) -- (6,0);
-            \node at (5,1) {$\emptyset$};
-    
-            \draw (4,6) -- (8,6);
-            \draw (6,4) -- (6,8);
-            \node at (5,5) {$\emptyset$};
-        
-            \draw[decorate,decoration={brace,amplitude=10pt}] (8,8) -- (8,4) node [black,midway,xshift=20pt] {$\operatorname{UR}_0$};
-            \node at (3,7) {$\operatorname{UR}_1'$};
-            \node at (7,7) {$\operatorname{UR}_1''$};
-            \node at (7,3) {$\operatorname{UR}_1'''$};
-    
-            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,8) -- (0,4) node [black,midway,xshift=-20pt] {$\operatorname{UL}_0$};
-            \node at (1,7) {$\operatorname{UL}_1'$};
-            \node at (5,7) {$\operatorname{UL}_1''$};
-            \node at (5,3) {$\operatorname{UL}_1'''$};
-    
-            \draw[decorate,decoration={brace,amplitude=10pt}] (8,4) -- (8,0) node [black,midway,xshift=20pt] {$\operatorname{BR}_0$};
-            \node at (3,5) {$\operatorname{BR}_1'$};
-            \node at (7,5) {$\operatorname{BR}_1''$};
-            \node at (7,1) {$\operatorname{BR}_1'''$};
-
-            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,4) -- (0,0) node [black,midway,xshift=-20pt] {$\operatorname{BL}_0$};
-        \end{tikzpicture}
-        \caption{Two steps of recursive decomposition}
-        \label{fig:qubo}
-    \end{subfigure}
-    \hfill
     \begin{subfigure}[c]{0.54\textwidth}
         \centering
         \resizebox{0.54\textwidth}{!}{%
@@ -244,7 +201,49 @@ Given the practical impossibility of using the QPU directly, it is unavoidable t
         \caption{Example of 32 qubit QPU\cite{Pegasus}}
         \label{fig:pegasus}
     \end{subfigure}
-    \caption{Decomposition of QUBO matrix (\ref{fig:qubo}) and QPU graph structure (\ref{fig:pegasus})}
+    \hfill
+    \begin{subfigure}[c]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.54]
+            \draw (0,0) rectangle (8,8);
+        
+            \draw (0,4) -- (8,4);
+            \draw (4,0) -- (4,8);
+            \node at (2,2) {$\emptyset$};
+            
+            \draw (0,6) -- (4,6);
+            \draw (2,8) -- (2,4);
+            \node at (1,5) {$\emptyset$};
+        
+            \draw (4,2) -- (8,2);
+            \draw (6,4) -- (6,0);
+            \node at (5,1) {$\emptyset$};
+    
+            \draw (4,6) -- (8,6);
+            \draw (6,4) -- (6,8);
+            \node at (5,5) {$\emptyset$};
+        
+            \draw[decorate,decoration={brace,amplitude=10pt}] (8,8) -- (8,4) node [black,midway,xshift=20pt] {$\operatorname{UR}_0$};
+            \node at (3,7) {$\operatorname{UR}_1'$};
+            \node at (7,7) {$\operatorname{UR}_1''$};
+            \node at (7,3) {$\operatorname{UR}_1'''$};
+    
+            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,8) -- (0,4) node [black,midway,xshift=-20pt] {$\operatorname{UL}_0$};
+            \node at (1,7) {$\operatorname{UL}_1'$};
+            \node at (5,7) {$\operatorname{UL}_1''$};
+            \node at (5,3) {$\operatorname{UL}_1'''$};
+    
+            \draw[decorate,decoration={brace,amplitude=10pt}] (8,4) -- (8,0) node [black,midway,xshift=20pt] {$\operatorname{BR}_0$};
+            \node at (3,5) {$\operatorname{BR}_1'$};
+            \node at (7,5) {$\operatorname{BR}_1''$};
+            \node at (7,1) {$\operatorname{BR}_1'''$};
+
+            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,4) -- (0,0) node [black,midway,xshift=-20pt] {$\operatorname{BL}_0$};
+        \end{tikzpicture}
+        \caption{Two steps of recursive decomposition}
+        \label{fig:qubo}
+    \end{subfigure}
+    \caption{QPU graph structure (\ref{fig:pegasus}) and decomposition of QUBO matrix (\ref{fig:qubo})}
 \end{figure}
 
 Given any QUBO matrix we recursively divide it into four parts as in Figure \ref{fig:qubo}:
@@ -299,8 +298,7 @@ Our investigation contributes to giving evidence that quantum computing can brin
 In many application scenarios, large computational resources are not available, such as in personal computers or embedded systems. In these situations, hybrid solvers such as the one we have presented are good candidates to allow for a good approximation of results while significantly reducing complexity and computational power.
 
 \verb|QSplit| presents a method for handling large QUBO problems that is alternative to those found in the literature\cite{subqubo1}\cite{subqubo2}. It focuses on maximising the use of the QPU. Although this approach is reasonable, it is not guaranteed to lead to an optimal result. The assignment produced can be improved by implementing more refined problem partitioning strategies\cite{bnb}, or by creating work pipelines capable of using a set of methods for finding the optimal assignment\cite{dwavehybrid}.
-\end{spacing}
 
-\bibliography{bibliography}
+\bibliography{bibliography.bib}
 
 \end{document}
