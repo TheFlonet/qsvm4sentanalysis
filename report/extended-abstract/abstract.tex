@@ -4,7 +4,10 @@
 \lstset{breaklines=true, keywordstyle=\bfseries}
 \usepackage[inline]{enumitem}
 \usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
 \usepackage{setspace}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \begin{document}
 
@@ -17,8 +20,7 @@
 \address[1]{Università degli studi di Torino, Dipartimento di Informatica, Corso Svizzera 185 - 10149 Torino}
 
 \begin{abstract}
-    The following work explores the advantages of a hybrid classical-quantum solver, particularly applied to sentiment analysis. Additionally, we have developed an alternative hybrid solver to leverage the quantum component of the computational infrastructure further. 
-    The experimental results collected show how quantum computation allows faster convergence to optimal solutions and how effective hybrid solvers can be developed to avoid the opaque systems proposed by D-Wave, thus making greater use of the quantum component.
+    In this work, we first experiment with applying a hybrid classical-quantum classifier (HCQC) for sentiment analysis and compare it to the classical CPLEX classifier and Transformer architecture. We find that HCQC is worse than Transformer in classification, but takes much less time to converge to a reasonably good approximate solution. Secondly, the work explores how to address what we may consider a bottleneck of HCQC, whose architecture is partially undisclosed by the D-Wave property. The results show how effective hybrid solvers can be developed to avoid the opaque systems proposed by D-Wave, thus making greater use of the quantum component.
 \end{abstract}
 \begin{keywords}
     Quantum Adiabatic Computing \sep 
@@ -29,31 +31,30 @@
 
 \maketitle
 
-\begin{spacing}{1}
 \section{Introduction}
-    In natural language processing, the two main challenges in developing new models are the difficulty in acquiring high-quality data and the extensive training times required to make models more expressive\cite{scaling}.
+In natural language processing, the two main challenges in developing new models are the difficulty in acquiring high-quality data and the extensive training times required to make models more expressive\cite{scaling}.
 
-This work focuses on the latter issue. We experiment with unconventional computing architectures, the goal being to assess if and how they can help accelerate training time to obtain more expressive models. To this purpose, our choice is architectures that develop Adiabatic Quantum Computing (AQC). The reason is twofold, on one side AQC by its very nature solves minimization problems in the QUBO form (Quadratic Unconstrained Binary Optimization), on the other the core of many AI is minimizing some function by looking for the values of specific parameters.
+This work focuses on the latter issue. We experiment with unconventional computing architectures, the goal being to assess if and how they can help accelerate training time to obtain more expressive models. To this purpose, our choice is architectures that develop Adiabatic Quantum Computing (AQC). The reason is twofold. On one side AQC by its very nature solves minimization problems in the QUBO form (Quadratic Unconstrained Binary Optimization). On the other, the core of many AI problems is minimizing some functions by looking for the values of specific parameters.
 
 We choose SVM\cite{SVM} over more standard Transformers models because preliminary investigations on using SVM for machine learning took leveraging AQC exists\cite{QSVM} and SVM share some similarities with the attention mechanism of Transformers\cite{TransformerSVM}.
 
-Precalling that, among classification tasks in natural language processing, the binary version of Sentiment Analysis (BSA) aims to separate sentences that convey ``positive'' emotions from those that convey ``negative'' emotions. We reduced the BSA to QUBO and evaluated
-\begin{enumerate*}
-    \item performance during classification,
-    \item the time required to train the model, and
+Precalling that, among classification tasks in natural language processing, the binary version of Sentiment Analysis (BSA) aims to separate sentences that convey ``positive'' emotions from those that convey ``negative'' emotions. We reduced the BSA to QUBO and evaluated the following:
+\begin{enumerate*}[label=\arabic*)]
+    \item performance during classification;
+    \item the time required to train the model;
     \item the time required to classify new examples,
 \end{enumerate*}
 compared to more standard techniques implemented with heuristics and classical architectures. To improve our results relative to training time we also started to investigate software-based alternatives to the proprietary mechanisms that physically embed QUBO problems on Quantum CPU (QPU) for AQC. We shall briefly report on this in the conclusion.
 
 \section{Quantum Support Vector Machine for Sentiment Analysis}
 
-We choose TweetEval\cite{TweetEval} to verify the effectiveness of SVM as QUBO for BSA. This dataset is considered a standard for comparing different models and contains a sufficiently large and representative number of labelled examples. The ``sentiment'' split of TweetEval includes three classes: positive, negative and neutral. We choose to discard all ``neutral'' samples to avoid introducing errors during learning due to examples belonging to non-expressive classes. Additionally, the quantity of elements in the positive and negative classes was normalized to ensure a balanced dataset.
+We choose TweetEval\cite{TweetEval} to verify the effectiveness of SVM for BSA. TweetEval is considered a standard for comparing different models and contains a sufficiently large and representative number of labelled examples. The ``sentiment'' split of TweetEval includes three classes: positive, negative and neutral. We choose to discard all ``neutral'' samples to avoid introducing errors during learning due to examples belonging to non-expressive classes. Additionally, we normalize the quantity of elements in the positive and negative classes to ensure a balanced dataset.
 
 Since SVMs do not natively support text processing, it is necessary to compute embeddings. Among the various possibilities, SentenceBert\cite{SentenceBert} allows for capturing the contextual information of the entire sentence by producing a single embedding.
 
-For comparison with the classical counterpart, we choose 
-\begin{enumerate*}
-    \item the solver CPLEX\cite{cplex}, without modifying its parameters,
+For comparison with the classical counterpart, we choose:
+\begin{enumerate*}[label=\arabic*)]
+    \item the solver CPLEX\cite{cplex}, without modifying its parameters;
     \item RoBERTa\cite{ROBERTA}, a deep-learning model based on BERT\cite{BERT} and the attention mechanism\cite{Attention}.
 \end{enumerate*}
 RoBERTa allows for a fair comparison as it is pre-trained on TweetEval.
@@ -72,37 +73,37 @@ RoBERTa allows for a fair comparison as it is pre-trained on TweetEval.
     \end{tabular}
 \end{table}
 
-Table \ref{tab:classification} shows some data related to the training and inference of the different models compared. D-Wave stands for what we develop and report on here.
+Table \ref{tab:classification} shows some data related to the training and inference of the different models compared. D-Wave stands for what we develop in this work and report on here.
 
-\paragraph{F1 score} The classification conducted by RoBERTa is significantly better, although the results of both CPLEX and D-Wave are also well above random guesses. The slight difference between the solution obtained with CPLER and that with D-Wave may be due to some limitations of the current hybrid solvers, which restricted the domain of the optimisation variables from real numbers to integers.
+\paragraph{F1 score} The classification conducted by RoBERTa is significantly better, although the results of both CPLEX and D-Wave are also well above random guesses. The slight difference between the solution obtained with CPLEX and that with D-Wave may be due to some limitations of the current hybrid solvers, which restricted the domain of the optimisation variables from real numbers to integers.
 
-\paragraph{Training time} The time required by D-Wave to find an optimal assignment is 60\% less than that of the classical counterpart. Although not available, it is reasonable to expect an even better result if compared to the time required RoBERTa, which may require several hours of training on high-performance machines.
+\paragraph{Training time} The time required by D-Wave to find an optimal assignment is 60\% less than that of the classical counterpart. Although not available, it is reasonable to expect an even better result if compared to the time required by RoBERTa, which we can fairly expect to amount to several hours of training on high-performance machines.
 
-\paragraph{Prediction time} The complexity of the RoBERTa architecture also affects the time required for prediction by requiring more computing time than CPLEX or D-Wave. The higher time required is due to D-Wave returning a set of optimal solutions, for each of them a model is created to apply a majority vote to establish the class in inference. Experimentally, no advantages emerge from using such a procedure, known as ensemble learning, whereby it is possible to work with only the first of the optimal assignments produced, obtaining times comparable to those of CPLEX.
+\paragraph{Prediction time} The complexity of RoBERTa architecture also affects the time required for prediction by requiring more computing time than CPLEX or D-Wave. The higher time required is due to D-Wave returning a set of optimal solutions. For each of them, a model is created to apply a majority vote to establish the class in inference. Since no advantages emerge from using several models, it is possible to use only one of the optimal assignments, reducing the time to values comparable to those of CPLEX.
 
 \section{Maximizing quantum boost}
 
-Using the default hybrid solver entails an opaque workflow due to the underlying proprietary technology. Examination of the available data, however, shows that the QPU contributes very marginally in calculating the solution, averaging 0.08\%. Since the performance boost derives from the quantum component, it is worth considering whether it is possible to use a greater amount of it, ideally shifting the entire problem resolution onto the QPU and delegating only pre- and post-processing operations to the CPU.
+Using the \emph{default} hybrid solver by D-Wave entails an opaque workflow due to the underlying proprietary technology. Examination of the available data, however, shows that to obtain the values in Table \ref{tab:classification} the QPU contributes very marginally, averaging 0.08\%. Since the performance boost should derive from the quantum component, it is worth considering whether it is possible to use a greater amount of it, ideally shifting the entire problem resolution onto the QPU and delegating only pre- and post-processing operations to some CPUs or GPUs.
 
 Direct access to the QPU is possible provided you manually perform certain pre-processing operations of the problem such as:
 \begin{enumerate}
-   \item Convert the problem into QUBO form i.e,
+    \item Convert the problem into QUBO form i.e:
     \begin{enumerate*}
-        \item incorporates the constraints into the objective as penalty functions via appropriately parameterised Lagrangian relaxation\cite{QbridgeI},
-        \item converts the optimisation variables into binary variables,
-        \item transforms the objective function into a minimisation problem.
+        \item to incorporate the constraints into the objective as penalty functions via appropriately parameterised Lagrangian relaxation\cite{QbridgeI};
+        \item to convert the optimisation variables into binary variables;
+        \item to transform the objective function into a minimisation problem.
     \end{enumerate*}
-    \item Search for the minor\cite{ME}\cite{MEdwave} associated with the QUBO problem that can be mapped onto the graph corresponding to the QPU Pegasus\cite{Pegasus}.
+    \item Search for the minor\cite{ME}\cite{MEdwave} associated with the QUBO problem that can be mapped onto the D-Wave QPU's physical graph architecture, Figure \ref{fig:pegasus}.
 \end{enumerate}
 
-By performing these steps independently, it is possible to bypass D-Wave's proprietary technology and maximise the use of the QPU. The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, the table \ref{tab:embedding} focuses on the time required to compute the minor embedding of the graph representing an SVM. We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 40\% of the available qubits on the QPU, this makes the direct use of the QPU not applicable to real-size problems.
+By performing these steps independently, it is possible to bypass D-Wave's proprietary technology to try to maximise QPU usage. The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, Table \ref{tab:embedding} focuses on the time required to compute the minor embedding of the graph representing an SVM. We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 40\% of the available qubits on the QPU. This makes the direct use of the QPU not applicable to real-size problems.
 
 \begin{table}
     \caption{Embedding search time}
     \label{tab:embedding}
     \begin{tabular}{ccccccc}
         \toprule
-        Problem nodes & 4 & 8 & 16 & 32 & 64 & 128 \\
+        Problem nodes & 4 & 8 & 16 & 32 & 64 & 128 \\  
         \midrule
         Embedding Nodes & 4 & 13 & 40 & 138 & 526 & 2117 \\
         Avg Time (s) & 0.2 & 0.3 & 0.6 & 6.1 & 53.4 & 434.2 \\
@@ -112,136 +113,192 @@ By performing these steps independently, it is possible to bypass D-Wave's propr
 
 \section{Homebrewing a Hybrid Solver}
 
-Given the practical impossibility of using the QPU directly, it is unavoidable to rely on hybrid solvers. Therefore, we investigate a first attempt to design a hybrid solver, to maximize the use of the QPU.
-
-Provided the structure of the QUBO problem, algebraic techniques can be employed to decompose the problem into smaller chunks. Once a sufficiently small problem is reached, it can be solved on the QPU, and the solutions of the sub-problems can then be aggregated.
-
-This technique is not limited to SVM but applies more generally to a strategy for solving QUBO problems. Consequently, the subsequent considerations will examine matrices that do not necessarily represent an SVM.
+Given the practical impossibility of using the QPU directly, it is unavoidable to rely on hybrid solvers. Therefore, we investigate how to design a hybrid solver, called \verb|QSplit|, to increase the use of the QPU, based on a quite simple algebraic technique that decomposes QUBO problems into smaller chunks. Sufficiently small problems can be solved by mapping them on the QPU, eventually aggregating the results. This technique is of general application, not limited to QUBO instances we get from SVM.
 
 \begin{figure}
     \centering
-    \begin{tikzpicture}[scale=0.5]
-        \draw (0,0) rectangle (8,8);
-    
-        \draw (0,4) -- (8,4);
-        \draw (4,0) -- (4,8);
-        \node at (2,2) {$\emptyset$};
+    \begin{subfigure}[c]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.54]
+            \draw (0,0) rectangle (8,8);
         
-        \draw (0,6) -- (4,6);
-        \draw (2,8) -- (2,4);
-        \node at (1,5) {$\emptyset$};
+            \draw (0,4) -- (8,4);
+            \draw (4,0) -- (4,8);
+            \node at (2,2) {$\emptyset$};
+            
+            \draw (0,6) -- (4,6);
+            \draw (2,8) -- (2,4);
+            \node at (1,5) {$\emptyset$};
+        
+            \draw (4,2) -- (8,2);
+            \draw (6,4) -- (6,0);
+            \node at (5,1) {$\emptyset$};
     
-        \draw (4,2) -- (8,2);
-        \draw (6,4) -- (6,0);
-        \node at (5,1) {$\emptyset$};
+            \draw (4,6) -- (8,6);
+            \draw (6,4) -- (6,8);
+            \node at (5,5) {$\emptyset$};
+        
+            \draw[decorate,decoration={brace,amplitude=10pt}] (8,8) -- (8,4) node [black,midway,xshift=20pt] {$\operatorname{UR}_0$};
+            \node at (3,7) {$\operatorname{UR}_1'$};
+            \node at (7,7) {$\operatorname{UR}_1''$};
+            \node at (7,3) {$\operatorname{UR}_1'''$};
+    
+            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,8) -- (0,4) node [black,midway,xshift=-20pt] {$\operatorname{UL}_0$};
+            \node at (1,7) {$\operatorname{UL}_1'$};
+            \node at (5,7) {$\operatorname{UL}_1''$};
+            \node at (5,3) {$\operatorname{UL}_1'''$};
+    
+            \draw[decorate,decoration={brace,amplitude=10pt}] (8,4) -- (8,0) node [black,midway,xshift=20pt] {$\operatorname{BR}_0$};
+            \node at (3,5) {$\operatorname{BR}_1'$};
+            \node at (7,5) {$\operatorname{BR}_1''$};
+            \node at (7,1) {$\operatorname{BR}_1'''$};
 
-        \draw (4,6) -- (8,6);
-        \draw (6,4) -- (6,8);
-        \node at (5,5) {$\emptyset$};
+            \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (0,4) -- (0,0) node [black,midway,xshift=-20pt] {$\operatorname{BL}_0$};
+        \end{tikzpicture}
+        \caption{Two steps of recursive decomposition}
+        \label{fig:qubo}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.54\textwidth}
+        \centering
+        \resizebox{0.54\textwidth}{!}{%
+            \begin{tikzpicture}[main/.style = {draw, circle}] 
+                \node[main](1){};
+                \node[main](2)[right of=1]{}; 
+                \node[main](5)[above right of=2]{};
+                \node[main](6)[above of=5]{};
+                \node[main](3)[below right of=5]{};
+                \node[main](4)[right of=3]{};
+                \node[main](7)[below right of=2]{};
+                \node[main](8)[below of=7]{};
         
-        % \draw (0,7) -- (2,7);
-        % \draw (1,8) -- (1,6);
+                \draw (1) -- (6);\draw (6) -- (4);\draw (4) -- (8);\draw (8) -- (1);
+                \draw (1) -- (5);\draw (5) -- (4);\draw (4) -- (7);\draw (7) -- (1);
+                \draw (6) -- (2);\draw (2) -- (8);\draw (8) -- (3);\draw (3) -- (6);
+                \draw (2) -- (5);\draw (5) -- (3);\draw (3) -- (7);\draw (7) -- (2);
+                \draw (1) -- (2);\draw (5) -- (6);\draw (3) -- (4);\draw (8) -- (7);
         
-        % \draw (2,5) -- (4,5);
-        % \draw (3,6) -- (3,4);
-    
-        % \draw (4,3) -- (6,3);
-        % \draw (5,2) -- (5,4);
+                \node[main](11)[right of=4]{};
+                \node[main](12)[right of=11]{}; 
+                \node[main](15)[above right of=12]{};
+                \node[main](16)[above of=15]{};
+                \node[main](13)[below right of=15]{};
+                \node[main](14)[right of=13]{};
+                \node[main](17)[below right of=12]{};
+                \node[main](18)[below of=17]{};
         
-        % \draw (6,1) -- (8,1);
-        % \draw (7,0) -- (7,2);
-    
-        % \node at (6.5,0.5) {$\emptyset$};
-        % \node at (4.5,2.5) {$\emptyset$};
-        % \node at (2.5,4.5) {$\emptyset$};
-        % \node at (0.5,6.5) {$\emptyset$};
-    
-        \node at (6,6) {$UR_0$};
-        \node at (3,7) {$UR_1'$};
-        \node at (7,7) {$UR_1''$};
-        \node at (7,3) {$UR_1'''$};
-        % \node at (1.5,7.5) {$UR_2$};
-        % \node at (3.5,5.5) {$UR_2$};
-        % \node at (5.5,3.5) {$UR_2$};
-        % \node at (7.5,1.5) {$UR_2$};
-
-        \node at (2,6) {$UL_0$};
-        \node at (1,7) {$UL_1'$};
-        \node at (5,7) {$UL_1''$};
-        \node at (5,3) {$UL_1'''$};
-        % \node at (0.5,7.5) {$UL_2$};
-        % \node at (4.5,3.5) {$UL_2$};
-        % \node at (2.5,5.5) {$UL_2$};
-        % \node at (6.5,1.5) {$UL_2$};
-
-        \node at (6,2) {$BR_0$};
-        \node at (3,5) {$BR_1'$};
-        \node at (7,5) {$BR_1''$};
-        \node at (7,1) {$BR_1'''$};
-        % \node at (7.5,0.5) {$BR_2$};
-        % \node at (3.5,4.5) {$BR_2$};
-        % \node at (5.5,2.5) {$BR_2$};
-        % \node at (1.5,6.5) {$BR_2$};
-    \end{tikzpicture}
-    \caption{Two steps of recursive decomposition}
-    \label{fig:qubo}
+                \draw (11) -- (16);\draw (16) -- (14);\draw (14) -- (18);\draw (18) -- (11);
+                \draw (11) -- (15);\draw (15) -- (14);\draw (14) -- (17);\draw (17) -- (11);
+                \draw (16) -- (12);\draw (12) -- (18);\draw (18) -- (13);\draw (13) -- (16);
+                \draw (12) -- (15);\draw (15) -- (13);\draw (13) -- (17);\draw (17) -- (12);
+                \draw (11) -- (12);\draw (15) -- (16);\draw (13) -- (14);\draw (18) -- (17);
+        
+                \node[main](26)[below of=8]{};
+                \node[main](25)[below of=26]{};
+                \node[main](22)[below left of=25]{};
+                \node[main](21)[left of=22]{};
+                \node[main](23)[below right of=25]{};
+                \node[main](24)[right of=23]{};
+                \node[main](27)[below right of=22]{};
+                \node[main](28)[below of=27]{};
+        
+                \draw (21) -- (26);\draw (26) -- (24);\draw (24) -- (28);\draw (28) -- (21);
+                \draw (21) -- (25);\draw (25) -- (24);\draw (24) -- (27);\draw (27) -- (21);
+                \draw (26) -- (22);\draw (22) -- (28);\draw (28) -- (23);\draw (23) -- (26);
+                \draw (22) -- (25);\draw (25) -- (23);\draw (23) -- (27);\draw (27) -- (22);
+                \draw (21) -- (22);\draw (25) -- (26);\draw (23) -- (24);\draw (28) -- (27);
+        
+                \node[main](36)[below of=18]{};
+                \node[main](35)[below of=36]{};
+                \node[main](32)[below left of=35]{};
+                \node[main](31)[left of=32]{};
+                \node[main](33)[below right of=35]{};
+                \node[main](34)[right of=33]{};
+                \node[main](37)[below right of=32]{};
+                \node[main](38)[below of=37]{};
+        
+                \draw (31) -- (36);\draw (36) -- (34);\draw (34) -- (38);\draw (38) -- (31);
+                \draw (31) -- (35);\draw (35) -- (34);\draw (34) -- (37);\draw (37) -- (31);
+                \draw (36) -- (32);\draw (32) -- (38);\draw (38) -- (33);\draw (33) -- (36);
+                \draw (32) -- (35);\draw (35) -- (33);\draw (33) -- (37);\draw (37) -- (32);
+                \draw (31) -- (32);\draw (35) -- (36);\draw (33) -- (34);\draw (38) -- (37);
+        
+                \draw (6) -- (16);
+                \draw (5) -- (15);
+                \draw (7) -- (17);
+                \draw (8) -- (18);
+                \draw (26) -- (36);
+                \draw (25) -- (35);
+                \draw (27) -- (37);
+                \draw (28) -- (38);
+                \draw (1) -- (21);
+                \draw (2) -- (22);
+                \draw (3) -- (23);
+                \draw (4) -- (24);
+                \draw (11) -- (31);
+                \draw (12) -- (32);
+                \draw (13) -- (33);
+                \draw (14) -- (34);
+            \end{tikzpicture} 
+        }  
+        \caption{Example of 32 qubit QPU\cite{Pegasus}}
+        \label{fig:pegasus}
+    \end{subfigure}
+    \caption{Decomposition of QUBO matrix (\ref{fig:qubo}) and QPU graph structure (\ref{fig:pegasus})}
 \end{figure}
 
-The QUBO matrix is recursively divided into four parts with the following characteristics:
-\begin{enumerate*}
-    \item $UL$ and $BR$ are themselves QUBO matrices operating on a partition of the optimization variables,
-    \item $UR$ is not guaranteed to be upper triangular and retains the information linking the two partitions of the variables,
-    \item $\emptyset$ is a matrix composed entirely of zeros and can thus be ignored.
+Given any QUBO matrix we recursively divide it into four parts as in Figure \ref{fig:qubo}:
+\begin{enumerate*}[label=\arabic*)]
+    \item $\operatorname{ULs}$ and $\operatorname{BRs}$ are themselves QUBO matrices operating on a partition of the optimization variables;
+    \item $\operatorname{UR}$ is not guaranteed to be upper triangular, as required by a QUBO instance, but it retains the information linking the partitions $\operatorname{UL}_0$, $\operatorname{BL}_0$ and $\operatorname{UR}_0$, $\operatorname{BR}_0$ of the variables and we can safely transform it into an upper triangular matrix, namely a QUBO instance;
+    \item $\emptyset$ is a matrix composed entirely of zeros, so we ignore it.
 \end{enumerate*}
 
-Figure \ref{fig:qubo} intuitively illustrates how the QUBO matrix is partitioned. Specifically, two steps are performed, reducing the single problem solved via QPU to $\frac{1}{16}$ of its original size.
+The recursive subdivision can continue until the matrices reach a predetermined size. Compatible with the results of Table \ref{tab:embedding}, directly solving $32 \times 32$ matrices via QPU might be a good compromise for using \verb|QSplit| in real-world contexts.
 
-The recursive subdivision continues until the matrices reach a predetermined size, which, for the data in Table \ref{tab:embedding}, could be set to 32. Focusing on the resolution of $UL_1'$, $UR_1'$ and $BR_1'$ helps understand how the proposed solution addresses the subproblems and assembles the overall solution. A similar approach applies to all other recursive steps and sections of the problem. 
-
-Assuming that the matrices considered above are of a size that allows direct resolution on the QPU:
-\begin{enumerate*}
-\item $UL_1'$ and $BR_1'$ can be solved independently and their results combined to generate conflict-free initial assignments.
-\item $UR_1'$ connects the two variable partitions. In practice, it is solved by incorporating the coefficients of a matrix of zeros of size $UL_0$. Although this could lead to matrices larger than the bounds tested in table \ref{tab:embedding}, the construction of this problem ensures that the resulting graph is small enough to allow for manageable computation times.
+Let us see how an inductive step of the process works. Let us assume that we have classifications offered by $\operatorname{UL}_1'$, $\operatorname{UR}_1'$, $\operatorname{BR}_1'$. The classification offered by:
+\begin{enumerate*}[label=\arabic*)]
+    \item $\operatorname{UL}_1'$ and $\operatorname{BR}_1'$ can be combined to generate conflict-free initial assignments called $\operatorname{S_1}$;
+    \item $\operatorname{UR}_1'$ offers classifications based on two partitions of variables. In practice, it is solved by incorporating the coefficients of a matrix of zeros of size $\operatorname{UL}_0$. Although this could lead to matrices larger than the bounds tested in Table \ref{tab:embedding}, its graph structure is small enough to allow for manageable computation times directly on the QPU.
 \end{enumerate*}
-
-The two sets of solutions are combined by searching for the most compatible assignments and marking the conflicting variables. From the conflicting values, a QUBO problem is extracted, considering only the rows and columns associated with these variables, which is solved via QPU.
-
-The proposed method of resolving conflicting assignments could, in the worst case, require reconsideration of the entire problem \(UL_0\), nullifying the decomposition process and leading to intractable cases. However, the tests have indicated that the number of conflicting variables is limited, allowing this approach to be used effectively in practice. 
-
-From the set of possible assignments, duplicates are removed and only the $k$ most promising assignments are retained. This is to avoid an exponential increase in the number of solutions to be aggregated.
-
-Given the non-deterministic nature of the search, it is not possible to guarantee how far the proposed solution might deviate from the optimal. Table \ref{tab:qsplit} shows the average results obtained from multiple algorithm executions on 128 variable cliques. The column ``stop dim'' indicates the size of the QUBO sub-matrix at which the direct solver is invoked via QPU. At the same time, the ``estimated range'' is the minimum and maximum energy value from 500,000 random assignments. It can be observed that, although not reaching the optimum, our proposed procedure quickly diverges from high-energy assignments, favouring lower-entropy solutions. Considering the values of ``stop dim'', it is apparent that as the size of the sub-problem solved by the QPU decreases:
-\begin{enumerate*}
-    \item the total calculation time required slightly increases,
-    \item the approximation of the result improves.
-\end{enumerate*}
-The reported times do not include the computation of the minor embedding, but only the actual resolution. If the total time were considered, the proposed algorithm would be faster than direct resolution in every tested context.
+The solutions from $\operatorname{S_1}$ and those obtained from $\operatorname{UR}_1'$ are combined by searching for compatible assignments and marking conflicting variables. From the conflicting values, a QUBO problem is extracted, considering only the rows and columns associated with these variables, which is again solved via QPU. Of course, the proposed method of resolving conflicting assignments could, in the worst case, require reconsideration of the entire problem \(\operatorname{UL}_0\), nullifying the decomposition process and leading to intractable cases. However, the problem did not show up in our tests. From the set of possible assignments obtained by solving conflicting classifications, duplicates are removed and only the $k$ most promising assignments are retained. This is a heuristic that should help avoid an exponential increase in the number of solutions to be aggregated.
 
 \begin{table}
     \centering
     \begin{tabular}{cccccc}
         \toprule
-        Stop dim & Time (s) & Proposed solution & Direct time (s) & Real sample mean & Estimated range \\
+        Stop dim & Time (s) & Proposed solution & Direct time (s) & Direct solution & Estimated range \\
         \midrule
         2 & 75.57 & -626.71 & 51.7 & -1321.91 & -665.52, 282.35 \\
         4 & 57.19 & -674.29 & 50.92 & -1196.69 & -610.99, 292.62 \\
         8 & 50.33 & -95 & 52.31 & -958.78 & -440.96, 449.74 \\
         16 & 37.55 & -127.61 & 53.72 & -868.28 & -412.46, 447.15 \\
         32 & 32.94 & -122.6 & 51.51 & -1024.12 & -409.88, 388.24 \\
-        % 64 & 48 & -118.24 & 53.87 & -854.4 & -303.07, 459.94 \\
         \bottomrule
     \end{tabular}
     \caption{Results for 128 variables cliques}
     \label{tab:qsplit}
 \end{table}
 
+To test \verb|QSplit| we ran the algorithm on some random problems with 128 variables, collecting:
+\begin{enumerate*}[label=\arabic*)]
+    \item The times required by \verb|QSplit| and the solution obtained (Time and Proposed solution);
+    \item The times required by direct resolution on QPU and the associated solution (Direct time and Direct solution);
+    \item A possible range of solutions obtained by calculating the value of the QUBO problem considering 500,000 random assignments (Estimated range).
+\end{enumerate*}
+We performed tests by setting different values of Stop dim, i.e. the size of the matrix for which the problem is solved directly on QPU.
+
+It can be seen that as Stop dim decreases, the time required by \verb|QSplit| increases slightly, due to the greater number of recombinations performed, and at the same time the quality of the solution increases, approaching the lower bound of the Estimated range.
+
+The reported times do not include the computation of the minor embedding, but only the actual resolution. If the total time were considered, the proposed algorithm would be faster than direct resolution in every tested context.
+
 \section{Conclusion}
 
-Quantum computing for solving optimization problems brings tangible benefits over traditional methods. The trade-off between the speed of finding a solution and the quality of the results is crucial and must be evaluated on a case-by-case basis.
+Our investigation contributes to giving evidence that quantum computing can bring tangible benefits over traditional methods to solve optimization problems. Our work also confirms that a trade-off between the speed of finding a solution and the quality of the solution is an aspect that must be evaluated on a case-by-case basis.
 
-In many application scenarios, large computational resources are not available, such as in personal computers or embedded systems. In these situations, hybrid solvers allow for a good approximation of results while significantly reducing complexity.
+In many application scenarios, large computational resources are not available, such as in personal computers or embedded systems. In these situations, hybrid solvers such as the one we have presented are good candidates to allow for a good approximation of results while significantly reducing complexity and computational power.
 
-The proposed strategy presents a method for handling large QUBO problems that is alternative to those found in the literature\cite{subqubo1}\cite{subqubo2}. The results of our proposed solution can be improved by implementing strategies for partitioning the QUBO matrix. One example could be considering the number of non-zero values in calculating the stop criterion. To further refine the solution produced, greater utilisation of the classical component can be considered. Currently, the algorithm focuses on maximising the use of the QPU. Although this approach is reasonable, it is not guaranteed to lead to an optimal result. For example, the assignment produced by the current algorithm could be used to initialise classical local search, such as Tabu Search\cite{tabu}, which was used by D-Wave in its early versions of hybrid solvers\cite{dwavehybrid}.
+\verb|QSplit| presents a method for handling large QUBO problems that is alternative to those found in the literature\cite{subqubo1}\cite{subqubo2}. It focuses on maximising the use of the QPU. Although this approach is reasonable, it is not guaranteed to lead to an optimal result. The assignment produced can be improved by implementing more refined problem partitioning strategies\cite{bnb}, or by creating work pipelines capable of using a set of methods for finding the optimal assignment\cite{dwavehybrid}.
 \end{spacing}
 
 \bibliography{bibliography}
