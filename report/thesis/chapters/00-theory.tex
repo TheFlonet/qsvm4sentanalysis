@@ -30,7 +30,7 @@ and if this nuance of meaning is not captured, a ``naive'' translation would res
 
 \section{Support vector machine}
 
-\note{Image \ref{svm-margins} is extracted from Esposito's slides, can I use it?}
+\note{Image \ref{fig:svm-margins} is extracted from Esposito's slides, can I use it?}
 
 Among the various machine learning models for binary classification, support vector machines\cite{SVM} (SVMs) aim to separate examples by generalizing them as effectively as possible. The underlying idea is to select, among the candidate separation lines, the one that maximizes the distance between the elements of the two classes. Provided the training dataset is balanced, this procedure ensures better generalization properties for examples near the decision boundary that discriminates between positive and negative examples.
 
@@ -38,10 +38,10 @@ Among the various machine learning models for binary classification, support vec
     \centering
     \includegraphics[width=0.4\textwidth]{figures/svm-intuition}
     \caption{Decision boundary.}
-    \label{svm-example}
+    \label{fig:svm-example}
 \end{wrapfigure}
 
-In Figure \ref{svm-example}, we can visualize an example with two-dimensional data for classification. Among the different separation lines, it is intuitive to associate the blue one with the best generalization. This line not only correctly classifies all examples in the dataset but is also likely to generalize better during inference.
+In Figure \ref{fig:svm-example}, we can visualize an example with two-dimensional data for classification. Among the different separation lines, it is intuitive to associate the blue one with the best generalization. This line not only correctly classifies all examples in the dataset but is also likely to generalize better during inference.
 
 The formulation of SVMs is defined through a constraint satisfaction problem (CSP). To properly define the problem, it is necessary to introduce the notions of functional margin and geometric margin.
 
@@ -53,7 +53,7 @@ The formulation of SVMs is defined through a constraint satisfaction problem (CS
     \centering
     \includegraphics[width=0.7\textwidth]{figures/margins}
     \caption{Visual representation of the contribution of margins in defining the decision boundary.}
-    \label{svm-margins}
+    \label{fig:svm-margins}
 \end{figure}
 
 \subsection{Primal Formulation}
@@ -124,11 +124,11 @@ Instead of performing the multiplication $x_ix_j$, this multiplication can be su
 Kernels can thus be used in the dual formulation of SVMs to generalize classification to datasets with non-linearly separable data.
 
 \begin{align}
-    \label{svm-obj}
+    \label{eq:svm-obj}
     \max_\alpha\ & -\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) + \sum_{i=1}^n\alpha_i \\ 
-    \label{svm-c1}
+    \label{eq:svm-c1}
     \text{subject to } & 0 \leq \alpha_i \leq C \quad \forall i: 1\leq i\leq n \\
-    \label{svm-c2}
+    \label{eq:svm-c2}
     & \sum_{i=1}^ny_i\alpha_i=0
 \end{align}
 
@@ -168,13 +168,13 @@ Although gate-based architecture represents a more generic computational model, 
 
 Adiabatic quantum computing\cite{AQC} (AQC) is not aimed at creating a complete computational system. Instead, its goal is to exploit quantum phenomena to accelerate the optimization of models\cite{AQC2}. Specifically, D-Wave’s implementation of AQC follows these logical steps:
 
-% \begin{enumerate}
-%   \item Transform the problem into a Quadratic Unconstrained Binary Optimization (QUBO) formulation.
-%   \item Convert the objective function into a minimization problem.
-%   \item Generate the graph that represents the problem.
-%   \item Map this graph onto the qubit graph that forms the Quantum Processing Unit (QPU).
-%   \item Use quantum annealing to return the assignment that minimizes the objective function.
-% \end{enumerate}
+\begin{enumerate}
+  \item Transform the problem into a Quadratic Unconstrained Binary Optimization (QUBO) formulation.
+  \item Convert the objective function into a minimization problem.
+  \item Generate the graph that represents the problem.
+  \item Map this graph onto the qubit graph that forms the Quantum Processing Unit (QPU).
+  \item Use quantum annealing to return the assignment that minimizes the objective function.
+\end{enumerate}
 
 This overview is a high-level representation of the steps required to utilize quantum annealing technologies. The complexity of the procedure is not immediately apparent at this level of abstraction, necessitating a detailed analysis of each step for a comprehensive understanding.
 
@@ -241,7 +241,7 @@ Generates the following undirected graph:
       (x4) edge[loop right] node{-2} (x4);
   \end{tikzpicture}
   \caption{Graph of the proposed problem.}
-  \label{problem-graph}
+  \label{fig:problem-graph}
 \end{figure}
 
 \paragraph{Minor graph embedding} As previously mentioned, the structure of the QPU\cite{Pegasus} is fixed, and this structure determines the number and connections between the Qubits.
@@ -329,15 +329,15 @@ Imagining a QPU with 32 Qubits, its shape would be approximately as follows:
           \draw (14) -- (34);
       \end{tikzpicture} 
       \caption{32 QuBit QPU.}
-      \label{QPU}
+      \label{fig:QPU}
   \end{center}
 \end{figure}
 
-The structure of the Qubits is characterized by this ``diamond'' shape that D-Wave calls Pegasus. The currently available QPUs have approximately 5500 Qubits, in which a pattern similar to the one shown in figure \ref{QPU} is repeated.
+The structure of the Qubits is characterized by this ``diamond'' shape that D-Wave calls Pegasus. The currently available QPUs have approximately 5500 Qubits, in which a pattern similar to the one shown in figure \ref{fig:QPU} is repeated.
 
-To embed the graph \ref{problem-graph} into the QPU, the nodes must be arranged appropriately. Direct mapping is not always possible, and in such cases, the minor embedding procedure\cite{ME} is necessary. The minor embedding algorithm\cite{MEdwave} constructs chains of qubits that map multiple physical nodes of the QPU to the same logical node of the original graph. This approach compensates for the limited connections of the QPU and ensures all necessary nodes are connected.
+To embed the graph \ref{fig:problem-graph} into the QPU, the nodes must be arranged appropriately. Direct mapping is not always possible, and in such cases, the minor embedding procedure\cite{ME} is necessary. The minor embedding algorithm\cite{MEdwave} constructs chains of qubits that map multiple physical nodes of the QPU to the same logical node of the original graph. This approach compensates for the limited connections of the QPU and ensures all necessary nodes are connected.
 
-A possible embedding for \ref{problem-graph} might be:
+A possible embedding for \ref{fig:problem-graph} might be:
 
 \begin{figure}[H]
   \begin{center}
@@ -351,7 +351,7 @@ A possible embedding for \ref{problem-graph} might be:
           \draw[ultra thick] (5) -- (6); \draw[ultra thick] (1) -- (2); \draw (2) -- (5);
       \end{tikzpicture} 
       \caption{Embedded problem}
-      \label{embedding}
+      \label{fig:embedding}
   \end{center}
 \end{figure}
 
@@ -359,7 +359,7 @@ A possible embedding for \ref{problem-graph} might be:
 
 Once the graph is mapped onto the QPU, the search for the assignment that minimizes the energy expressed by the physical system can begin. The two main phenomena during this process are annealing and quantum tunnelling.
 
-The annealing phenomenon (referred to as thermal jump in figure \ref{q-anneal}), which is also present in various local search techniques like simulated annealing\cite{SimulatedAnnealing}, aims to escape local minima. The idea behind this technique is to allow a state change that temporarily increases the total energy, with the hope that from this new state, a global minimum can be reached.
+The annealing phenomenon (referred to as thermal jump in figure \ref{fig:q-anneal}), which is also present in various local search techniques like simulated annealing\cite{SimulatedAnnealing}, aims to escape local minima. The idea behind this technique is to allow a state change that temporarily increases the total energy, with the hope that from this new state, a global minimum can be reached.
 
 To further avoid local minima, quantum computing leverages the tunnelling phenomenon. The physical system can naturally change states towards a more stable configuration with lower energy. This physical process helps avoid searching by climbing peaks, thus accelerating convergence towards the global minimum.
 
@@ -367,5 +367,5 @@ To further avoid local minima, quantum computing leverages the tunnelling phenom
   \centering
   \includegraphics[width=0.5\textwidth]{figures/q-annealing.jpg}
   \caption{Graphical representation of quantum annealing.}
-  \label{q-anneal}
+  \label{fig:q-anneal}
 \end{figure}
