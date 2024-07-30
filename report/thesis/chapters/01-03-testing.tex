@@ -1,4 +1,46 @@
 \chapter{Testing framework}
-\section{Dataset used}
-\section{Pre-processing strategy}
-\section{Generating sentence embeddings}
+
+\section{Dataset used}\label{sec:dataset}
+
+To compare the proposed implementation with other machine learning models, both deep and non-deep, a standard dataset that allows for reasonable comparisons is necessary. In the literature, several datasets specifically developed for Sentiment Analysis can be found, among these, TweetEval\cite{tweeteval} will be analyzed in detail.
+
+The dataset proposed by CardiffNLP contains various contexts of text classification, among these, the ``sentiment'' split categorizes sentences based on the fundamental emotion they convey, whether positive, negative, or neutral. The golden standard includes 60,000 labelled examples extracted and subsequently anonymized from \url{https://x.com/}, previously known as Twitter. The strings extracted from the social network are concise, ranging from 10 to 200 characters, with 73.7\% of the examples being between 90 and 150 characters in length. The examples are distributed among the classes in an imbalanced manner, with 45\% belonging to the neutral class, 40\% labelled as positive, and only 15\% conveying negative emotions. The underrepresentation of the negative class may be due to content verification mechanisms on Twitter, these tools, designed to discourage overly aggressive use of the platform, lead to a scarcity of negative sentences. The imbalanced nature of the dataset can be desirable in some contexts; generally, it is crucial to be aware of it to evaluate potential rebalancing strategies. In the presented context, a balanced dataset is preferable, because otherwise, the optimization process of SVMs might favour a \emph{dummy classifier}, i.e., a classifier that always responds with the majority class, as it minimizes error for the given data.
+
+\section{Pre-processing Strategy}
+
+Before the dataset can be used to train the models, some pre-processing operations are necessary. These operations ensure higher quality input data to improve the performance of the resulting models.
+
+\paragraph{Eliminating Superfluous Class} SVMs allow for the classification of data divided into two classes. This working hypothesis may be too restrictive in some application contexts. Referring to the ``sentiment'' split of TweetEval, it is reasonable to expect that most tweets do not convey a specific sentiment, thus the need for the neutral class. Alternatively, one might require not only identifying a positive or negative sentiment but also associating the text with a specific emotion (hate, joy, fear, \dots).
+
+In the situations described above, multi-class classification is necessary. In the literature, methods for transforming a multi-class classification into a set of binary classifications are available\cite{multiclass}. This procedure requires training multiple models that learn to classify different subsets of the total information, combining their results to identify the target class uniquely. Since this thesis does not focus on developing a ``production-ready'' solution, it is possible to focus on training a single binary classifier and studying its advantages and disadvantages. The reasoning conducted will be generalizable to multi-class dataset usage.
+
+Among the three classes available in TweetEval, the neutral class is opted to be eliminated for two reasons:
+\begin{enumerate}
+    \item It is the most difficult class to classify even for a human;
+    \item Given the distribution of the data in the classes of the dataset, sentences belonging to the neutral class appear to be the most numerous, however, training in the presence of scarce data can create classification problems, which is why the two least represented classes, the positive and the negative, are chosen.
+\end{enumerate}
+
+\paragraph{Mapping Labels for SVMs} The standard formulation of SVMs assumes having a dataset labelled with $+1$ for positive class examples and $-1$ for negative class examples. This is required to use a low-computation-cost function, such as the sign function, to determine the class of new examples to classify.
+
+Sentences in TweetEval are labelled with $0$ for the negative class and $2$ for positive examples. To allow correct optimization, it is necessary to map the class labels from $\{0, 2\}$ to $\{-1, 1\}$, which can be done by subtracting $1$ from the original labels.
+
+\paragraph{Balancing the Dataset} As reported in \ref{sec:dataset}, the distribution of examples across classes is not fair. The balanced dataset is a desirable property in SVMs, so an equal number of examples were extracted from the positive class as the cardinality of the negative one. Despite the significant reduction in the number of examples, the dataset is large enough to guarantee more than 5,000 instances for each class considered. For this reason, it is possible to resize the dataset without worrying about potential information loss.
+
+\section{Generating Sentence Embeddings}
+
+Current artificial intelligence models are not capable of ``understanding'' text, at least not in the intuitive sense associated with the verb understand, so it is needed to reprocess the information and transform a sequence of characters into a sequence of numbers. This process is known as embedding generation.
+
+Before deep-learning models, embeddings were manually built by identifying salient information from the text. For example, trying to separate ``simple'' words from ``complex'' ones, some relevant information could be:
+\begin{itemize}
+    \item The part of speech represented, also known as PoS (noun, verb, adverb, \dots);
+    \item The length of the word;
+    \item The frequency in a reference dataset.
+\end{itemize}
+
+Deep neural networks have allowed the automatic creation of text embeddings with high semantic significance\cite{word2vec}. The newly generated vectors have significantly increased the number of dimensions, from tens to hundreds. The increase has considerably improved performance at the cost of making the embeddings uninterpretable; each word is mapped into a multidimensional space, but the semantic meaning of a single axis is unknown.
+
+To further improve performance, ad hoc variants of embeddings for specific tasks\cite{sentimentEmbedding} or procedures to capture the information of an entire sentence\cite{sentence-bert} have been developed.
+
+In the analysed application context, generating an embedding for the entire sentence can be considered an appropriate choice. On the one hand, it avoids shifting the complexity of the Sentiment Analysis task from the model to the embedding, as would happen using ad hoc embeddings for the reference task. On the other hand, it allows a sufficiently expressive vector representation to be produced.
+
+The embeddings for TweetEval were generated using the pre-trained \verb|all-mpnet-base-v2| model, which transforms a sentence into a vector in 768 dimensions. The input sentence used to create the embedding must be shorter than 384 characters; since the reference dataset works on short sentences, this constraint is not limiting.
