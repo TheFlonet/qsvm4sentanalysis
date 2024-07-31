@@ -287,7 +287,7 @@ To test \verb|QSplit| we ran the algorithm on some random problems with 128 vari
 \end{enumerate*}
 We performed tests by setting different values of Stop dim, i.e. the size of the matrix for which the problem is solved directly on QPU.
 
-It can be seen that as Stop dim decreases, the time required by \verb|QSplit| increases slightly, due to the greater number of recombinations performed, and at the same time the quality of the solution increases, approaching the lower bound of the Estimated range.
+It can be seen in Table \ref{tab:qsplit} that as Stop dim decreases, the time required by \verb|QSplit| increases slightly, due to the greater number of recombinations performed, and at the same time the quality of the solution increases, approaching the lower bound of the Estimated range.
 
 The reported times do not include the computation of the minor embedding, but only the actual resolution. If the total time were considered, the proposed algorithm would be faster than direct resolution in every tested context.
 
