@@ -142,7 +142,9 @@ $$t = \frac{\sum_{i=1}^n y_i - \sum_{j=1}^n(\alpha_jy_jK(x_i,x_j))}{n}$$
 
 As for the value of $w$, it cannot be directly derived when using the kernel function. The new $f(x)$ formulation becomes:
 
-$$f(x)=\sum_{i=1}^n\alpha_iy_iK(x_i, x) + t$$
+\begin{equation}
+  f(x)=\sum_{i=1}^n\alpha_iy_iK(x_i, x) + t\label{eq:svm-predict}
+\end{equation}
 
 \section{Adiabatic quantum computing}
 
