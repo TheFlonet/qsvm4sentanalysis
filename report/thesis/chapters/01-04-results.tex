@@ -1,4 +1,163 @@
 \chapter{Results}
-\section{Classification methodologies compared}
-\section{Performance analysis}
-\section{Analysis of required resources}
+
+\section{Classification Methodologies Compared}\label{sec:qsvm-res}
+
+The analysis focuses on comparing three fundamental aspects that characterize each machine learning model: the quality of the classification, the time required for the training phase, and the time needed to classify new examples.
+
+In the subsequent analyses, times will be reported in seconds. Since both training and inference are considered waiting times: The former for obtaining the actual model; The latter for obtaining the relevant data; The best result will be closest to zero, i.e., the procedure that takes the least time to provide the desired result.
+
+Evaluating performance is not as straightforward because a wrong choice of judgment method may highlight secondary flaws and conceal potential strengths. Conversely, it could lead to the opposite situation, concluding that the proposed approach is better than it should be.
+
+As this is a binary classification task, classic machine-learning metrics can be utilized. The data obtained from the inference phase are divided based on the original labels of the dataset, assigning the \emph{Actual Positive} (AP) set to the data labelled $1$ and the \emph{Actual Negative} (AN) set to the data labelled $-1$. Test data are also divided based on the class produced by the model, generating the \emph{Predicted Positive} (PP) and \emph{Predicted Negative} (PN) sets. Based on these four sets, the \emph{contingency table} is determined.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l|ll}
+       & PP & PN \\\hline
+    AP & TP & FN \\
+    AN & FP & TN
+    \end{tabular}
+    \caption{Contingency table}
+\end{table}
+
+The intersection between two of the above-described sets defines:
+\begin{itemize}
+    \item \emph{True Positive} (TP), the elements of the positive class categorised correctly;
+    \item \emph{False Positive} (FP), elements of the negative class that were classified as positive;
+    \item \emph{True Negative} (TN), elements correctly classified as negative;
+    \item \emph{False Negative} (FN), elements erroneously labelled as negative.
+\end{itemize}
+
+From the values in the contingency table, various evaluation metrics can be derived, all of which are within the interval $[0, 1]$, where $0$ indicates the worst possible value and $1$ is the perfect score.
+
+\paragraph{Accuracy} $\frac{TP + TN}{TP + TN + FP + FN}$, indicates the number of correct predictions out of the total available examples, thus not providing explanations for the errors obtained.
+
+\paragraph{Precision} Derived using the formula $\frac{TP}{TP + FP}$, it indicates how many of the elements labelled as positive should have been positive.
+
+\paragraph{Recall} From the formula $\frac{TP}{TP + FN}$, it provides a measure of how well a relevant datum (positive class) is correctly interpreted by the model.
+
+\paragraph{F1-Score} The formula is obtained through the harmonic mean of precision and recall, $2*\frac{\text{Precision}*\text{Recall}}{\text{Precision}+\text{Recall}}$. This metric avoids degenerate situations where a desirable result is obtained on one of the two metrics while significantly decreasing the score of the other.
+
+These four metrics will be considered for evaluating the obtained models, to capture as much information as possible for assessing performance during the classification of new examples.
+
+\section{Performance Analysis}
+
+Using the APIs provided by D-Wave, it is possible to calculate the minimum time required by a CSP problem to be solved by the hybrid solver available.
+
+The size of TweetDF would require at least 480 seconds, since the free usage of D-Wave's cloud services is limited to 20 minutes, the tests reported below will be conducted on a dataset consisting of 4096 randomly selected examples for the training phase and 2048 examples for the inference phase, equally divided between positive and negative classes. The smaller number of examples allows for more test repetitions, thus recording more reliable data.
+
+The subset extraction of the data was performed randomly, only imposing an equal number of positive and negative examples.
+
+The results obtained from ten distinct executions are reported in Tables \ref{tab:QSVM1}, \ref{tab:QSVM2}, and \ref{tab:QSVM3}. These tables are presented to allow a comparison with non-quantum methods for solving the same classification task.
+
+\paragraph{Classical Optimizer CPLEX} The CPLEX program\cite{cplex} is an optimization software for solving linear and non-linear programming problems. The mathematical formulation of the CSP describing an SVM is represented using the PyOmo library, which allows abstraction concerning the chosen solver and the generic writing of problems. Once the problem is formulated as an objective function and constraints, calls to the optimization library are made, returning the assignment of the variables $\alpha$ that minimizes the objective function \ref{eq:min-svm}. The results regarding the resolution of the problem through CPLEX are detailed in Table \ref{tab:QSVM1}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccccccc}
+    \toprule                                                             \\                    
+    Train time & Accuracy & Precision & Recall & F1    & Time to predict \\
+    \midrule
+    285.207    & 0.8      & 0.95      & 0.64   & 0.77  & 2.324           \\
+    278.999    & 0.83     & 0.91      & 0.74   & 0.81  & 1.997           \\
+    267.266    & 0.81     & 0.97      & 0.65   & 0.77  & 2.059           \\
+    256.59     & 0.8      & 0.96      & 0.64   & 0.76  & 2.353           \\
+    254.312    & 0.78     & 0.95      & 0.59   & 0.73  & 2.105           \\
+    271.298    & 0.81     & 0.93      & 0.68   & 0.79  & 2.383           \\
+    271.301    & 0.79     & 0.91      & 0.64   & 0.75  & 2.392           \\
+    266.922    & 0.82     & 0.93      & 0.69   & 0.79  & 2.148           \\
+    257.671    & 0.79     & 0.96      & 0.61   & 0.75  & 2.398           \\
+    264.427    & 0.8      & 0.88      & 0.68   & 0.77  & 1.977           \\
+    \bottomrule
+    \end{tabular}
+    \caption{Results obtained through CPLEX}
+    \label{tab:QSVM1}
+\end{table}
+
+\paragraph{Hybrid Optimizer from D-Wave} D-Wave offers a suite of hybrid solvers, for optimization problems, available through Python APIs\cite{hss}. The program is always initialized using the PyOmo library and then transferred to D-Wave's cloud services for resolution. Unlike CPLEX, which returns a single optimal solution, the solver provided by D-Wave produces a list of possible assignments, each with its associated objective function value. By extracting all and only the assignments with the minimum objective function value, it is possible to produce a set of models and perform the inference phase by aggregating the individual results through a majority vote. Although this procedure slows down the prediction, it could improve the inference phase. The results obtained using the solvers proposed by D-Wave are detailed in Table \ref{tab:QSVM2}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccccccccc}
+    \toprule
+    Train time & Accuracy & Precision & Recall & F1    & Time to predict \\
+    \midrule
+    390.745    & 0.81     & 0.97      & 0.64   & 0.77  & 40.219          \\
+    423.917    & 0.79     & 0.96      & 0.6    & 0.74  & 30.186          \\
+    326.422    & 0.79     & 0.97      & 0.59   & 0.73  & 23.686          \\
+    239.25     & 0.76     & 0.95      & 0.55   & 0.7   & 19.74           \\
+    221.635    & 0.81     & 0.96      & 0.65   & 0.77  & 39.708          \\
+    320.892    & 0.8      & 0.96      & 0.63   & 0.76  & 34.159          \\
+    319.161    & 0.81     & 0.96      & 0.65   & 0.78  & 40.224          \\
+    437.813    & 0.82     & 0.97      & 0.67   & 0.79  & 40.424          \\
+    377.309    & 0.81     & 0.97      & 0.65   & 0.78  & 30.541          \\
+    220.48     & 0.82     & 0.97      & 0.66   & 0.79  & 39.654          \\
+    \bottomrule
+    \end{tabular}
+    \caption{Results obtained through D-Wave}
+    \label{tab:QSVM2}
+\end{table}
+
+\paragraph{The Transformer Model RoBERTa} In addition to the optimization methods reported, it is relevant to evaluate the performance of the hybrid solvers compared to the state-of-the-art. The model considered belongs to the BERT family. The foundational version of RoBERTa\cite{roberta-base} was trained on the Sentiment Analysis task using datasets of various natures, taking approximately 15 days to converge. Subsequently, the model was fine-tuned on TweetEval\cite{tweetRoberta}\cite{robertamodel} to specialize it in classifying ``basic'' sentiments.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccccc}
+    \toprule
+    Accuracy & Precision & Recall & F1    & Time to predict \\
+    \midrule
+    0.95     & 0.95      & 0.94   & 0.95  & 142.569         \\
+    0.94     & 0.94      & 0.94   & 0.94  & 124.094         \\
+    0.94     & 0.94      & 0.93   & 0.94  & 141.828         \\
+    0.95     & 0.95      & 0.94   & 0.95  & 133.949         \\
+    0.94     & 0.95      & 0.93   & 0.94  & 147.302         \\
+    0.94     & 0.95      & 0.93   & 0.94  & 135.804         \\
+    0.94     & 0.95      & 0.93   & 0.94  & 136.883         \\
+    0.94     & 0.95      & 0.93   & 0.94  & 132.836         \\
+    0.95     & 0.96      & 0.94   & 0.95  & 137.382         \\
+    0.94     & 0.95      & 0.94   & 0.94  & 135.044         \\
+    \bottomrule
+    \end{tabular}
+    \caption{Results obtained through RoBERTa}
+    \label{tab:QSVM3}
+\end{table}
+
+Considering the results reported in different contexts, the following analysis is done of the three characteristics of interest identified in the section \ref{sec:qsvm-res}.
+
+\paragraph{Performance during Inference} The results recorded by RoBERTa are significantly better compared to those obtained from SVMs, both in the quantum version and the classical one. Despite this, the machine learning models also report scores well above a random guess, leading to the conclusion that the proposed methodology can capture the semantic information conveyed by the text, although not as well as the Transformer architecture, which is renowned in the literature for its superior ability to convey textual information. No significant differences are noted between the model produced by D-Wave and the one generated with CPLEX, indicating that the reduction in the optimization variable domain, discussed in \ref{sec:domain}, does not impact model performance.
+
+\paragraph{Training Time} Although unavailable, the training times for an expressive and fine-tuned model like RoBERTa are certainly higher than those recorded by the optimization approaches. At the very least, it is reasonable to expect times in the order of hours, if not days, on high-performance GPUs. Conversely, the D-Wave approach and the one based on CPLEX allowed training the model on a personal computer. The recorded times, between 250 and 450 seconds, consider several external factors, which are useful to break down for a proper analysis. Both with D-Wave and CPLEX, it was necessary to convert the available data into a format understandable by the optimizers, which takes about 80 seconds. Resolution via D-Wave involves sending the model to the cloud infrastructure, and while it is not possible to record the time taken to transmit the data, one can consider the size of the CSP on disk, which is around 4GB. Analyzing only the time required to produce the response to the problem, the CPLEX optimizer takes an average of 100 seconds, while D-Wave's hybrid computation produces comparable quality responses in only 40 seconds, significantly reducing the required time.
+
+\paragraph{Classification Time} Even when inferring new examples, the times recorded by RoBERTa were the worst of the three methodologies compared. Although in this case, the unit of measurement is still seconds, the time required to classify the same number of new examples is significantly greater. Among the SVM variants, classical and quantum, the version produced by D-Wave is less performant than that obtained with CPLEX. This behaviour is due to the use of multiple models to calculate the result, a procedure not performed with the result obtained from CPLEX. From a qualitative analysis of the ensemble procedure, using multiple models does not seem to bring particular benefits; In almost all cases, the majority class equals the class predicted by each model in the set. For this reason, it is possible to avoid the computational overhead of the ensemble procedure and use only one of the optimal models obtained through D-Wave, which reduces inference time, making the results produced by CPLEX and D-Wave comparable.
+
+\section{Testing with the whole dataset}
+
+Since the results obtained from different executions are almost identical, it is possible to perform a single test using the entire TweetDF. This additional test allows verification of the consistency of performance across the entire data set and the scalability of the hybrid optimisation.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{cccccc}
+    \toprule
+    \multicolumn{6}{c}{D-Wave}                                       \\ \midrule
+    Train (min) & Accuracy & Precision & Recall & F1   & Predict (s) \\
+    35          & 0.82     & 0.96      & 0.66   & 0.78 & 212.3       \\ \bottomrule
+    \toprule
+    \multicolumn{6}{c}{RoBERTa}                                      \\ \midrule
+                & Accuracy & Precision & Recall & F1   & Predict (s) \\
+                & 0.94     & 0.95      & 0.94   & 0.94 & 291         \\ \bottomrule
+    \end{tabular}
+    \caption{Results with whole TweetDF}
+    \label{tab:qsvm-fulldf}
+\end{table}
+
+The results shown in Table \ref{tab:qsvm-fulldf} pertain to RoBERTa and D-Wave. The data regarding CPLEX are not reported since the SVM problem with such a large dataset caused the optimizer to crash before producing a result. This incident highlights a significant advantage of quantum computing: the ability to handle not only more complex problems but also larger ones. This is relevant because, in general, the more information encoded in the problem, the better the optimal solution produced.
+
+The performance results do not vary significantly, indicating that a random subset of TweetDF is sufficient to capture the semantic information that can be modelled with SVMs.
+
+Inference time increases linearly when using RoBERTa, unlike with D-Wave, where the time increases fivefold with a dataset three times larger than in previous tests. However, in this case, the time recorded using D-Wave is influenced by using multiple models simultaneously. By reducing inference to a single matrix operation, i.e. using only one model, it is possible to significantly reduce the times, resulting in a linear growth of the required time.
+
+The training time using D-Wave rises to 35 minutes, of which 8 minutes are used on the D-Wave hybrid solver. Despite the considerable increase in training times, the optimization conducted by D-Wave is still much shorter than what is reasonable to expect for training RoBERTa.
+
+\section{QSVM Overview}
+
+In summary, machine learning-based approaches have proven to be much faster in generating a model, requiring significantly less data. Moreover, the increase in the size of input data does not lead to significant improvements in the quality of the produced model. The performance recorded by machine learning models is inferior to what can be achieved with Transformer architectures, however, in low computational power contexts, such as embedded systems and personal computers, the approximation produced by SVMs could represent a valid alternative. Specifically, the approach leveraging quantum computing (D-Wave) has proven to be superior to classical optimization (CPLEX), allowing for solving the presented problems in less time and with comparable performance.
