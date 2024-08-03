@@ -32,7 +32,7 @@ This process is not done by directly accessing the quantum solver but through wh
 
 Hybrid solvers can read the standard format in which optimization problems are written, allowing easier substitution of classical solvers with quantum solvers. For example, any optimization model written with Pyomo\cite{pyomo}, a standard library in combinatorial optimization, can save models in text files that can later be read and loaded into D-Wave’s internal solver format.
 
-\paragraph{Domain limitations} Reading the file describing the problem and converting it to the internal representation is entirely transparent as long as two conditions are met:
+\paragraph{Domain limitations}\label{sec:domain} Reading the file describing the problem and converting it to the internal representation is entirely transparent as long as two conditions are met:
 \begin{enumerate}
     \item The problem must be written in minimization form,
     \item There must be no multiplications between real variables.
