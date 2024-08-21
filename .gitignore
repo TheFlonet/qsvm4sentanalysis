@@ -11,6 +11,7 @@ __pycache__
 !report/extra/img/*.*
 !report/thesis/figures/*.*
 !report/extended-abstract/figures/*.*
+!report/poster/logos/*.*
 
 # Dev Env
 .idea
