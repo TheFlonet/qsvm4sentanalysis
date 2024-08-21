@@ -337,7 +337,7 @@ Imagining a QPU with 32 Qubits, its shape would be approximately as follows:
 
 The structure of the Qubits is characterized by this ``diamond'' shape that D-Wave calls Pegasus. The currently available QPUs have approximately 5500 Qubits, in which a pattern similar to the one shown in figure \ref{fig:QPU} is repeated.
 
-To embed the graph \ref{fig:problem-graph} into the QPU, the nodes must be arranged appropriately. Direct mapping is not always possible, and in such cases, the minor embedding procedure\cite{ME} is necessary. The minor embedding algorithm\cite{MEdwave} constructs chains of qubits that map multiple physical nodes of the QPU to the same logical node of the original graph. This approach compensates for the limited connections of the QPU and ensures all necessary nodes are connected.
+To embed the graph \ref{fig:problem-graph} into the QPU, the nodes must be arranged appropriately. Direct mapping is not always possible, and in such cases, the minor embedding procedure\cite{ME} is necessary. The minor embedding algorithm constructs chains of qubits that map multiple physical nodes of the QPU to the same logical node of the original graph. This approach compensates for the limited connections of the QPU and ensures all necessary nodes are connected.
 
 A possible embedding for \ref{fig:problem-graph} might be:
 
