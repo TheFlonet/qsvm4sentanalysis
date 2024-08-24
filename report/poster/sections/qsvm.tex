@@ -1,0 +1,15 @@
+\begin{block}{Quantum Support Vector Machine for Sentiment Analysis}
+    We explore the potential of \textbf{Adiabatic Quantum Computing (AQC)} for \textbf{Natural Language Processing (NLP)}. The focus is on \textbf{Binary Sentiment Analysis (BSA)}. 
+    Our steps are:
+
+    \begin{enumerate} 
+        \item Select the TweetEval dataset\cite{TweetEval}; 
+        \item Transform the text into vectors using SentenceBert\cite{SentenceBert}; 
+        \item Encode the problem of learning a \textbf{Support Vector Machine (SVM)} using the D-Wave hybrid solvers; 
+        \item Assess the quality. We compare it with:
+        \begin{itemize}
+            \item An SVM implementation via CPLEX classical solver;
+            \item The Transformer RoBERTa\cite{roberta}.
+        \end{itemize} 
+    \end{enumerate}
+\end{block}
