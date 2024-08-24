@@ -50,7 +50,7 @@ As an alternative to D-Wave's hybrid approach, ``QPU-only'' solvers can be used.
 This plan offers 20 minutes per month for the hybrid solvers and one minute per month for purely quantum solvers.
 
 It is not explicitly stated whether the paid plan involves using different algorithms compared to the free version. 
-Given that, the free tier is presented as an opportunity for prototyping'', some of the findings gathered may not fully reflect the complete potential of the quantum technology provided by D-Wave.
+Given that, some of the findings gathered may not fully reflect the complete potential of the quantum technology provided by D-Wave.
 
 \section{QPU solver}
 
@@ -157,7 +157,7 @@ Ideally, the value of each qubit within $\phi(y)$ should be coherent with the va
 The algorithm proceeds as follows:
 \begin{itemize}
     \item The nodes of $H$ that are not part of any partial embedding (i.e., not part of any $\phi(x_i)$) are selected; these nodes are referred to as ``free'' nodes.
-    \item For each free node $h$, the shortest path between $h$ and each $\phi(x_i)$, the path must contains only free nodes.
+    \item For each free node $h$, the shortest path between $h$ and each $\phi(x_i)$ is computed, the path must contains only free nodes.
     \item $h^*$ is identified as the free node that minimizes the sum of the path lengths to the different $\phi(x_i)$.
     \item $h^*$ becomes the root of $\phi(y)$, and the other nodes in $\phi(y)$ are those that form the shortest paths between $h^*$ and each $\phi(x_i)$.
 \end{itemize}
