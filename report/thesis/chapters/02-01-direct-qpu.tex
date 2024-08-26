@@ -4,7 +4,9 @@
 
 Section \ref{sec:qsvm-res} has shown that adiabatic quantum computing can offer advantages in terms of faster convergence to a solution. However, it is worth asking how much of this advantage is due to the quantum component and how much is attributable to a classical solver optimised for quadratic problems.
 
-The technology behind the hybrid solvers is protected by D-Wave's intellectual property, which makes these tools essentially black boxes. Given the proprietary nature of these solvers, analysis must rely on the limited data available to make informed evaluations of alternative solutions.
+The technology behind the hybrid solvers is protected by D-Wave's intellectual property, which makes these tools essentially black boxes. 
+
+Given the proprietary nature of these solvers, analysis must rely on the limited data available to make informed evaluations of alternative solutions.
 From the control dashboard provided by D-Wave\footnote{\url{https://cloud.dwavesys.com/leap/}}, it is possible to inspect the problems solved by their QPUs and obtain some useful information.
 
 Although the data collected does not allow an in-depth analysis of the underlying implementation choices, it can still be useful for a ``high-level'' analysis.
@@ -17,8 +19,8 @@ Although the data collected does not allow an in-depth analysis of the underlyin
 By selecting a problem from the list, the information from Figure \ref{fig:dwaveleap} is available, i.e: 
 \begin{itemize} 
 	\item A report on the characteristics of the problem presented, whether BQM, QUBO or CQM. 
-	\item A list of the calculated potential solutions, together with the associated energy values, representing the result of the objective function with the given assignment, Figure \ref{fig:sampleset} is an example. 
-	\item Execution times of the problem, indicating not only the total time but also how much of this time was spent on the QPU. 
+	\item A list of the calculated potential solutions, together with the associated energy values, representing the result of the objective function with the given assignment. Figure \ref{fig:sampleset} is an example. 
+	\item Execution times of the problem, indicating not only the total time but also how much of this time was spent on the QPU. Namely ``Timing'' tab of Figure \ref{fig:dwaveleap}
 \end{itemize}
 
 \begin{figure}
@@ -28,7 +30,7 @@ By selecting a problem from the list, the information from Figure \ref{fig:dwave
     \label{fig:sampleset}
 \end{figure}
 
-Of the available data, information on execution times is of main interest, as it can help to determine whether and to what extent the quantum component is crucial in generating an optimal solution.
+Of the available data, information on execution time is of main interest, as it can help to determine whether and to what extent the quantum component is crucial in generating an optimal solution.
 
 \subsection{QPU Usage}
 
@@ -72,14 +74,12 @@ The following sections will thus focus on analyzing the minor embedding algorith
 \section{Minor Embedding Algorithm}
 
 \begin{displayquote}
-    Given two arbitrary graphs $G$ and $H$, $G$ is called a minor of $H$ if $G$ is isomorphic to a graph that can be formed from $H$ by a series of the following operations: edge contraction, edge or vertex deletion.
+    Given two arbitrary graphs $G$ and $H$, $G$ is called a minor of $H$ if $G$ is isomorphic to a graph that can be formed from $H$ by a series of the following operations applied to $H$: \emph{edge contraction}, \emph{edge deletion} or \emph{vertex deletion}.
 \end{displayquote}
 
 The definition provided introduces the concept of a minor graph, which is fundamental to understanding the applications of minor embedding. 
 
-Recalling that two graphs are isomorphic if there exists a bijective function between the vertices of the first graph and those of the second.
-
-In the minor embedding of $G$ into $H$, $G$ is the ``small'' graph that must be isomorphic to a transformation of $H$ based on three operations:
+Recalling that two graphs are isomorphic if there exists a bijective function between the vertices of the first graph and those of the second, in the minor embedding of $G$ into $H$, $G$ is the ``small'' graph that must be isomorphic to a transformation of $H$ based on the above three operations:
 \begin{itemize}
     \item \emph{Edge deletion}: Involves removing an edge from $H$;
     \item \emph{Vertex deletion}: Involves removing a vertex from $H$. Together with edge deletion, this operation allows for the removal of redundant information;
@@ -157,7 +157,7 @@ Ideally, the value of each qubit within $\phi(y)$ should be coherent with the va
 The algorithm proceeds as follows:
 \begin{itemize}
     \item The nodes of $H$ that are not part of any partial embedding (i.e., not part of any $\phi(x_i)$) are selected; these nodes are referred to as ``free'' nodes.
-    \item For each free node $h$, the shortest path between $h$ and each $\phi(x_i)$ is computed, the path must contains only free nodes.
+    \item For each free node $h$, the shortest path between $h$ and each $\phi(x_i)$ is computed, the path must contain only free nodes.
     \item $h^*$ is identified as the free node that minimizes the sum of the path lengths to the different $\phi(x_i)$.
     \item $h^*$ becomes the root of $\phi(y)$, and the other nodes in $\phi(y)$ are those that form the shortest paths between $h^*$ and each $\phi(x_i)$.
 \end{itemize}
