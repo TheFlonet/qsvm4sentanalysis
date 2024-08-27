@@ -19,56 +19,26 @@ Branch\&Bound has been applied as a partitioning methodology for QUBO problems i
         level 2/.style={sibling distance=3cm},
         level 3/.style={sibling distance=1.5cm},
     ]
-        \node {$(x_1, x_2, x_3)$}
-        child { node {$(x_2, x_3)$}
-            child { node {$(x_3)$}
-            child { 
-                node {$(0,0,0)$}
-                edge from parent node[left] {$x_3:0$}
+        \node {$(x_1,x_2,x_3)$}
+        child { node {$(0, x_2, x_3)$}
+            child { node {$(0,0,x_3)$}
+                child { node {$(0,0,0)$}}
+                child { node {$(0,0,1)$}}
             }
-            child { 
-                node {$(0,0,1)$}
-                edge from parent node[right] {$x_3:1$}
+            child { node {$(0,1,x_3)$}
+                child { node {$(0,1,0)$}}
+                child { node {$(0,1,1)$}}
             }
-            edge from parent node[left] {$x_2:0$}
-            }
-            child { node {$(x_3)$}
-                child { 
-                    node {$(0,1,0)$}
-                    edge from parent node[left] {$x_3:0$}
-                }
-                child { 
-                    node {$(0,1,1)$}
-                    edge from parent node[right] {$x_3:1$}
-                }
-                edge from parent node[right] {$x_2:1$}
-            }
-            edge from parent node[left] {$x_1:0$}
         }
-        child { node {$(x_2, x_3)$}
-            child { node {$(x_3)$}
-                child { 
-                    node {$(1,0,0)$}
-                    edge from parent node[left] {$x_3:0$}
-                }
-                child { 
-                    node {$(1,0,1)$}
-                    edge from parent node[right] {$x_3:1$}
-                }
-                edge from parent node[left] {$x_2:0$}
+        child { node {$(1,x_2,x_3)$}
+            child { node {$(1,0,x_3)$}
+                child { node {$(1,0,0)$}}
+                child { node {$(1,0,1)$}}
             }
-            child { node {$(x_3)$}
-                child { 
-                    node {$(1,1,0)$}
-                    edge from parent node[left] {$x_3:0$}
-                }
-                child { 
-                    node {$(1,1,1)$}
-                    edge from parent node[right] {$x_3:1$}
-                }
-                edge from parent node[right] {$x_2:1$}
+            child { node {$(1,1,x_3)$}
+                child { node {$(1,1,0)$}}
+                child { node {$(1,1,1)$}}
             }
-            edge from parent node[right] {$x_1:1$}
         };
     \end{tikzpicture}
     \caption{Example of a complete exploration for a problem with three binary variables.}
@@ -112,7 +82,7 @@ Section \ref{sec:AQC} outlined the general structure of a QUBO problem.
 
 $$\min X^TQX$$ 
 
-Where $X$ is the column vector of optimization variables with dimension $(n \times 1)$, $X^T$ is the transposed vector with dimension $(1 \times n)$, and $Q$ is the upper triangular square matrix with dimension $n \times n$.
+Where $X$ is the column vector of optimization variables with dimension $(n \times 1)$, $X^T$ is the transposed vector with dimension $(1 \times n)$, and $Q$ is the upper triangular square matrix with dimension $(n \times n)$.
 
 Taking a problem with $n=6$ as an example, the matrix formulation takes the form:
 
