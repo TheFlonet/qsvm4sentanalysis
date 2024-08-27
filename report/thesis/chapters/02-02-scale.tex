@@ -3,9 +3,10 @@
 D-Wave claims that its heuristic approach enables the search for minor embeddings computationally feasible. 
 This chapter evaluates that claim to understand the limitations beyond which the QPU cannot be effectively used through a direct procedure.
 
-As discussed in Section \ref{sec:qpuonly}, the search for an embedding is the only step that can impact the resolution speed of current quantum solvers. 
-Therefore, understanding the limits of the minor embedding search corresponds to identifying the threshold beyond which the QPU cannot be used directly.
+As discussed in Chapter \ref{sec:qpuonly}, the search for an embedding is the only step that can impact the resolution speed of current quantum solvers. 
 
+This chapter will focus on examining the limitations encountered in the use of minor embedding. 
+This investigation aims to identify the threshold beyond which the direct use of the QPU becomes unfeasible.
 Section \ref{sec:qpu-dataset} will introduce the dataset used for testing, while Section \ref{sec:qpu-res} will present the results obtained and the corresponding analyses.
 
 \section{Testing with Growing Problem Sizes}\label{sec:qpu-dataset}
@@ -15,7 +16,7 @@ The only optimization variables are the $\alpha_i$ variables, one for each examp
 Since the $\alpha_i$ variables belong to the integer domain, their binary expansion must be computed for use with QUBO problems:
 
 \begin{itemize} 
-	\item Calculate the number of bits required to represent $\alpha \in [0, \text{UB}]$, i.e. $k = \lfloor\log_2(\text{UB})\rfloor + 1$; 
+	\item Calculate the number of bits required to represent $\alpha \in [0, \text{UB}]$, i.e. $k = \lfloor\log_2(\text{UB})\rfloor + 1$. Where $\text{UB}$ is the upper bound of the $\alpha$ domain derived from Equation \ref{eq:svm-c1}; 
 	\item Replace each $\alpha_i$ with $2^0\alpha_i^0 + \dots + 2^k\alpha_i^k$. 
 \end{itemize}
 
@@ -56,8 +57,17 @@ Each example is placed at a constant distance from its neighbours or the origin,
     \label{fig:toydf}
 \end{figure}
 
-A structure like that in Figure \ref{fig:toydf} allows for generating a dataset that, by construction, will lead to a fixed input graph for the minor embedding algorithm. 
-The number of nodes depends on only two factors:
+A structure like the one in Figure \ref{fig:toydf} allows for generating a dataset that, by construction, will lead to a fixed input graph $G$ for the minor embedding algorithm, called ToyGraph. 
+For example, the data in figure \ref{fig:toydf} leads to the graph in figure \ref{fig:toydfgraph}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{figures/toygraph.png}
+    \caption{Input graph $G$ for ToyDF of size $8$ and $UB=1$.}
+    \label{fig:toydfgraph}
+\end{figure}
+
+The number of nodes of $G$ depends on only two factors:
 
 \begin{itemize} 
 	\item Equation \ref{eq:nodesnum}, where $\text{UB} = 1$ can be set to ensure that the number of nodes increases linearly with the number of examples; 
@@ -69,8 +79,10 @@ Although this structure is common in many optimization problems, it requires sig
 
 \section{Results}\label{sec:qpu-res}
 
-The search for minor embeddings was conducted with various sizes of ToyDF. 
-By repeating all cases using the first 100 prime numbers as initial seeds of minor embedding search, the results shown in Table \ref{tab:scale} were obtained.
+The search for minor embeddings for ToyGraph was conducted with various sizes of ToyDF. 
+Given the heuristic nature of the minor embedding search, the algorithm needs a seed for the pseudorandom number generator to govern non-deterministic choices. 
+According to the recommendations of \cite{random}, a good generator seed should be a prime number; therefore, the tests were repeated using the first 100 prime numbers.
+The results shown in Table \ref{tab:scale} were obtained.
 
 \begin{table}[H]
     \centering
@@ -104,20 +116,20 @@ By repeating all cases using the first 100 prime numbers as initial seeds of min
 
 The columns in Table \ref{tab:scale} indicate: 
 \begin{itemize} 
-	\item \textbf{Problem Nodes}: The number of nodes in the original problem; 
-	\item \textbf{Average Embedding Nodes}: The number of nodes in the found embedding; 
+	\item \textbf{Problem Nodes}: The number of nodes in the original problem as in Figure \ref{fig:toydfgraph}; 
+	\item \textbf{Average Embedding Nodes}: The number of nodes in the found embedding from $G$ to Pegasus; 
 	\item \textbf{Average Time (s)}: The time, in seconds, taken to find the embedding. 
 \end{itemize}
 
-The highlighted rows represent problems where the initial problem size is a power of two. 
+The rows in Table \ref{tab:scale} represent initial problems whose size is a power of two. 
 Although this characteristic does not have significant consequences for the analysis, doubling the required number of nodes is not uncommon. This doubling can be due to:
 \begin{itemize} 
 	\item Use of pre-solving; 
-	\item An increase in the upper bound of the $\alpha_i$ variables, which in an ideal (error-free) SVM scenario should be able to tend toward $+\infty$. 
+	\item An increase in the upper bound of the $\alpha_i$ variables, which in an ideal (error-free) SVM scenario should be able to tend towards $+\infty$. 
 \end{itemize}
 
-Figure \ref{fig:scale_nodes} shows the number of QPU nodes required to find an embedding for the graph. 
-Given the difference in scale between the x-axis and y-axis, it can be observed that the demand for nodes grows exponentially.
+Figure \ref{fig:scale_nodes} shows the number of QPU nodes required to find an embedding. 
+The number of nodes required for the embedding is at least ten times the size of the input graph $G$.
 
 For instance, a problem with 256 nodes, an insignificant dataset size compared to TweetDF, requires 3,000 qubits on the QPU. 
 Given that current D-Wave QPUs have around 5,600 qubits, it is unlikely that an embedding will be found for larger problems.
@@ -130,7 +142,7 @@ Given that current D-Wave QPUs have around 5,600 qubits, it is unlikely that an 
 \end{figure}
 
 Figure \ref{fig:scale_time} shows the average time required to compute the embedding. 
-Although the growth is not exponential, the complexity of the procedure significantly impacts performance, reaching 800 seconds for moderately sized problems.
+The cost of the procedure significantly impacts performance, reaching 800 seconds for moderately sized problems.
 
 Given that these times refer to a preprocessing operation, such high values are incompatible with the results recorded in Section \ref{sec:qsvm-performance}. 
 In the case of the hybrid solver, the time recorded to compute the optimal solution with 4,096 examples and an upper bound of $\alpha = 255$ is less than the time required for the minor embedding search for problems with 128 nodes.
@@ -144,7 +156,7 @@ In the case of the hybrid solver, the time recorded to compute the optimal solut
 
 \subsection{QPU Solver vs. Hybrid Solver}
 
-These findings indicate that the direct use of the QPU is not a scalable alternative capable of solving problems beyond those currently addressed by classical computers.
+These findings strongly suggest that the direct use of the QPU is not a scalable alternative capable of solving problems beyond those currently addressed by classical computers.
 
 The use of hybrid solvers is therefore a key step for the optimal utilisation of quantum annealing technology. 
 It is therefore worth considering whether alternative hybrid solvers can be developed to further exploit the QPU and improve performance in problem-solving.
