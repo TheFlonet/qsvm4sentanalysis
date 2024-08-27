@@ -48,6 +48,7 @@ sketches
 *.abs
 *.xmpdata
 *.xmpi
+*.pyg
 
 # Generated data
 data
