@@ -6,11 +6,13 @@ import dimod
 import networkx as nx
 import numpy as np
 import pandas as pd
-from dimod import SimulatedAnnealingSampler
+from dotenv import load_dotenv
 from matplotlib import pyplot as plt
 from numpy import floating, integer
 from subqubo.QSplitSampler import QSplitSampler
 from subqubo.QUBO import QUBO
+import pyomo.environ as pyo
+from dwave.system import EmbeddingComposite, DWaveSampler
 
 
 def sanitize_df(qubo: QUBO) -> pd.DataFrame:
@@ -21,31 +23,67 @@ def sanitize_df(qubo: QUBO) -> pd.DataFrame:
     return qubo.solutions
 
 
-def measure(problem: Dict, interactions: int, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
-    start_time = time.time()
-    direct_solutions = (dimod.SimulatedAnnealingSampler().sample_qubo(qubo.qubo_dict, num_reads=10)
-                        .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
-    end_time = time.time()
+def get_direct_sol(qubo: QUBO) -> pd.DataFrame:
+    return (EmbeddingComposite(DWaveSampler()).sample_qubo(qubo.qubo_dict, num_reads=10)
+            .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
 
-    random_solutions = (dimod.RandomSampler()
-                        .sample_qubo(qubo.qubo_dict, num_reads=min(500_000, 2 ** problem['variables']))
-                        .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
 
-    start = time.time()
-    sampler = QSplitSampler(SimulatedAnnealingSampler(), problem['cut_dim'])
-    subqubos = sampler.run(qubo, problem['variables'])
-    end = time.time()
+def get_random_sol(qubo: QUBO) -> pd.DataFrame:
+    return (dimod.RandomSampler()
+            .sample_qubo(qubo.qubo_dict, num_reads=min(500_000, 2 ** len(qubo.rows_idx)))
+            .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
 
+
+def get_sol_range(qubo: QUBO) -> Tuple[float, float]:
+    n = len(qubo.rows_idx)
+    model = pyo.ConcreteModel()
+    model.x = pyo.Var(range(n), domain=pyo.Binary)
+
+    def objective_rule(w_model):
+        return sum(qubo.qubo_matrix[i][j] * model.x[i] * model.x[j] for i in range(n) for j in range(n))
+
+    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.minimize, name='obj')
+    solver = pyo.SolverFactory('cplex_direct')
+    solver.solve(model)
+    min_sol = model.obj()
+    model.del_component('obj')
+    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
+    solver = pyo.SolverFactory('cplex_direct')
+    solver.solve(model)
+    max_sol = model.obj()
+    return min_sol, max_sol
+
+
+def normalize_sol(solution: float, sol_range: Tuple[float, float]) -> float:
+    return (solution - sol_range[0]) / (sol_range[1] - sol_range[0])
+
+
+def measure(problem: Dict, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
     res['Name'].append(problem['name'])
     res['Variables'].append(problem['variables'])
     res['Cut dim'].append(problem['cut_dim'])
-    res['Interactions'].append(interactions)
-    res['Time (s)'].append(np.round(end - start, 5))
-    res['Proposed solution'].append(np.round(min(sanitize_df(subqubos).energy), 5))
+    sol_range = get_sol_range(qubo)
+
+    start_time = time.time()
+    direct_solutions = get_direct_sol(qubo)
+    end_time = time.time()
     res['Direct time (s)'].append(np.round(end_time - start_time, 5))
-    res['Direct sample solution'].append(np.round(direct_solutions['energy'].min(), 5))
-    res['Sol range (approx)'].append((np.round(random_solutions['energy'].min(), 5),
-                                      np.round(random_solutions['energy'].max(), 5)))
+    res['Direct sol'].append(np.round(normalize_sol(direct_solutions['energy'].min(), sol_range), 5))
+
+    start_time = time.time()
+    random_solutions = get_random_sol(qubo)
+    end_time = time.time()
+    res['Random time (s)'].append(np.round(end_time - start_time, 5))
+    res['Random min sol'].append(np.round(normalize_sol(random_solutions['energy'].min(), sol_range), 5))
+    res['Random avg sol'].append(np.round(normalize_sol(random_solutions['energy'].mean(), sol_range), 5))
+
+    start = time.time()
+    subqubos, qpu_time = QSplitSampler(EmbeddingComposite(DWaveSampler()),
+                                       problem['cut_dim']).run(qubo, problem['variables'])
+    end = time.time()
+    res['QSplit CPU+Network time (s)'].append(np.round(end - start, 5))
+    res['QSplit QPU time (s)'].append(np.round(qpu_time, 5))
+    res['QSplit sol'].append(np.round(normalize_sol(sanitize_df(subqubos)['energy'].min(), sol_range), 5))
 
     return res
 
@@ -64,14 +102,17 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 
 
 def test_scale() -> None:
+    load_dotenv()
     test_set = [{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}] + [
         {'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'}
         for variables in [8, 16, 32, 64, 128]
-        for cut_dim in [2 ** i for i in range(1, variables.bit_length() - 1)]
+        for cut_dim in [2 ** i for i in range(1, min(variables.bit_length() - 1, 6))]
     ]
     res = {
-        'Name': [], 'Variables': [], 'Cut dim': [], 'Interactions': [], 'Time (s)': [], 'Proposed solution': [],
-        'Direct time (s)': [], 'Direct sample solution': [], 'Sol range (approx)': [],
+        'Name': [], 'Variables': [], 'Cut dim': [],
+        'QSplit CPU+Network time (s)': [], 'QSplit QPU time (s)': [], 'QSplit sol': [],
+        'Direct time (s)': [], 'Direct sol': [],
+        'Random time (s)': [], 'Random min sol': [], 'Random avg sol': []
     }
 
     for test_dict in test_set:
@@ -79,18 +120,17 @@ def test_scale() -> None:
         if 'problem' in test_dict:
             qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
                         rows_idx=[i + 1 for i in range(8)])
-            num_interactions = 14
             nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
-            plt.savefig("graph.png", format="PNG")
-            res = measure(test_dict, num_interactions, qubo, res)
+            plt.savefig('graph.png', format='PNG')
+            res = measure(test_dict, qubo, res)
         else:
             qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
                                                         num_interactions=test_dict['variables'] ** 2,
                                                         vartype=dimod.BINARY).to_qubo()[0],
                         [i for i in range(test_dict['variables'])],
                         [i for i in range(test_dict['variables'])])
-            res = measure(test_dict, test_dict['variables'] ** 2, qubo, res)
-    pd.DataFrame(res).to_csv("subqubo.csv", index=False)
+            res = measure(test_dict, qubo, res)
+        pd.DataFrame(res).to_csv('subqubo.csv', index=False)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,9 @@
 import logging
+import time
 from collections import defaultdict
 from typing import Tuple, List, Any
 import dimod
+import dwave.system
 import numpy as np
 import pandas as pd
 from subqubo.QUBO import QUBO
@@ -10,30 +12,34 @@ log = logging.getLogger('subqubo')
 
 
 class QSplitSampler:
-    def __init__(self, sampler: dimod.SimulatedAnnealingSampler, cut_dim: int):
+    def __init__(self, sampler: dimod.SimulatedAnnealingSampler | dwave.system.EmbeddingComposite, cut_dim: int):
         self.sampler = sampler
         self.cut_dim = cut_dim
 
-    def run(self, qubo: QUBO, dim: int) -> QUBO:
+    def run(self, qubo: QUBO, dim: int) -> Tuple[QUBO, float]:
         if dim <= self.cut_dim:
             if len(qubo.qubo_dict) == 0:
                 all_indices = sorted(list(set(qubo.rows_idx).union(qubo.cols_idx)))
                 data = [[np.nan for _ in range(len(all_indices) + 1)]]
                 qubo.solutions = pd.DataFrame(data, columns=all_indices + ['energy'])
+                q_time = 0
             else:
-                res = (self.sampler.sample_qubo(qubo.qubo_dict, num_reads=10)
-                       .to_pandas_dataframe()
-                       .drop(columns=['num_occurrences'])
-                       .drop_duplicates()
+                sampleset = self.sampler.sample_qubo(qubo.qubo_dict, num_reads=10)
+                res = (sampleset.to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates()
                        .sort_values(by='energy', ascending=True))
+                q_time = sampleset.info['timing']['qpu_access_time'] / 1e6
                 qubo.solutions = res[res['energy'] == min(res['energy'])]
-            return qubo
+            return qubo, q_time
 
         sub_problems = self.__split_problem(qubo, dim)
-        sub_problems = [self.run(q, dim // 2) for q in sub_problems]
-        return self.__aggregate_solutions(sub_problems, qubo)
+        solutions, q_times = [], []
+        for idx, p in enumerate(sub_problems):
+            s, qpu_t = self.run(p, dim // 2)
+            solutions.append(s)
+            q_times.append(qpu_t)
+        return self.__aggregate_solutions(solutions, q_times, qubo)
 
-    def __aggregate_solutions(self, solutions: List[QUBO], qubo: QUBO) -> QUBO:
+    def __aggregate_solutions(self, solutions: List[QUBO], q_times: List[float], qubo: QUBO) -> Tuple[QUBO, float]:
         # Aggregate upper-left qubo with lower-right
         starting_sols = self.__combine_ul_lr(solutions[0], solutions[2])
         # Set missing columns in upper-right qubo to NaN
@@ -50,7 +56,7 @@ class QSplitSampler:
         qubo.solutions = (self.__local_search(combined_df, qubo).reset_index(drop=True)
                           .drop_duplicates().nsmallest(n=10, columns='energy'))
 
-        return qubo
+        return qubo, sum(q_times)
 
     @staticmethod
     def __combine_rows(row1: pd.Series, row2: pd.Series) -> List[float | Any]:
