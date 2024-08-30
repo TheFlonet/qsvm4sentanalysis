@@ -1,6 +1,6 @@
 \chapter{The Underlying Idea of a Hybrid Solver}
 
-The core idea behind a hybrid solver is to alternate between classical processes and QPU-based solutions, enabling the handling of larger problems than those constrained by the limits outlined in Section \ref{sec:qpu-res}.
+The core idea behind a hybrid solver is to alternate between classical processes and QPU-based solutions, enabling the handling of problems larger than those constrained by the limits outlined in Section \ref{sec:qpu-res}.
 
 A common feature of current hybrid implementations is the necessity to partition or, more generally, subdivide the original problem into a set of tractable subproblems. 
 This approach allows the ``difficult'' component of the problem to be solved by leveraging quantum acceleration, while the CPU is tasked with aggregating the solutions.
@@ -66,8 +66,8 @@ Although this approach can be interesting, its application is more limited than 
 For instance, in the SVM problem, the CSP formulation consists of: 
 
 \begin{itemize} 
-	\item A single, small constraint, Equation \ref{eq:svm-c2}; 
-	\item An objective function that dominates the problem's dimensions, Equation \ref{eq:svm-obj}. 
+	\item A single, small constraint, Equation \eqref{eq:svm-c2}; 
+	\item An objective function that dominates the problem's dimensions, Equation \eqref{eq:svm-obj}. 
 \end{itemize}
 
 This implies that even reducing the problem size would not yield significant benefits. 
@@ -80,9 +80,9 @@ The goal is to maximize the use of the QPU, delegating only the aggregation of p
 
 Section \ref{sec:AQC} outlined the general structure of a QUBO problem. 
 
-$$\min X^TQX$$ 
+$$\min X^TQX\text{,}$$
 
-Where $X$ is the column vector of optimization variables with dimension $(n \times 1)$, $X^T$ is the transposed vector with dimension $(1 \times n)$, and $Q$ is the upper triangular square matrix with dimension $(n \times n)$.
+where $X$ is the column vector of optimization variables with dimension $(n \times 1)$, $X^T$ is the transposed vector with dimension $(1 \times n)$, and $Q$ is the upper triangular square matrix with dimension $(n \times n)$.
 
 Taking a problem with $n=6$ as an example, the matrix formulation takes the form:
 
@@ -144,7 +144,7 @@ The structure of the QUBO problem suggests the possibility of subdividing it int
     \end{bmatrix}
 \end{equation}
 
-It is therefore necessary to verify the feasibility of decomposition by analyzing the results of the subproblems and recombining them to obtain Equation \ref{eq:whole6}.
+It is therefore necessary to verify the feasibility of decomposition by analyzing the results of the subproblems and recombining them to obtain Equation \eqref{eq:whole6}.
 
 \paragraph{Subproblem 1}
 By dividing the variables into two partitions ($P_1=\{x_1,x_2,x_3\}$ and $P_2=\{x_4,x_5,x_6\}$), the upper-left submatrix of $Q$ (hereafter referred to as $\operatorname{UL}$) forms the following problem:
@@ -246,6 +246,6 @@ This expands to:
     \label{eq:BR}
 \end{equation}
 
-\paragraph{Solution Aggregation} By summing Equations \ref{eq:UL}, \ref{eq:UR} and \ref{eq:BR}, it is evident that the result is equivalent to Equation \ref{eq:whole6}.
+\paragraph{Solution Aggregation} By summing Equations \eqref{eq:UL}, \eqref{eq:UR} and \eqref{eq:BR}, it is evident that the result is equivalent to Equation \eqref{eq:whole6}.
 
 This algebraic property of the QUBO matrix allows the problem to be decomposed and the subproblems to be solved independently before recombining the solutions to achieve the final result.

@@ -10,7 +10,7 @@ First of all, it is essential to transform the objective function into a minimiz
     \min_\alpha\ \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) - \sum_{i=1}^n\alpha_i
 \end{equation}
 
-Constraint \ref{eq:svm-c2} can be incorporated into the objective function as a penalty constraint through Lagrangian relaxation. This procedure simplifies the finding of potential solutions since the problem’s constraints no longer need to be explicitly satisfied. However, by appropriately calibrating the Lagrangian multiplier, it is possible to ensure that the optimal solutions are those that satisfy the constraints, effectively reducing the penalty constraints to zero.
+Constraint \eqref{eq:svm-c2} can be incorporated into the objective function as a penalty constraint through Lagrangian relaxation. This procedure simplifies the finding of potential solutions since the problem’s constraints no longer need to be explicitly satisfied. However, by appropriately calibrating the Lagrangian multiplier, it is possible to ensure that the optimal solutions are those that satisfy the constraints, effectively reducing the penalty constraints to zero.
 
 $$\min_\alpha\ \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(x_i, x_j) - \sum_{i=1}^n\alpha_i + L\left(\sum_{i=1}^ny_i\alpha_i\right)^2$$
 
@@ -18,7 +18,7 @@ An empirical method advises setting the Lagrangian parameter $L$ to a value betw
 
 The final step to achieve a QUBO formulation is to rewrite the problem using binary variables. The presented SVM formulation uses the real domain for the variables $\alpha$, making them not directly usable. A ``naive'' solution to this problem could be to use a standard encoding for real numbers, similar to traditional computers, such as IEEE 754\cite{IEEE}. However, since each binary variable corresponds to a node in the QPU graph, this approach would be highly inefficient, requiring a large number of qubits that would essentially be underutilized.
 
-Alternatively, ad hoc representations can be evaluated to minimize the number of qubits to the bare essentials. Using the information from constraint \ref{eq:svm-c1}, which limits the domain of the variables $\alpha$ to positive numbers less than $C$, can be helpful. Additionally, machine learning models often do not require the full numerical precision available in modern computers, making it reasonable to consider limiting the precision of the expressible real numbers to a fixed number of decimal places, further reducing the number of qubits needed for a single $\alpha$.
+Alternatively, ad hoc representations can be evaluated to minimize the number of qubits to the bare essentials. Using the information from constraint \eqref{eq:svm-c1}, which limits the domain of the variables $\alpha$ to positive numbers less than $C$, can be helpful. Additionally, machine learning models often do not require the full numerical precision available in modern computers, making it reasonable to consider limiting the precision of the expressible real numbers to a fixed number of decimal places, further reducing the number of qubits needed for a single $\alpha$.
 
 A final possible refinement could be to use a numerical representation system based on powers of ten instead of powers of two. For instance, the four-bit number $1011$ could represent $10.11$ ($10^1 + 10^{-1} + 10^{-2}$) instead of $2.75$ ($2^1 + 2^{-1} + 2^{-2}$), in this representation system, the number of bits is divided equally between the integer and fractional parts.
 
@@ -37,7 +37,7 @@ Hybrid solvers can read the standard format in which optimization problems are w
     \item The problem must be written in minimization form,
     \item There must be no multiplications between real variables.
 \end{enumerate}
-Equation \ref{eq:min-svm} shows that it is not a problem to meet the first requirement. However, it is different regarding the multiplication of optimization variables in the real domain. The SVM formulation involves quadratic interactions between variables in the real domain. To approximate the solution without requiring a complete problem rewrite, it is possible to convert all variables to the integer domain. In this way, using the information from constraint \ref{eq:svm-c1}, $\lceil\log_2(C)\rceil$ qubits are sufficient for each variable $\alpha$.
+Equation \eqref{eq:min-svm} shows that it is not a problem to meet the first requirement. However, it is different regarding the multiplication of optimization variables in the real domain. The SVM formulation involves quadratic interactions between variables in the real domain. To approximate the solution without requiring a complete problem rewrite, it is possible to convert all variables to the integer domain. In this way, using the information from constraint \eqref{eq:svm-c1}, $\lceil\log_2(C)\rceil$ qubits are sufficient for each variable $\alpha$.
 
 Empirically, the proposed approximation results in negligible performance deterioration while significantly reducing the number of qubits required for each variable.
 

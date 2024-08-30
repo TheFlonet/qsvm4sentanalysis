@@ -1,6 +1,6 @@
 \chapter{QUBO Splitting Algorithm}
 
-Following the theoretical discussion on the feasibility of the algebraic partitioning method in Section \ref{sec:prop}, this chapter provides an account of its implementation. 
+Following the theoretical discussion on the feasibility of the algebraic partitioning method in Section \ref{sec:prop}, this chapter provides an account of its implementation, which is one of the outcome of the work. 
 Chapter \ref{sec:qsplitres} will present the results obtained from testing the procedures outlined.
 
 \section{QUBO Utility Class}
@@ -8,7 +8,7 @@ Chapter \ref{sec:qsplitres} will present the results obtained from testing the p
 Thus far, QUBO problems have been presented and analyzed in matrix form or as the equivalent produced equation. 
 While matrices can represent these problems, the coefficient matrix $Q$ is often sparse, i.e. it contains many zero values relative to the total number of matrix cells.
 
-As an upper triangular matrix, the maximum number of non-zero values is $n(n+1)/2$, where $n$ is the dimension of the $Q$ matrix. 
+Since a QUBO problem is characterised by an upper triangular matrix, the maximum number of non-zero values is $n(n+1)/2$, where $n$ is the dimension of the $Q$ matrix. 
 This implies, by definition, at least $n(n-1)/2$ zero values. Since QUBO problem information must be transmitted between different computers for processing, D-Wave has changed the representation format to eliminate redundant information.
 
 To achieve this, instead of matrices, \textsc{HashMap}s are used, where the key is the pair representing the position in the matrix $(\text{row}, \text{col})$, and the value corresponds to the matrix coefficient at that cell. 
@@ -20,7 +20,7 @@ To operate effectively, it is necessary to maintain a dual representation of the
 	\item A minimal representation for transmitting the problem to D-Wave quantum solvers. 
 \end{enumerate}
 
-For this reason, a support class \texttt{QUBO} was developed to manage the consistency between the two representations automatically. 
+For this reason, a support class \texttt{QUBO} was developed during this thesis to manage the consistency between the two representations automatically. 
 The \texttt{QUBO} class is responsible for: 
 \begin{itemize} 
 	\item Maintaining a copy of the matrix representation; 
@@ -38,7 +38,7 @@ The available methods are responsible for:
 
 \section{\texttt{QSplitSampler} Implementation}
 
-The main points of the implementation are outlined below; the complete code for \texttt{QSplitSampler} is available on GitHub\footnote{\url{https://github.com/TheFlonet/qsvm4sentanalysis/tree/main/subqubo}}.
+The main points of the implementation are outlined below, along with an explanatory example; the complete code for \texttt{QSplitSampler} is available on GitHub\footnote{\url{https://github.com/TheFlonet/qsvm4sentanalysis/tree/main/subqubo}}.
 
 \subsection{Main Method}
 
@@ -53,18 +53,48 @@ In the first case, the algorithm uses the QPU to solve QUBO instances where the 
 In the second case, the QUBO problem is partitioned using the \texttt{split\_problem} method, presented in Section \ref{sec:split}. 
 Once the solutions are computed, they are aggregated using \texttt{aggregate\_solutions}, Section \ref{sec:aggr}.
 
-\begin{python}
+The reference code can be found in Listing \ref{code:main}.
+
+\begin{lstlisting}[language=Python, caption=QSplitSampler main function, label=code:main]
 def QSplitSampler(qubo: QUBO, dim: int) -> QUBO:
     if dim <= CUT_DIM:
         res = SAMPLER.sample_qubo(qubo.qubo_dict, num_reads=10)
-        qubo.solutions = res[min(res['energy'])]
+        qubo.solutions = res[min(res.energy)]
         return qubo
 
     sub_problems = split_problem(qubo, dim)
     for i, q in enumerate(sub_problems):
         sub_problems[i] = QSplitSampler(q, dim // 2)
     return aggregate_solutions(sub_problems, qubo)
-\end{python}
+\end{lstlisting}
+
+For example, suppose setting the parameters of \texttt{QSplitSampler} as follows:
+\begin{itemize}
+    \item The problems solved directly via QPU are composed of two variables;
+    \item The QPU returns four assignments;
+    \item At the end of each recursive step, only the three best solutions are retained.
+\end{itemize}
+
+A starting QUBO problem could be:
+
+\begin{equation}
+    \begin{bmatrix}
+        x_1 & x_2 & x_3 & x_4
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 2 & 3 & 4 \\
+        0 & 5 & 6 & 7 \\
+        0 & 0 & 8 & 9 \\
+        0 & 0 & 0 & 10 \\
+    \end{bmatrix}
+    \begin{bmatrix}
+        x_1 \\
+        x_2 \\
+        x_3 \\
+        x_4
+    \end{bmatrix}
+    \label{eq:example_full}
+\end{equation}
 
 \subsection{Split Method}\label{sec:split}
 
@@ -77,71 +107,171 @@ The order in which the new subproblems are returned is as follows:
 	\item The $\operatorname{BR}$ problem, the bottom-right sub-matrix portion, operates on the second half of the optimization variables. 
 \end{itemize}
 
-Although all matrix portions are converted to be upper triangular, the $\operatorname{UR}$ partition is, by definition, not a QUBO problem. 
+The following subproblems are obtained from \eqref{eq:example_full}:
+\begin{itemize}
+    \item $\operatorname{UL}$
+    \begin{equation}
+        \begin{bmatrix}
+            x_1 & x_2
+        \end{bmatrix}
+        \begin{bmatrix}
+            1 & 2 \\
+            0 & 5
+        \end{bmatrix}
+        \begin{bmatrix}
+            x_1 \\
+            x_2
+        \end{bmatrix}
+        \label{eq:exampleUL}
+    \end{equation}
+    \item $\operatorname{UR}$
+    \begin{equation}
+        \begin{bmatrix}
+            x_1 & x_2
+        \end{bmatrix}
+        \begin{bmatrix}
+            3 & 4 \\
+            6 & 7
+        \end{bmatrix}
+        \begin{bmatrix}
+            x_3 \\
+            x_4
+        \end{bmatrix}
+        \label{eq:exampleUR}
+    \end{equation}
+    \item $\operatorname{BR}$
+    \begin{equation}
+        \begin{bmatrix}
+            x_3 & x_4
+        \end{bmatrix}
+        \begin{bmatrix}
+            8 & 9 \\
+            0 & 10
+        \end{bmatrix}
+        \begin{bmatrix}
+            x_3 \\
+            x_4
+        \end{bmatrix}
+        \label{eq:exampleBR}
+    \end{equation}
+\end{itemize}
+
+Although all matrix portions are converted to be upper triangular, problem obtained by $\operatorname{UR}$ like \eqref{eq:exampleUR} is, by definition, not in QUBO form. 
 This is because it operates on both partitions of the optimization variables, meaning $X^T \neq X$.
 
 The compact representation required by D-Wave allows the solver to determine the problem dimensions automatically. 
-Therefore, the problem solved in this case does not take the form shown in Equation \ref{eq:ur} but the one shown in Equation \ref{eq:realur}.
+Therefore, the problem solved in this case does not take the form shown in Equation \eqref{eq:ur}.
+The subproblem \eqref{eq:exampleUR}, for example, takes the form in \eqref{eq:realur}.
 
 \begin{equation}
     \begin{bmatrix}
-        x_1 & x_2 & x_3 & x_4 & x_5 & x_6
+        x_1 & x_2 & x_3 & x_4
     \end{bmatrix}
     \begin{bmatrix}
-        0 & 0 & 0 & q_{14}' & q_{15}' & q_{16}' \\
-        0 & 0 & 0 & 0 & q_{25}' & q_{26}' \\
-        0 & 0 & 0 & 0 & 0 & q_{36}' \\
-        0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0
+        0 & 0 & 8 & 9 \\
+        0 & 0 & 0 & 10 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 
     \end{bmatrix}
     \begin{bmatrix}
         x_1 \\
         x_2 \\
         x_3 \\
-        x_4 \\
-        x_5 \\
-        x_6
+        x_4 
     \end{bmatrix}
     \label{eq:realur}
 \end{equation}
 
 That is, the subproblem is ``embedded'' in a zero matrix with dimensions equal to those of the original problem. 
-This operation negates the dimensionality reduction of the QUBO problem; however, the underlying graph representing the problem remains sufficiently small to allow its resolution like the other two sub-matrices.
+This operation seems to negate the dimensionality reduction of the QUBO problem; however, the underlying representation of the problem remains sufficiently small to allow its resolution like the other two sub-matrices.
 
 \subsection{Aggregation Method}\label{sec:aggr}
 
 Once the subproblems are solved, the results must be aggregated to provide a complete solution to the problem.
-The aggregation procedure involves the following steps: 
-\begin{enumerate} 
-	\item Combine the results of the $\operatorname{UL}$ and $\operatorname{BR}$ subproblems. Since these subproblems operate on different partitions of the variables, their union consists of concatenating the two partial assignments. 
-    All possible configurations are considered by performing the Cartesian product between the two sets of elements. 
-    The complete set of solutions obtained in this way is called $S_1$.
-	\item For each possible assignment in $S_1$, extract the most similar assignment produced by $\operatorname{UR}$. 
-    \item For each pair of assignments $\langle S_1,\operatorname{UR}\rangle$, mark the conflicting values. 
-	\item Resolve the conflicts by extracting a new QUBO subproblem. This step is detailed in Section \ref{sec:qsearch}. 
-	\item Keep only the $k$ best distinct solutions. This guarantees a manageable number of assignments to handle.
-\end{enumerate}
+
+\paragraph{UL-BR aggregation} Since these subproblems operate on different partitions of the variables, a Cartesian product of their partial assignments is performed to consider all possible combinations. 
+
+Referring $S_{\operatorname{UL}}$, Equation \eqref{eq:s_ul}, as the solutions of \eqref{eq:exampleUL}, and $S_{\operatorname{BR}}$, Equation \eqref{eq:s_br}, as the solutions of \eqref{eq:exampleBR}, from their Cartesian product the solutions given in \eqref{eq:ulrb} are obtained.
+
+\begin{equation}
+    S_{\operatorname{UL}} =\{\{x_1=0,x_2=0\}, \{x_1=1,x_2=0\}, \{x_1=0,x_2=1\}\}
+    \label{eq:s_ul}
+\end{equation}
+
+\begin{equation}
+    S_{\operatorname{BR}} =\{\{x_3=0,x_4=0\}, \{x_3=1,x_4=0\}\}
+    \label{eq:s_br}
+\end{equation}
+
+\begin{equation}
+    S_{\operatorname{UL}-\operatorname{BR}}=\left[
+    \begin{array}{c}
+        \{x_1=0,x_2=0,x_3=1,x_4=0\} \\
+        \{x_1=1,x_2=0,x_3=0,x_4=0\} \\
+        \{x_1=1,x_2=0,x_3=1,x_4=0\} \\
+        \{x_1=0,x_2=1,x_3=0,x_4=0\} \\
+        \{x_1=0,x_2=1,x_3=1,x_4=0\} \\
+        \{x_1=0,x_2=0,x_3=0,x_4=0\}
+    \end{array}
+    \right]
+    \label{eq:ulrb}
+\end{equation}
+
+\paragraph{UR contribution} For each assignment of $S_{\operatorname{UL}-\operatorname{BR}}$ \eqref{eq:ulrb} the closest assignment of $S_{\operatorname{UR}}$, Equation \eqref{eq:ursol}, is searched.
+
+\begin{equation}
+    S_{\operatorname{UR}}=\left[
+        \begin{array}{c}
+            \{x_1=0,x_2=0,x_3=0,x_4=0\},\\ 
+            \{x_1=1,x_2=0,x_3=0,x_4=0\},\\
+            \{x_1=0,x_2=1,x_3=0,x_4=0\},\\
+            \{x_1=0,x_2=0,x_3=1,x_4=0\}
+        \end{array}
+        \right]
+        \label{eq:ursol}
+\end{equation}
+
+The following pairs of assignments are obtained:
+\begin{itemize}
+    \item $S_1 = \langle S_{\operatorname{UL}-\operatorname{BR}}[1], S_{\operatorname{UR}}[4]\rangle$, with no conflicting variables;;
+    \item $S_2 = \langle S_{\operatorname{UL}-\operatorname{BR}}[2], S_{\operatorname{UR}}[2]\rangle$, with no conflicting variables;;
+    \item $S_3 = \langle S_{\operatorname{UL}-\operatorname{BR}}[3], S_{\operatorname{UR}}[2]\rangle$, conflicting on the variable $x_3$;
+    \item $S_4 = \langle S_{\operatorname{UL}-\operatorname{BR}}[4], S_{\operatorname{UR}}[3]\rangle$, with no conflicting variables;;
+    \item $S_5 = \langle S_{\operatorname{UL}-\operatorname{BR}}[5], S_{\operatorname{UR}}[3]\rangle$, conflicting on the variable $x_3$;
+    \item $S_6 = \langle S_{\operatorname{UL}-\operatorname{BR}}[6], S_{\operatorname{UR}}[1]\rangle$, with no conflicting variables;.
+\end{itemize}
+
+\paragraph{Final answer set} The resolution of conflicting assignments is dealt with in detail in Section \ref{sec:qsearch}, once assignments without conflicting variables have been obtained, the value of the objective function $X^TQX$ is calculated and the $k$ assignments with the lowest value are kept.
+
+Solving the conflicts in $S_3$ and $S_5$, the final assignments produced by \texttt{QSplitSampler} are:
+\begin{itemize}
+    \item $S_1$, with an objective function value of 8;
+    \item $S_2 = S_3$, with objective function value of 1;
+    \item $S_4 = S_5$, with objective function value of 5;
+    \item $S_6$, with objective function value of 0.
+\end{itemize}
+
+The resulting assignments produced for the problem \eqref{eq:example_full} are then $S_6$, $S_2$ and $S_4$
 
 \subsection{Quantum Local Search}\label{sec:qsearch}
 
 Conflicting assignments can be resolved using various search methodologies, including: 
 \begin{enumerate} 
-	\item Brute-force resolution; 
-	\item Local search techniques; 
+	\item Brute-force; 
+	\item Local search; 
 	\item Extraction of a new QUBO problem. 
 \end{enumerate}
 
-The brute-force strategy was initially implemented, but for non-trivial problems, the number of assignments to test led to intractable issues.
+Brute-force was initially implemented, but for non-trivial problems, the number of assignments to test led to intractable issues.
 
-Using local search techniques might be promising, but it would go against the principle underlying the development of \texttt{QSplitSampler}, which is to maximize the use of the QPU.
+Local search techniques might be promising, but it would go against the principle underlying the development of \texttt{QSplitSampler}, which is to maximize the use of the QPU.
 
 For these reasons, the most reasonable option was to assess the feasibility of using the QPU to resolve conflicting assignments.
 
-\begin{python}
-def local_search(df: pd.DataFrame, qubo: QUBO) -> pd.DataFrame:
+\begin{lstlisting}[language=Python, caption=QUBO extractor function, label=code:qsearch]
+def q_search(df: pd.DataFrame, qubo: QUBO) -> pd.DataFrame:
     for i, row in df.iterrows():
-        no_energy = row.drop('energy')
+        no_energy = row.drop(energy)
 
         nans = no_energy[np.isnan(no_energy)]
         qubo_nans = defaultdict(int)
@@ -151,59 +281,21 @@ def local_search(df: pd.DataFrame, qubo: QUBO) -> pd.DataFrame:
                 qubo_nans[(row_idx, col_idx)] = val
         nans_sol = SAMPLER.sample_qubo(qubo_nans, num_reads=10)
         nans_sol = nans_sol.to_pandas_dataframe()
-                           .sort_values(by='energy', 
+                           .sort_values(by=energy, 
                                         ascending=True).iloc[0]
-        df.loc[i, nans.index] = nans_sol.drop('energy')
-        df.loc[i, 'energy'] += nans_sol['energy']
+        df.loc[i, nans.index] = nans_sol.drop(energy)
+        df.loc[i, energy] += nans_sol.energy
 
     return df
-\end{python}
+\end{lstlisting}
 
-The underlying idea of the proposed search mechanism is to extract a subproblem, focusing on the rows and columns associated with the conflicting variables. 
-Once extracted and converted, the subproblem can be resolved again on the QPU.
+The underlying idea of the proposed in Listing \ref{code:qsearch} search mechanism is to extract a subproblem focusing on the rows and columns associated with the conflicting variables. 
+Once extracted and converted in upper triangular, the subproblem can be resolved again on the QPU.
 
-For example, consider the following partial assignment:
+In the problem \eqref{eq:example_full} the only variable that generates conflicting assignments is $x_3$, so the row and column relating to that variable must be extracted from the matrix $Q$.
+Since there is only one value, the QUBO formulation reduces to $\min x_3*8*x_3$, which is minimised by assigning $x_3$ the value zero.
 
-\begin{equation*}
-    \begin{bmatrix}
-        0 & x_2 & 1 & 1 & 0 & x_6
-    \end{bmatrix}
-    \begin{bmatrix}
-        q_{11} & q_{12} & q_{13} & q_{14} & q_{15} & q_{16} \\
-        0 & q_{22} & q_{23} & q_{24} & q_{25} & q_{26} \\
-        0 & 0 & q_{33} & q_{34} & q_{35} & q_{36} \\
-        0 & 0 & 0 & q_{44} & q_{45} & q_{46} \\
-        0 & 0 & 0 & 0 & q_{55} & q_{56} \\
-        0 & 0 & 0 & 0 & 0 & q_{66}
-    \end{bmatrix}
-    \begin{bmatrix}
-        0 \\
-        x_2 \\
-        1 \\
-        1 \\
-        0 \\
-        x_6
-    \end{bmatrix}
-\end{equation*}
+Unlike the method discussed in Section \ref{sec:split}, this search approach does not guarantee a specific size for the resulting problem.
+Because in the case of complementary assignments, the number of conflicting variables equals the total number of variables considered. 
 
-From this, we extract the following subproblem:
-
-\begin{equation*}
-    \begin{bmatrix}
-        x_2 & x_6
-    \end{bmatrix}
-    \begin{bmatrix}
-        q_{22} & q_{26} \\
-        0 & q_{66}
-    \end{bmatrix}
-    \begin{bmatrix}
-        x_2 \\
-        x_6
-    \end{bmatrix}
-\end{equation*}
-
-In this case, the extracted subproblem still consists of an upper triangular matrix. 
-However, if it were not, it is possible to transform the subproblem to bring it back to the standard QUBO formulation.
-
-Unlike the method discussed in Section \ref{sec:split}, this search approach does not guarantee a specific size for the resulting problem. 
 Experimentally, the number of variables with conflicting assignments remained small enough to allow resolution via the QPU.

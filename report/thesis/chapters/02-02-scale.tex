@@ -11,12 +11,12 @@ Section \ref{sec:qpu-dataset} will introduce the dataset used for testing, while
 
 \section{Testing with Growing Problem Sizes}\label{sec:qpu-dataset}
 
-\paragraph{Problem Size Calculation} For the formulation of the SVM problem in Equation \ref{eq:min-svm}, it is possible to calculate the number of nodes in the underlying graph of the QUBO problem. 
+\paragraph{Problem Size Calculation} For the formulation of the SVM problem in Equation \eqref{eq:min-svm}, it is possible to calculate the number of nodes in the underlying graph of the QUBO problem. 
 The only optimization variables are the $\alpha_i$ variables, one for each example. 
 Since the $\alpha_i$ variables belong to the integer domain, their binary expansion must be computed for use with QUBO problems:
 
 \begin{itemize} 
-	\item Calculate the number of bits required to represent $\alpha \in [0, \text{UB}]$, i.e. $k = \lfloor\log_2(\text{UB})\rfloor + 1$. Where $\text{UB}$ is the upper bound of the $\alpha$ domain derived from Equation \ref{eq:svm-c1}; 
+	\item Calculate the number of bits required to represent $\alpha \in [0, \text{UB}]$, i.e. $k = \lfloor\log_2(\text{UB})\rfloor + 1$. Where $\text{UB}$ is the upper bound of the $\alpha$ domain derived from Equation \eqref{eq:svm-c1}; 
 	\item Replace each $\alpha_i$ with $2^0\alpha_i^0 + \dots + 2^k\alpha_i^k$. 
 \end{itemize}
 
@@ -70,7 +70,7 @@ For example, the data in figure \ref{fig:toydf} leads to the graph in figure \re
 The number of nodes of $G$ depends on only two factors:
 
 \begin{itemize} 
-	\item Equation \ref{eq:nodesnum}, where $\text{UB} = 1$ can be set to ensure that the number of nodes increases linearly with the number of examples; 
+	\item Equation \eqref{eq:nodesnum}, where $\text{UB} = 1$ can be set to ensure that the number of nodes increases linearly with the number of examples; 
 	\item The application or not of the pre-solving strategy, which, as discussed in Section \ref{sec:presolve}, doubles the number of required nodes when activated. 
 \end{itemize}
 
