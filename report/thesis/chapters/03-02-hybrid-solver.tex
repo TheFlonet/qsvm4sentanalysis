@@ -161,7 +161,7 @@ This is because it operates on both partitions of the optimization variables, me
 
 The compact representation required by D-Wave allows the solver to determine the problem dimensions automatically. 
 Therefore, the problem solved in this case does not take the form shown in Equation \eqref{eq:ur}.
-The subproblem \eqref{eq:exampleUR}, for example, takes the form in \eqref{eq:realur}.
+The subproblem \eqref{eq:exampleUR}, for example, is shaped in \eqref{eq:realur}.
 
 \begin{equation}
     \begin{bmatrix}
@@ -293,9 +293,9 @@ The underlying idea of the proposed in Listing \ref{code:qsearch} search mechani
 Once extracted and converted in upper triangular, the subproblem can be resolved again on the QPU.
 
 In the problem \eqref{eq:example_full} the only variable that generates conflicting assignments is $x_3$, so the row and column relating to that variable must be extracted from the matrix $Q$.
-Since there is only one value, the QUBO formulation reduces to $\min x_3*8*x_3$, which is minimised by assigning $x_3$ the value zero.
+Since there is only one value, the QUBO formulation reduces to $\min 8x_3^2$, which is minimised by assigning $x_3$ the value zero.
 
 Unlike the method discussed in Section \ref{sec:split}, this search approach does not guarantee a specific size for the resulting problem.
-Because in the case of complementary assignments, the number of conflicting variables equals the total number of variables considered. 
+Because in the case of complementary assignments, for example like $\{x_1=1,x_2=0,x_3=1,x_4=0\}$ and $\{x_1=0,x_2=1,x_3=0,x_4=1\}$, the number of conflicting variables equals the total number of variables considered. 
 
 Experimentally, the number of variables with conflicting assignments remained small enough to allow resolution via the QPU.
