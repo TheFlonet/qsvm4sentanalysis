@@ -19,7 +19,7 @@
 \address[1]{Università degli studi di Torino, Dipartimento di Informatica, Corso Svizzera 185 - 10149 Torino}
 
 \begin{abstract}
-    In this work, we first experiment with applying a hybrid classical-quantum classifier (HCQC) for sentiment analysis and compare it to the classical CPLEX classifier and Transformer architecture. We find that HCQC is worse than Transformer in classification, but takes much less time to converge to a reasonably good approximate solution. Secondly, the work explores how to address what we may consider a bottleneck of HCQC, whose architecture is partially undisclosed by the D-Wave property. The results show how effective hybrid solvers can be developed to avoid the opaque systems proposed by D-Wave, thus making greater use of the quantum component.
+    In this study, we initially investigate the application of a hybrid classical-quantum classifier (HCQC) for sentiment analysis, comparing its performance against the classical CPLEX classifier and the Transformer architecture. Our findings indicate that while the HCQC underperforms relative to the Transformer in terms of classification accuracy, but it requires significantly less time to converge to a reasonably good approximate solution. This experiment also reveals a critical bottleneck in the HCQC, whose architecture is partially undisclosed by the D-Wave property. To address this limitation, we propose a novel algorithm based on the algebraic decomposition of QUBO models, which enhances the time the quantum processing unit can allocate to problem-solving tasks.
 \end{abstract}
 \begin{keywords}
     Quantum Adiabatic Computing \sep 
@@ -43,7 +43,8 @@ Precalling that, among classification tasks in natural language processing, the 
     \item the time required to train the model;
     \item the time required to classify new examples,
 \end{enumerate*}
-compared to more standard techniques implemented with heuristics and classical architectures. To improve our results relative to training time we also started to investigate software-based alternatives to the proprietary mechanisms that physically embed QUBO problems on Quantum CPU (QPU) for AQC. We shall briefly report on this in the conclusion.
+compared to more standard techniques implemented with heuristics and classical architectures. 
+To overcome the limited use of the quantum process unit (QPU) by the D-Wave hybrid solver, we also started to investigate algebraic-based alternatives to the proprietary mechanisms that split QUBO problems between QPU and CPU.
 
 \section{Quantum Support Vector Machine for Sentiment Analysis}
 
@@ -58,31 +59,19 @@ For comparison with the classical counterpart, we choose:
 \end{enumerate*}
 RoBERTa allows a fair comparison as the model we use\cite{robertamodel} is fine-tuned on TweetEval.
 
-\begin{table}
-    \caption{Classification results}
-    \label{tab:classification}
-    \begin{tabular}{cccc}
-        \toprule
-        & D-Wave & CPLEX & RoBERTa \\
-        \midrule
-        F1-Score (\%) & 76.1 & 76.9 & 94.3 \\
-        Train time (s) & 39.2 & 101.9 & / \\
-        Eval time (s) & 33.9 & 2.2 & 136.8 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+Below are the results obtained, D-Wave represents our solution.
 
-Table \ref{tab:classification} shows some data related to the training and inference of the different models compared. D-Wave stands for what we develop in this work and report on here.
+\paragraph{F1 score} The classification conducted by RoBERTa is significantly better (94.3\%), although the results of both CPLEX and D-Wave are also well above random guesses, respectively with 76.9\% and 76.1\%. 
+The slight difference between the solution obtained with CPLEX and that with D-Wave may be due to some limitations of the current hybrid solvers, which restricted the domain of the optimisation variables from real numbers to integers.
 
-\paragraph{F1 score} The classification conducted by RoBERTa is significantly better, although the results of both CPLEX and D-Wave are also well above random guesses. The slight difference between the solution obtained with CPLEX and that with D-Wave may be due to some limitations of the current hybrid solvers, which restricted the domain of the optimisation variables from real numbers to integers.
+\paragraph{Training time} The time required by D-Wave to find an optimal assignment is 60\% less than that of the classical counterpart, with 39.2 seconds against 101.9. 
+Although not available, it is reasonable to expect an even better result if compared to the time required by RoBERTa, which we can fairly expect to amount to several hours of training on high-performance machines.
 
-\paragraph{Training time} The time required by D-Wave to find an optimal assignment is 60\% less than that of the classical counterpart. Although not available, it is reasonable to expect an even better result if compared to the time required by RoBERTa, which we can fairly expect to amount to several hours of training on high-performance machines.
-
-\paragraph{Prediction time} The complexity of RoBERTa architecture also affects the time required for prediction by requiring more computing time than CPLEX or D-Wave. The higher time required is due to D-Wave returning a set of optimal solutions. For each of them, a model is created to apply a majority vote to establish the class in inference. Since no advantages emerge from using several models, it is possible to use only one of the optimal assignments, reducing the time to values comparable to those of CPLEX.
+\paragraph{Prediction time} The complexity of RoBERTa architecture also affects the time required for prediction (136.8 seconds) by requiring more computing time than CPLEX or D-Wave, 2.2 and 33.9 seconds respectively. The higher time required is due to D-Wave returning a set of optimal solutions. For each of them, a model is created to apply a majority vote to establish the class in inference. Since no advantages emerge from using several models, it is possible to use only one of the optimal assignments, reducing the time to values comparable to those of CPLEX.
 
 \section{Maximizing quantum boost}
 
-Using the \emph{default} hybrid solver by D-Wave entails an opaque workflow due to the underlying proprietary technology. Examination of the available data, however, shows that to obtain the values in Table \ref{tab:classification} the QPU contributes very marginally, averaging 0.08\%. Since the performance boost should derive from the quantum component, it is worth considering whether it is possible to use a greater amount of it, ideally shifting the entire problem resolution onto the QPU and delegating only pre- and post-processing operations to some CPUs or GPUs.
+Using the \emph{default} hybrid solver by D-Wave entails an opaque workflow due to the underlying proprietary technology. Examination of the available data, however, shows that to obtain the QPU contributes very marginally, averaging 0.08\%. Since the performance boost should derive from the quantum component, it is worth considering whether it is possible to use a greater amount of it, ideally shifting the entire problem resolution onto the QPU and delegating only pre- and post-processing operations to some CPUs or GPUs.
 
 Direct access to the QPU is possible provided you manually perform certain pre-processing operations of the problem such as:
 \begin{enumerate}
@@ -95,7 +84,11 @@ Direct access to the QPU is possible provided you manually perform certain pre-p
     \item Search for the minor\cite{ME}\cite{MEdwave} associated with the QUBO problem that can be mapped onto the D-Wave QPU's physical graph architecture, Figure \ref{fig:pegasus}.
 \end{enumerate}
 
-By performing these steps independently, it is possible to bypass D-Wave's proprietary technology to try to maximise QPU usage. The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, Table \ref{tab:embedding} focuses on the time required to compute the minor embedding of the graph representing an SVM. We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 38\% of the 5600 qubits available on the QPU. This makes the direct use of the QPU not applicable to real-size problems.
+By performing these steps independently, it is possible to bypass D-Wave's proprietary technology to try to maximise QPU usage. 
+The only operation with high computational cost among those described is the search for the minor embedding, which is NP-complete. For this reason, Table \ref{tab:embedding} focuses on the time required to compute the minor embedding graphs representing SVMs. 
+We generated the graphs of the SVMs so that all examples were on the x-axis and the number of elements of the positive class was equal to the negative one. This problem does not pose a challenge for classification but allows SVMs of the desired size to be generated easily.
+
+We can see that, for 128 variables, the calculation takes more than 7 minutes and occupies about 38\% of the 5600 qubits available on the QPU. This makes the direct use of the QPU not applicable to real-size problems.
 
 \begin{table}
     \caption{Embedding search time}
@@ -112,7 +105,7 @@ By performing these steps independently, it is possible to bypass D-Wave's propr
 
 \section{Homebrewing a Hybrid Solver}
 
-Given the practical impossibility of using the QPU directly, it is unavoidable to rely on hybrid solvers. Therefore, we investigate how to design a hybrid solver, called \verb|QSplit|, to increase the use of the QPU, based on a quite simple algebraic technique that decomposes QUBO problems into smaller chunks. Sufficiently small problems can be solved by mapping them on the QPU, eventually aggregating the results. This technique is of general application, not limited to QUBO instances we get from SVM.
+Given the practical impossibility of using the QPU directly, it is unavoidable to rely on hybrid solvers. Therefore, we investigate how to design a hybrid solver, called \verb|QSplit|, to increase the use of the QPU, based on a quite simple algebraic technique that decomposes QUBO problems into smaller chunks. Sufficiently small problems can be solved by mapping them on the QPU directly, eventually aggregating the results. This technique is of general application, not limited to QUBO instances we get from SVM.
 
 \begin{figure}
     \centering
@@ -264,32 +257,44 @@ The solutions from $\operatorname{S_1}$ and those obtained from $\operatorname{U
 
 \begin{table}
     \centering
-    \begin{tabular}{cccccc}
+    \begin{tabular}{cccc|cc}
         \toprule
-        Stop dim & Time (s) & Proposed solution & Direct time (s) & Direct solution & Estimated range \\
+        \multicolumn{4}{c}{\texttt{QSplit}} & \multicolumn{2}{c}{\texttt{QPUSampler}} \\
+        Cut Dim         & CPU time & QPU time & Solution & Total time & Solution \\
         \midrule
-        2 & 75.57 & -626.71 & 51.7 & -1321.91 & -665.52, 282.35 \\
-        4 & 57.19 & -674.29 & 50.92 & -1196.69 & -610.99, 292.62 \\
-        8 & 50.33 & -95 & 52.31 & -958.78 & -440.96, 449.74 \\
-        16 & 37.55 & -127.61 & 53.72 & -868.28 & -412.46, 447.15 \\
-        32 & 32.94 & -122.6 & 51.51 & -1024.12 & -409.88, 388.24 \\
+        2               & 417.8    & 0.45     & 0.49     & 303.5      & 0 \\
+        4               & 173.3    & 0.35     & 0.41     & 92.1       & 0 \\
+        8               & 105.8    & 0.25     & 0.42     & 212.6      & 0 \\
+        16              & 49.7     & 0.17     & 0.39     & 119.9      & 0 \\
+        32              & 42       & 0.1      & 0.36     & 205.5      & 0 \\
         \bottomrule
     \end{tabular}
-    \caption{Results for 128 variables cliques}
+    \caption{Results for 128 variables cliques.}
     \label{tab:qsplit}
 \end{table}
 
 To test \verb|QSplit| we ran the algorithm on some random problems with 128 variables, collecting:
-\begin{enumerate*}[label=\arabic*)]
-    \item The times required by \verb|QSplit| and the solution obtained (Time and Proposed solution);
-    \item The times required by direct resolution on QPU and the associated solution (Direct time and Direct solution);
-    \item A possible range of solutions obtained by calculating the value of the QUBO problem considering 500,000 random assignments (Estimated range).
-\end{enumerate*}
-We performed tests by setting different values of Stop dim, i.e. the size of the matrix for which the problem is solved directly on QPU.
+\begin{itemize}
+    \item \texttt{QSplit} information:
+    \begin{enumerate*}[label=\arabic*)]
+        \item Cut Dim is the size of the problem solved directly via QPU;
+        \item CPU time is the total time spent on the CPU;
+        \item QPU time is the total time spent on the QPU;
+        \item Solution is the best result obtained and normalised with range $[0,1]$.
+    \end{enumerate*}
+    \item \texttt{QPUSampler} information:
+    \begin{enumerate*}[label=\arabic*)]
+        \item Total time is the sum of QPU and CPU time;
+        \item Solution is the best result obtained and normalised with range $[0,1]$.
+    \end{enumerate*}
+\end{itemize}
 
-It can be seen in Table \ref{tab:qsplit} that as Stop dim decreases, the time required by \verb|QSplit| increases slightly, due to the greater number of recombinations performed, and at the same time the quality of the solution increases, approaching the lower bound of the Estimated range.
+Table \ref{tab:qsplit} shows the results of \texttt{QSplit} compared with the direct execution on the QPU (\texttt{QPUSampler}) for randomly generated problems with 128 variables.
 
-The reported times do not include the computation of the minor embedding, but only the actual resolution. If the total time were considered, the proposed algorithm would be faster than direct resolution in every tested context.
+We can see that as the Cut Dim decreases, from 32 to 2, the time spent on the CPU increases significantly. Still, simultaneously, the time spent on the QPU systematically increases, aligning with the objectives of \texttt{QSplit}.
+Up to a Cut Dim of 8, the total time required by \texttt{QSplit} is less than that of the direct solution, significantly reducing the time needed for minor embedding computation.
+
+While \texttt{QPUSampler} consistently achieves the optimal value, the solutions proposed by \texttt{QSplit} deteriorate by 35\% to 50\%. It is noteworthy that this performance gap increases as the Cut Dim decreases. This behaviour is reasonable since, by not allowing a holistic view of the problem, \texttt{QSplit} is more likely to encounter local minima that are difficult to bypass.
 
 \section{Conclusion}
 

@@ -12,6 +12,7 @@ __pycache__
 !report/thesis/figures/*.*
 !report/extended-abstract/figures/*.*
 !report/poster/logos/*.*
+!report/presentation/BigHPC/img/*.*
 
 # Dev Env
 .idea
