@@ -23,9 +23,10 @@ def sanitize_df(qubo: QUBO) -> pd.DataFrame:
     return qubo.solutions
 
 
-def get_direct_sol(qubo: QUBO) -> pd.DataFrame:
-    return (EmbeddingComposite(DWaveSampler()).sample_qubo(qubo.qubo_dict, num_reads=10)
-            .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
+def get_direct_sol(qubo: QUBO) -> Tuple[pd.DataFrame, float]:
+    sampleset = EmbeddingComposite(DWaveSampler()).sample_qubo(qubo.qubo_dict, num_reads=10)
+    q_time = sampleset.info['timing']['qpu_access_time'] / 1e6
+    return sampleset.to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates(), q_time
 
 
 def get_random_sol(qubo: QUBO) -> pd.DataFrame:
@@ -65,9 +66,10 @@ def measure(problem: Dict, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
     sol_range = get_sol_range(qubo)
 
     start_time = time.time()
-    direct_solutions = get_direct_sol(qubo)
+    direct_solutions, qpu_time = get_direct_sol(qubo)
     end_time = time.time()
     res['Direct time (s)'].append(np.round(end_time - start_time, 5))
+    res['Direct QPU time (s)'].append(np.round(qpu_time, 5))
     res['Direct sol'].append(np.round(normalize_sol(direct_solutions['energy'].min(), sol_range), 5))
 
     start_time = time.time()
@@ -103,15 +105,16 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 
 def test_scale() -> None:
     load_dotenv()
-    test_set = [{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}] + [
-        {'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'}
-        for variables in [8, 16, 32, 64, 128]
-        for cut_dim in [2 ** i for i in range(1, min(variables.bit_length() - 1, 6))]
-    ]
+    test_set = ([{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}] +
+        [
+            {'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'}
+            for variables in [8, 16, 32, 64, 128]
+            for cut_dim in [2 ** i for i in range(1, min(variables.bit_length() - 1, 6))]
+        ])
     res = {
         'Name': [], 'Variables': [], 'Cut dim': [],
         'QSplit CPU+Network time (s)': [], 'QSplit QPU time (s)': [], 'QSplit sol': [],
-        'Direct time (s)': [], 'Direct sol': [],
+        'Direct time (s)': [], 'Direct QPU time (s)': [], 'Direct sol': [],
         'Random time (s)': [], 'Random min sol': [], 'Random avg sol': []
     }
 
