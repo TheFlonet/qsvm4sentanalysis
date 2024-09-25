@@ -1,42 +1,93 @@
 import logging
 import time
 from collections import defaultdict
-import random
-from typing import Mapping, Hashable, Tuple
+from typing import Mapping, Hashable, Tuple, Dict, List
 import dimod
 import networkx as nx
 import numpy as np
-from dimod import SimulatedAnnealingSampler
+import pandas as pd
+from dotenv import load_dotenv
 from matplotlib import pyplot as plt
 from numpy import floating, integer
+from subqubo.QSplitSampler import QSplitSampler
 from subqubo.QUBO import QUBO
-from subqubo.subqubo_utils import subqubo_solve, sanitize_df
 import pyomo.environ as pyo
+from dwave.system import EmbeddingComposite, DWaveSampler
 
 
-def solve_model(qubo: QUBO, sense: pyo.kernel.objective) -> float:
-    N = len(qubo.qubo_matrix)
+def sanitize_df(qubo: QUBO) -> pd.DataFrame:
+    for idx, row in qubo.solutions.iterrows():
+        x = row.drop('energy').values.astype(int)
+        qubo.solutions.at[idx, 'energy'] = x @ qubo.qubo_matrix @ x.T
+
+    return qubo.solutions
+
+
+def get_direct_sol(qubo: QUBO) -> Tuple[pd.DataFrame, float]:
+    sampleset = EmbeddingComposite(DWaveSampler()).sample_qubo(qubo.qubo_dict, num_reads=10)
+    q_time = sampleset.info['timing']['qpu_access_time'] / 1e6
+    return sampleset.to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates(), q_time
+
+
+def get_random_sol(qubo: QUBO) -> pd.DataFrame:
+    return (dimod.RandomSampler()
+            .sample_qubo(qubo.qubo_dict, num_reads=min(500_000, 2 ** len(qubo.rows_idx)))
+            .to_pandas_dataframe().drop(columns=['num_occurrences']).drop_duplicates())
+
+
+def get_sol_range(qubo: QUBO) -> Tuple[float, float]:
+    n = len(qubo.rows_idx)
     model = pyo.ConcreteModel()
-    model.x = pyo.Var(range(N), within=pyo.Binary)
+    model.x = pyo.Var(range(n), domain=pyo.Binary)
 
-    model.obj = pyo.Objective(expr=sum(qubo.qubo_matrix[i, j] * model.x[i] * model.x[j]
-                                       for i in range(N) for j in range(N)), sense=sense)
+    def objective_rule(w_model):
+        return sum(qubo.qubo_matrix[i][j] * model.x[i] * model.x[j] for i in range(n) for j in range(n))
+
+    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.minimize, name='obj')
     solver = pyo.SolverFactory('cplex_direct')
-    _ = solver.solve(model, tee=False)
-    optimized_x = [pyo.value(model.x[i]) for i in range(N)]
+    solver.solve(model)
+    min_sol = model.obj()
+    model.del_component('obj')
+    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
+    solver = pyo.SolverFactory('cplex_direct')
+    solver.solve(model)
+    max_sol = model.obj()
+    return min_sol, max_sol
 
-    return sum(qubo.qubo_matrix[i, j] * optimized_x[i] * optimized_x[j] for i in range(N) for j in range(N))
+
+def normalize_sol(solution: float, sol_range: Tuple[float, float]) -> float:
+    return (solution - sol_range[0]) / (sol_range[1] - sol_range[0])
 
 
-def measure(variables: int, cut_dim: int, qubo: QUBO) -> None:
-    min_sol, max_sol = solve_model(qubo, pyo.minimize), solve_model(qubo, pyo.maximize)
+def measure(problem: Dict, qubo: QUBO, res: Dict[str, List]) -> Dict[str, List]:
+    res['Name'].append(problem['name'])
+    res['Variables'].append(problem['variables'])
+    res['Cut dim'].append(problem['cut_dim'])
+    sol_range = get_sol_range(qubo)
+
+    start_time = time.time()
+    direct_solutions, qpu_time = get_direct_sol(qubo)
+    end_time = time.time()
+    res['Direct time (s)'].append(np.round(end_time - start_time, 5))
+    res['Direct QPU time (s)'].append(np.round(qpu_time, 5))
+    res['Direct sol'].append(np.round(normalize_sol(direct_solutions['energy'].min(), sol_range), 5))
+
+    start_time = time.time()
+    random_solutions = get_random_sol(qubo)
+    end_time = time.time()
+    res['Random time (s)'].append(np.round(end_time - start_time, 5))
+    res['Random min sol'].append(np.round(normalize_sol(random_solutions['energy'].min(), sol_range), 5))
+    res['Random avg sol'].append(np.round(normalize_sol(random_solutions['energy'].mean(), sol_range), 5))
+
     start = time.time()
-    subqubos = subqubo_solve(SimulatedAnnealingSampler(), qubo, dim=variables, cut_dim=cut_dim)
+    subqubos, qpu_time = QSplitSampler(EmbeddingComposite(DWaveSampler()),
+                                       problem['cut_dim']).run(qubo, problem['variables'])
     end = time.time()
-    log.info(f'Execution time for subqubo solver: {end - start:.2f}s')
+    res['QSplit CPU+Network time (s)'].append(np.round(end - start, 5))
+    res['QSplit QPU time (s)'].append(np.round(qpu_time, 5))
+    res['QSplit sol'].append(np.round(normalize_sol(sanitize_df(subqubos)['energy'].min(), sol_range), 5))
 
-    log.info(f'Ground truth solutions range from {np.round(min_sol, 5)} and {np.round(max_sol, 5)}')
-    log.info(f'The best proposed solution has energy {min(sanitize_df(subqubos).energy)}')
+    return res
 
 
 def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], float | floating | integer]]:
@@ -53,66 +104,36 @@ def max_cut_problem() -> Tuple[nx.Graph, Mapping[tuple[Hashable, Hashable], floa
 
 
 def test_scale() -> None:
-    test_set = [
-        {'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'max_cut'},
-        {'variables': 8, 'cut_dim': 8, 'name': '8 vars, cut dim 8'},
-        {'variables': 8, 'cut_dim': 4, 'name': '8 vars, cut dim 4'},
-        {'variables': 8, 'cut_dim': 2, 'name': '8 vars, cut dim 2'},
-        {'variables': 16, 'cut_dim': 16, 'name': '16 vars, cut dim 16'},
-        {'variables': 16, 'cut_dim': 8, 'name': '16 vars, cut dim 8'},
-        {'variables': 16, 'cut_dim': 4, 'name': '16 vars, cut dim 4'},
-        {'variables': 16, 'cut_dim': 2, 'name': '16 vars, cut dim 2'},
-        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
-        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
-        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
-        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
-        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'},
-    ]
+    load_dotenv()
+    test_set = ([{'problem': max_cut_problem(), 'variables': 8, 'cut_dim': 2, 'name': 'Max cut'}] +
+        [
+            {'variables': variables, 'cut_dim': cut_dim, 'name': f'V{variables}C{cut_dim}'}
+            for variables in [8, 16, 32, 64, 128]
+            for cut_dim in [2 ** i for i in range(1, min(variables.bit_length() - 1, 6))]
+        ])
+    res = {
+        'Name': [], 'Variables': [], 'Cut dim': [],
+        'QSplit CPU+Network time (s)': [], 'QSplit QPU time (s)': [], 'QSplit sol': [],
+        'Direct time (s)': [], 'Direct QPU time (s)': [], 'Direct sol': [],
+        'Random time (s)': [], 'Random min sol': [], 'Random avg sol': []
+    }
 
     for test_dict in test_set:
         log.info(f'Test {test_dict["name"]}'.upper())
-        log.info(f'Variables: {test_dict["variables"]}'.upper())
-        for j in range(5):
-            log.info(f'Execution {j + 1}')
-            if 'problem' in test_dict:
-                qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
-                            rows_idx=[i + 1 for i in range(8)])
-                nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
-                plt.savefig("graph.png", format="PNG")
-            else:
-                num_interactions = random.randint(test_dict['variables'], test_dict['variables'] ** 2)
-                log.info(f'Interactions: {num_interactions}'.upper())
-                qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
-                                                            num_interactions=num_interactions,
-                                                            vartype=dimod.BINARY).to_qubo()[0],
-                            [i for i in range(test_dict['variables'])],
-                            [i for i in range(test_dict['variables'])])
-
-            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
-
-
-def test_cut_dim() -> None:
-    tests = [
-        {'variables': 32, 'cut_dim': 32, 'name': '32 vars, cut dim 32'},
-        {'variables': 32, 'cut_dim': 16, 'name': '32 vars, cut dim 16'},
-        {'variables': 32, 'cut_dim': 8, 'name': '32 vars, cut dim 8'},
-        {'variables': 32, 'cut_dim': 4, 'name': '32 vars, cut dim 4'},
-        {'variables': 32, 'cut_dim': 2, 'name': '32 vars, cut dim 2'}
-    ]
-
-    for test_dict in tests:
-        log.info(f'Test {test_dict["name"]}'.upper())
-        log.info(f'Variables: {test_dict["variables"]}'.upper())
-        num_interactions = test_dict['variables']
-        while num_interactions <= test_dict['variables'] ** 2:
-            log.info(f'Interactions: {num_interactions}'.upper())
+        if 'problem' in test_dict:
+            qubo = QUBO(test_dict['problem'][1], cols_idx=[i + 1 for i in range(8)],
+                        rows_idx=[i + 1 for i in range(8)])
+            nx.draw(test_dict['problem'][0], with_labels=True, pos=nx.spectral_layout(test_dict['problem'][0]))
+            plt.savefig('graph.png', format='PNG')
+            res = measure(test_dict, qubo, res)
+        else:
             qubo = QUBO(dimod.generators.gnm_random_bqm(variables=test_dict['variables'],
-                                                        num_interactions=num_interactions,
+                                                        num_interactions=test_dict['variables'] ** 2,
                                                         vartype=dimod.BINARY).to_qubo()[0],
                         [i for i in range(test_dict['variables'])],
                         [i for i in range(test_dict['variables'])])
-            measure(test_dict['variables'], test_dict['cut_dim'], qubo)
-            num_interactions *= 2
+            res = measure(test_dict, qubo, res)
+        pd.DataFrame(res).to_csv('subqubo.csv', index=False)
 
 
 if __name__ == '__main__':
@@ -123,11 +144,4 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    file_handler = logging.FileHandler('subqubo.log')
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(formatter)
-    log.addHandler(file_handler)
-    log.info('SCALE TEST')
     test_scale()
-    log.info('CUT TEST')
-    test_cut_dim()
