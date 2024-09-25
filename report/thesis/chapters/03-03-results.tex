@@ -1,15 +1,35 @@
 \chapter{Effectiveness of QUBO splitting}\label{sec:qsplitres}
 
-This chapter analyzes the effectiveness of the \texttt{QSplitSampler}. 
-Specifically, we will examine a straightforward and easily visualized case study in Section \ref{sec:maxcut}, followed by a comprehensive series of tests to evaluate the algorithm's general effectiveness in Section \ref{sec:qsplittest}.
+The following chapter analyzes the effectiveness of \texttt{QSplitSampler} when applied to ``real'' problems.
 
-\section{Test case: Maximum-Cut problem}\label{sec:maxcut}
+The analysis compares \texttt{QSplitSampler} with D-Wave's solver that directly utilizes the QPU, namely \texttt{QPUSampler}.
+The data collected focuses on:
+\begin{itemize}
+    \item The quality of the solution produced, specifically how close the assignment is to the global optimum;
+    \item The time required for the resolution, considering both time spent on the QPU and CPU.
+\end{itemize}
 
-To evaluate \texttt{QSplitSampler} in a controlled environment, the first context examined was its application to the Maximum-Cut problem.
+Section \ref{sec:maxcut} examines a specific instance of the Maximum-Cut Problem (MCP).
+The selected instance can be easily visualised and has some desirable features for evaluating the performance of \texttt{QSplitSampler} under ``adverse'' conditions.
+
+Section \ref{sec:qsplittest} analyzes a series of randomly generated problems to evaluate not only the solution quality but, more importantly, the time advantage of \texttt{QSplitSampler} compared to \texttt{QPUSampler} by assessing whether increased QPU usage results in a shorter overall time to compute the solution.
+
+\section{Test case: Maximum-Cut Problem}\label{sec:maxcut}
+
+To evaluate \texttt{QSplitSampler} effectiveness it is natural to set a controlled environment, as opposed to the real scenario provided by sentiment analysis applications.
+The real scenario selected is represented by the solution to instances of MCP, reduced to QUBO. 
+
+Motivations to choose MCP are:
+\begin{itemize}
+    \item It is straightforward to manually construct problems with a specified number of edges and nodes;
+    \item It is a problem that can be reformulated easily in QUBO form;
+    \item It exhibits symmetric solutions, meaning that the assignment of binary variables or their complementary assignment yields the same objective function value.
+    Therefore, the optimal solution to MCP will never be unique, as there will always be at least two optimal assignments.
+\end{itemize}
 
 \subsection{Maximum-Cut}
 
-The Maximum-Cut problem involves dividing the vertices of a graph into two subsets, $S$ and $T$, such that the number of edges between nodes in $S$ and nodes in $T$ is maximized.
+MCP involves dividing the vertices of a graph into two subsets, $S$ and $T$, such that the number of edges between nodes in $S$ and nodes in $T$ is maximized.
 
 Consider a graph like the one in Figure \ref{fig:maxcut}. 
 Subset $S$ consists of the white nodes, and subset $T$ consists of the black nodes. 
@@ -35,7 +55,7 @@ Figure \ref{fig:maxcutset} highlights all and only the edges between $S$ and $T$
         
             \draw[blue, thick] ($(A)+(0.75,0.5)$) -- ($(C)+(0.75,-0.75)$) -- ($(C)+(-0.75,-0.75)$) -- ($(A)+(-0.75,0.5)$);
         \end{tikzpicture}
-        \caption{Maximum-Cut graph.}
+        \caption{Maximum-Cut example graph.}
         \label{fig:maxcut}
     \end{subfigure}
     \hfill
@@ -67,33 +87,36 @@ Figure \ref{fig:maxcutset} highlights all and only the edges between $S$ and $T$
 \paragraph{Desired Characteristics} In the case illustrated in Figure \ref{fig:maxcut}, it is easily verifiable that it is impossible to find an assignment of $S$ and $T$ that produces more than five edges.
 
 However, the solution is not unique. 
-If we associate $1$ with the white nodes and $0$ with the black nodes, two five-edge solutions are: 
+Associating $1$ with the white nodes and $0$ with the black nodes, two five-edge solutions are: 
 \begin{itemize}
     \item $\{A=1,B=0,C=1,D=0,E=0\}$,
     \item $\{A=0,B=1,C=0,D=1,E=1\}$.
 \end{itemize}
 
-The non-uniqueness of the solution presents a challenge during the optimization process, as different sections of the problem might guide towards complementary assignments, leading to inconsistent aggregated results.
+The non-uniqueness of the solution presents a challenge during the optimization process, as different sections of the problem might guide towards complementary assignments, leading to inconsistent aggregated results when, recalling Section \ref{sec:split}, a QUBO problem is splitted, possibly recursively, into smaller instances.
 
 \subsection{Results}
 
-The test problem is illustrated in Figure \ref{fig:maxcut_test}, consisting of a graph with eight nodes, corresponding to eight variables. 
-\texttt{QSplitSampler} was configured to solve problems of size two using the QPU, meaning that the QPU receives problems that are $\frac{1}{16}$ of the total size.
+\texttt{QSplitSampler} was configured to solve problems using \texttt{QPUSampler} that only consider two variables. 
+Since the initial problem size consists of eight variables, the submatrices considered for direct resolution have a size equal to $\frac{2^2}{8^2} = \frac{1}{16}$ of the original problem.
 
 In this case, partitioning is unnecessary, as the QPU can directly solve problems of this size. 
 The utility of this experiment lies in providing an initial measure of error.
 
+In particular, the instance of MCP under consideration is represented in Figure \ref{fig:maxcut_test}.
+The graph represents a problem with eight nodes, corresponding to eight binary variables.
+
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \node[circle, draw=black] (A) at (0,1.914) {};
-        \node[circle, draw=black] (B) at (1.914,3.828) {};
-        \node[circle, draw=black] (C) at (3.828,1.914) {};
-        \node[circle, draw=black] (D) at (1.914,0) {};
-        \node[circle, draw=black] (E) at (1.414,1.414) {};
-        \node[circle, draw=black] (F) at (1.414,2.414) {};
-        \node[circle, draw=black] (G) at (2.414,2.414) {};
-        \node[circle, draw=black] (H) at (2.414,1.414) {};
+        \node[circle, draw=black] (A) at (0,1.914) {A};
+        \node[circle, draw=black] (B) at (1.914,3.828) {B};
+        \node[circle, draw=black] (C) at (3.828,1.914) {C};
+        \node[circle, draw=black] (D) at (1.914,0) {D};
+        \node[circle, draw=black] (E) at (1.414,1.414) {E};
+        \node[circle, draw=black] (F) at (1.414,2.414) {F};
+        \node[circle, draw=black] (G) at (2.414,2.414) {G};
+        \node[circle, draw=black] (H) at (2.414,1.414) {H};
 
         \draw[black, thick] (A) -- (E);
         \draw[black, thick] (A) -- (F);
@@ -114,18 +137,36 @@ The utility of this experiment lies in providing an initial measure of error.
     \label{fig:maxcut_test}
 \end{figure}
 
-The results obtained are summarized in Table \ref{tab:maxcut}.
+Following the examples provided by D-Wave itself \cite{maxcut-dwave}, it is possible to convert the graph in Figure \ref{fig:maxcut_test} into a QUBO formulation, resulting in the upper triangular matrix shown in the matrix \eqref{eq:maxcutQUBO}.
+
+\begin{equation}
+    \begin{array}{c|*{8}{c}}
+          & A  & B  & C  & D  & E  & F  & G  & H  \\
+        \hline
+        A & -2 & 0  & 0  & 0  & 2  & 2  & 0  & 0  \\
+        B &    & -2 & 0  & 0  & 0  & 2  & 2  & 0  \\
+        C &    &    & -2 & 0  & 0  & 0  & 2  & 2  \\
+        D &    &    &    & -2 & 2  & 0  & 0  & 2  \\
+        E &    &    &    &    & -5 & 2  & 2  & 2  \\
+        F &    &    &    &    &    & -5 & 2  & 2  \\
+        G &    &    &    &    &    &    & -5 & 2  \\
+        H &    &    &    &    &    &    &    & -5 \\
+    \end{array}
+    \label{eq:maxcutQUBO}
+\end{equation}
+
+Solving the problem \eqref{eq:maxcutQUBO} yields the results given in Table \ref{tab:maxcut}.
 
 \begin{table}[H]
     \centering
     \begin{tabular}{cccc}
         \toprule
-        \multicolumn{2}{c}{\texttt{QSplitSampler}} & \multicolumn{2}{c}{Direct resolution} \\
+        \multicolumn{2}{c}{\texttt{QSplitSampler}} & \multicolumn{2}{c}{\texttt{QPUSampler}} \\
         Time (s) & Solution & Time (s) & Solution \\
         \midrule
         18.15 & 0.8 & 5.02 & 0        
     \end{tabular}
-    \caption{\texttt{QSplitSampler} executed on \ref{fig:maxcut_test}.}
+    \caption{\texttt{QSplitSampler} executed on \eqref{eq:maxcutQUBO}.}
     \label{tab:maxcut}
 \end{table}
 
@@ -139,10 +180,15 @@ The time required to process the problem is expressed in seconds and includes th
 The solution is presented by normalizing the values within the range $[0, 1]$. 
 Since these are minimization problems, $0$ corresponds to the optimal solution.
 
-\paragraph{Time Analysis} The time required to solve \ref{fig:maxcut_test} with \texttt{QSplitSampler} is 3.6 times greater than that of a direct resolution. 
-This increase is not only due to the CPU processing required by the partitioning and aggregation strategy but also the higher number of requests made to the quantum solver. 
-Although the problems are relatively small, it is necessary to transmit the data to D-Wave's cloud infrastructure, wait for processing, and then forward the result. 
-This computational overhead might become marginal for instances where quantum acceleration is substantial, but it significantly impacts the resolution of ``small'' problems.
+\paragraph{Time Analysis} The time required to solve MCP on the graph in Figure \ref{fig:maxcut_test} with \texttt{QSplitSampler} is 3.6 times greater than that of a direct resolution. 
+In detail, three main components can be identified that contribute to the time spent on classical machines:
+\begin{itemize}
+    \item Calculation of the minor embedding;
+    \item Partitioning algorithm and aggregation of the subproblems;
+    \item Time required to send the subproblems generated to \texttt{QPUSampler}.
+\end{itemize}
+The last of these components represents the dominant factor that causes \texttt{QSplitSampler} to perform worse than \texttt{QPUSampler} for small-sized problems.
+Since, it is necessary to transmit the data to D-Wave's cloud infrastructure, wait for processing, and then forward the result, this computational overhead might become marginal for instances where quantum acceleration is substantial, but it significantly impacts the resolution of ``small'' problems.
 
 \paragraph{Quality of Results} From a performance perspective, \texttt{QSplitSampler} produced results that were significantly worse compared to direct resolution. 
 However, it is important to contextualize these results.
@@ -159,36 +205,57 @@ The problems considered represent complete graphs, and while they do not represe
 Working with complete graphs increases the likelihood of having multiple optimal assignments. 
 Intuitively, this occurs because the problem has more data to combine to converge to the same objective function value.
 
-In Section \ref{sec:multivar}, the results obtained with problems of $64$ and $128$ variables are reported, while in Section \ref{sec:yqsplit}, general considerations on \texttt{QSplitSampler} are presented, analyzing the reasons behind the obtained results.
-
 \subsection{64 and 128 Variables Problems}\label{sec:multivar}
 
-Tables \ref{tab:64var} and \ref{tab:128var} respectively present the results for problems with $64$ and $128$ variables. The table columns provide the following information, with all times expressed in seconds: 
-\begin{itemize} 
-    \item \emph{Cut Dim}: the size of the \texttt{QSplitSampler} subproblem solved by the QPU; 
-    \item \emph{CPU time}: the time required by \texttt{QSplitSampler} to produce a solution, which includes: 
-    \begin{itemize} 
-        \item The time taken for minor embedding computation; 
-        \item The time for network transfer to D-Wave's cloud infrastructure; 
-        \item The time spent on classical architecture processing (division and aggregation of results). 
-    \end{itemize} 
-    \item \emph{QPU time}: the time spent on the QPU; 
-    \item \emph{Solution}: the value of the best solution, normalized to $[0, 1]$, produced by \texttt{QSplitSampler}; 
-    \item \texttt{QPUSampler}: the solution produced by directly solving the problem on the QPU. 
+Using D-Wave's libraries to generate complete graphs, problems with $64$ and $128$ variables were solved, with the results reported in Tables \ref{tab:64var} and \ref{tab:128var}, respectively.
+
+The table columns provide the following information, with all times expressed in seconds: 
+\begin{enumerate}
+    \item \texttt{QSplitSampler}
+    \begin{enumerate}
+        \item \emph{Cut Dim}: Number of variables handled by the subproblem sent directly to \texttt{QPUSampler};
+        \item \emph{CPU \& QPU time}: Represented as \emph{CPU time - QPU time};
+        \item \emph{Solution};
+    \end{enumerate}
+    \item \texttt{QPUSampler}
+    \begin{enumerate}
+        \item \emph{CPU \& QPU time}: Represented as \emph{CPU time - QPU time};
+        \item \emph{Solution}.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{itemize}
+    \item \emph{CPU time}: The time required by \texttt{QSplitSampler} to produce a solution, which includes:
+    \begin{itemize}
+        \item The time take for minor embedding computation;
+        \item The time for network transfer to D-Wave's cloud infrastructure;
+        \item The time spent on classical architecture processing (partition and aggregation of results).
+    \end{itemize}
+    \item \emph{QPU time}: The time spent on the QPU;
+    \item \emph{Solution} is the value of the best solution, normalized to $[0, 1]$.
 \end{itemize}
+
+\subsubsection{Results}
+
+Referring to the first row of Table \ref{tab:64var}, it can be observed that the total time required to provide the solution using \texttt{QSplitSampler} is approximately seven times greater than that required by \texttt{QPUSampler}.
+The increased time is due to the number of subproblems processed, a topic that will be discussed in detail in Section \ref{sec:subproblemcount}.
+
+As well as the time spent on the CPU, the time spent on the QPU increases significantly, by a factor of 16.5, where \texttt{QSplitSampler} takes 0.33 seconds compared to 0.02 seconds for \texttt{QPUSampler}.
+
+However, the quality of the solution produced is unacceptable; while \texttt{QPUSampler} reaches the global optimum, \texttt{QSplitSampler} deviates significantly, yielding a value of 0.45.
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{cccc|cc}
+    \begin{tabular}{ccc|cc}
         \toprule
-        \multicolumn{4}{c}{\texttt{QSplitSampler}} & \\
-        Cut Dim         & CPU time & QPU time & Solution & \texttt{QPUSampler} \\
+        \multicolumn{3}{c}{\texttt{QSplitSampler}} & \multicolumn{2}{c}{\texttt{QPUSampler}} \\
+        Cut Dim & CPU \& QPU time & Solution & CPU \& QPU time & Solution \\
         \midrule
-        2               & 156.9    & 0.33     & 0.26     & 0        \\
-        4               & 63.6     & 0.25     & 0.46     & 0        \\
-        8               & 35.4     & 0.17     & 0.47     & 0        \\
-        16              & 20.8     & 0.1      & 0.31     & 0        \\
-        32              & 22.8     & 0.05     & 0.26     & 0        \\
+        2 & 154.23 - 0.33 & 0.45 & 22.06 - 0.02 & 0 \\
+        4 & 73.76 - 0.25 & 0.42 & 21.41 - 0.02 & 0 \\
+        8 & 40.51 - 0.17 & 0.43 & 36.54 - 0.02 & 0 \\
+        16 & 24.6 - 0.10 & 0.42 & 37.87 - 0.02 & 0 \\
+        32 & 20.68 - 0.05 & 0.33 & 16.67 - 0.02 & 0 \\
         \bottomrule
     \end{tabular}
     \caption{Results for problems with 64 variables.}
@@ -197,31 +264,29 @@ Tables \ref{tab:64var} and \ref{tab:128var} respectively present the results for
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{cccc|c}
+    \begin{tabular}{ccc|cc}
         \toprule
-        \multicolumn{4}{c}{\texttt{QSplitSampler}} & \\
-        Cut Dim         & CPU time & QPU time & Solution & \texttt{QPUSampler}  \\
+        \multicolumn{3}{c}{\texttt{QSplitSampler}} & \multicolumn{2}{c}{\texttt{QPUSampler}} \\
+        Cut Dim & CPU \& QPU time & Solution & CPU \& QPU time & Solution \\
         \midrule
-        2               & 417.8    & 0.45     & 0.49     & 0        \\
-        4               & 173.3    & 0.35     & 0.41     & 0        \\
-        8               & 105.8    & 0.25     & 0.42     & 0        \\
-        16              & 49.7     & 0.17     & 0.39     & 0        \\
-        32              & 42       & 0.1      & 0.36     & 0        \\
+        2 & 414.42 - 0.45 & 0.36 & 144.29 - 0.02 & 0 \\
+        4 & 169.13 - 0.35 & 0.47 & 183.23 - 0.02 & 0 \\
+        8 & 95.89 - 0.25 & 0.5 & 168.34 - 0.02 & 0 \\
+        16 & 63.83 - 0.17 & 0.52 & 106.02 - 0.02 & 0 \\
+        32 & 45.42 - 0.1 & 0.42 & 143.97 - 0.02 & 0 \\
         \bottomrule
     \end{tabular}
     \caption{Results for problems with 128 variables.}
     \label{tab:128var}
 \end{table}
 
-In both cases, the quality of the solution produced deviates significantly from the optimum, deteriorating between 25\% and 50\%. 
+In both tables, the quality of the solution produced deviates significantly from the optimum, deteriorating between 25\% and 50\%. 
 Furthermore, the lower limit of the error committed seems to increase as the problem size increases, stabilising at around 35\%.
 
 Despite the suboptimal results, \texttt{QSplitSampler} maintains the desired behaviour regarding QPU usage. 
 All reported values exceed 0.1 seconds, three times higher than the use of D-Wave's hybrid solver (Section \ref{sec:qpuusage}) for significantly larger problems.
 
 However, despite the significant increase in the quantum component used to find the solution, the time required to transmit all the subproblems and aggregate the results remains dominant.
-
-\subsection{General Observations}\label{sec:yqsplit}
 
 Based on the results obtained, the following key considerations emerge: 
 \begin{itemize} 
@@ -235,15 +300,53 @@ The poor performance is likely due to the search for complementary assignments, 
 \paragraph{Solving Time} The increase in solution time as \emph{cut dim} decreases is considerable, raising the question of where most of the time is spent during execution. 
 Understanding the bottleneck of the current implementation may allow for the development of a second, potentially more efficient version.
 
+\subsection{Subproblem Count}\label{sec:subproblemcount}
+
 The methods used for subdivision and aggregation of subproblems are efficient enough not to have a significant impact on execution.
 
 Likewise, the time required for transmission to the cloud infrastructure should not be so high as to slow down execution. 
 However, how many subproblems are transferred remains to be verified. 
 Although a single transmission may be negligible, extensive use of network resources could justify the observed behaviour.
 
-To handle a problem with $2^a$ variables by sending subproblems of size $2^b$ to the QPU, where $a \geq b$, means transmitting a total of $3^{a-b}$ subproblems to the quantum solver. 
-This calculation considers only the number of subproblems sent to the QPU. 
-If the subproblems generated from the aggregation process are also considered, the total number of calls to the QPU would be $3^{a-b} + 3*(a-b)$.
+Imagine an example problem like the one in Figure \ref{fig:exstart}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0,0) rectangle (3,3);
+        \fill[gray!90, opacity=0.75] (3, 0) -- (0, 0) -- (0, 3) -- cycle;
+    \end{tikzpicture}
+    \caption{General QUBO problem.}
+    \label{fig:exstart}
+\end{figure}
+
+Once partitioned by the splitting operation, the result is what is presented in Figure \ref{fig:exsplit}, where of the four subproblems, only three require a solution to be aggregated.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0,0) rectangle (1.4,1.4);
+        \draw (1.6,1.6) rectangle (3,3);
+        \draw (0,1.6) rectangle (1.4,3);
+        \draw (1.6,0) rectangle (3,1.4);
+        \fill[gray!90, opacity=0.75] (0,0) -- (0,1.4) -- (1.4,1.4) -- (1.4,0);
+        \fill[gray!90, opacity=0.75] (0,1.6) -- (0,3) -- (1.4,1.6) -- cycle;
+        \fill[gray!90, opacity=0.75] (1.6,0) -- (3,0) -- (1.6,1.4) -- cycle;
+
+        \draw[decorate,decoration={brace,amplitude=10pt}] (0,1.6) -- (0,3) node [black,midway,xshift=-25pt] {$\operatorname{UL}$};
+        \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (3,1.6) -- (3,3) node [black,midway,xshift=25pt] {$\operatorname{UR}$};
+        \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (3,0) -- (3,1.4) node [black,midway,xshift=25pt] {$\operatorname{BR}$};
+    \end{tikzpicture}
+    \caption{One step split.}
+    \label{fig:exsplit}
+\end{figure}
+
+For each step of the recursive partition, three new problems are generated, which in turn can be further partitioned.
+
+So, to handle a problem with $2^a$ variables by sending subproblems of size $2^b$ to the QPU, where $a \geq b$, means transmitting a total of $3^{a-b}$ subproblems to \texttt{QPUSampler}, where 3 is the number of subproblems generated by a single execution of the split step and $(a-b)$ is the number of recursive calls of \texttt{QSplitSampler}.
+
+This calculation considers only the number of subproblems sent to the QPU by the splitting procedure. 
+Conflict resolution also generates new subproblems, but their number grows linearly with the recursive calls of \texttt{QSplitSampler}. For this reason, its contribution may be disregarded as the growth in the number of subproblems is dominated by the base-3 exponentiation.
 
 Thus, for a problem with $128$ variables ($2^7$) and a \emph{cut dim} of $2$, the number of subproblems transmitted is at least: $3^{7-1}=3^6=729$.
 

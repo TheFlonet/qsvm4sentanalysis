@@ -15,10 +15,10 @@
 \usepackage{tikz}
 \usetikzlibrary{trees}
 \usetikzlibrary{calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{lineno}
 \linenumbers
-\usepackage{todonotes}
-\newcommand\note[1]{\todo[inline]{#1}}
 \usepackage[style=numeric-comp]{biblatex}
 \addbibresource{bibliography.bib}
 \usepackage{color, colortbl}
@@ -59,21 +59,23 @@
 I declare to be responsible for the content I am presenting to obtain the final degree, not to have plagiarised in all or part of the work produced by others and to have cited original sources in a way consistent with current plagiarism regulations and copyright. I am also aware that in the case of false declaration, I could incur in law penalties and my admission to the final exam could be denied.
 \newpage
 
-\input{acknowledgments}
+\section*{Acknowledgments}
 
 \pagenumbering{arabic}
 \newpage
 
 \section*{Abstract}
+In this study, we initially investigate the application of a hybrid classical quantum classifier (HCQC) for sentiment analysis, comparing its performance against the classical CPLEX classifier and the Transformer architecture. 
+Our findings indicate that while the HCQC underperforms relative to the Transformer in terms of classification accuracy, but it requires significantly less time to converge to a reasonably good approximate solution. 
+This experiment also reveals a critical bottleneck in the HCQC, whose architecture is partially undisclosed by the D-Wave property. 
+To address this limitation, we propose a novel algorithm based on the algebraic decomposition of QUBO models, which enhances the time the quantum processing unit can allocate to problem-solving tasks.
+
 \newpage
 
 \tableofcontents
-% \listoftables
-% \listoffigures
 \newpage
 
 \chapter{Introduction}
-\note{TODO: will be written as the last part}
 
 \input{chapters/00-theory}
 
