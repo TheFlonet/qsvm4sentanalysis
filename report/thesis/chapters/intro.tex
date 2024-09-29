@@ -1,0 +1,64 @@
+\section*{Note on the Use of Quantum Solvers}
+
+All the experiments using a quantum component have been conducted on real machines (hybrid or purely quantum) provided by D-Wave.
+D-Wave offers a limited amount of free machine time each month, specifically 20 minutes for hybrid solvers and one minute for purely quantum solvers.
+Once this limit is exceeded, users must either wait for the monthly renewal or opt for the ``premium'' option by paying additional computation time.
+
+Ideally, the difference between the solvers available for free and those available through the premium version should pertain only to cost and the time allocated.
+However, although this assumption seems reasonable, it is not explicitly confirmed in D-Wave's documentation.
+For this reason, some of the considerations discussed may not apply equally when using the paid solvers.
+
+\chapter{Introduction}
+
+In recent years, the development of models dedicated to the understanding and processing of language has significantly increased. 
+With the public release of ChatGPT\cite{chatgpt}, the use of large language models has become accessible to anyone, enabling their rapid diffusion.
+
+OpenAI, the company behind the development of GPT models, has shown\cite{scaling} that the quality of the model stems inevitably from a few fundamental aspects:
+\begin{itemize}
+    \item The quantity and relative quality of the data;
+    \item The size of the model;
+    \item The training time, also depends on the computational infrastructure available.
+\end{itemize}
+
+The relationship between the quality or the quantity of data and the model's expressiveness is intuitive, even without the need to fully understand the architectural mechanisms of language processing models. 
+A larger amount of data allows for extracting more examples of coherent sentences, thereby increasing the likelihood of accurately predicting the next word in a plausible sentence.
+Furthermore, the information learned from the dataset is ``stored'' in the model's parameters, meaning high-quality data enables the model to manipulate text more effectively.
+
+On the other hand, understanding why a larger model empirically yields better responses remains an open problem, explored in a different research field called Explainable AI.
+
+As larger models require more data, there is also a need for greater computational power to train these models while limiting training time.
+The resource demand is so high that training a ``foundational'' model, i.e., a large-scale model trained on general data, is feasible only for large tech companies such as Facebook, Google, and Microsoft.
+
+This thesis studies alternative models that can reduce the required computational resources.
+By working with unconventional computational architectures, this work aims to determine whether and how they can accelerate the creation of new models, correlating the increased speed with differences in the model's expressiveness.
+
+The computational architecture on which the research has been conducted is adiabatic quantum computing (AQC, Section \ref{sec:AQC}), specifically its application in quantum annealing as proposed by D-Wave.
+There are two primary reasons for this choice. 
+First, adiabatic quantum computing naturally solves problems formulated in QUBO (quadratic unconstrained binary optimization) form.
+Second, many deep learning training algorithms aim to minimize a function based on specific parameters.
+
+Instead of using Transformer models, typically employed for language processing tasks, this thesis focuses on using support vector machines (SVM), shifting from deep learning to machine learning. 
+Using SVMs (Section \ref{sec:svm}) allows for reducing the model's size from hundreds of millions of learnable parameters to a few tens of thousands, making it feasible to train the model even on personal computers or low-power systems such as embedded devices.
+
+Rather than comparing the models in language modelling, the chosen task for language processing is Sentiment Analysis, specifically its binary version (BSA, Section \ref{sec:bsa}).
+This task aims to separate sentences conveying a ``positive'' sentiment from those expressing a ``negative'' sentiment.
+
+Using a well-defined task such as BSA allows for objectively evaluating the created model.
+This is a substantial difference compared to language modelling, for which there are no standard evaluation datasets, and where better performance on synthetic benchmarks often does not lead to noticeable improvements in real-world applications.
+
+By comparing the quantum implementation of BSA with state-of-the-art classical solvers and Transformer models, Section \ref{sec:qsvm-res} examines:
+\begin{itemize}
+    \item Performance relative to the classification task;
+    \item Model training time;
+    \item Time required to classify new examples.
+\end{itemize}
+
+From the analyses conducted, it appears that the use of the quantum processing unit (QPU) by D-Wave’s hybrid solvers is minimal.
+Since the functioning of hybrid solvers is hidden by D-Wave’s intellectual property, it is impossible to explain this behaviour properly.
+As discussed in Chapter \ref{sec:qpu}, the limited use of the QPU could stem from the inability to directly handle large-scale problems, as detailed in Section \ref{sec:me}.
+To avoid excessive use of quantum resources, which are currently limited and costly to maintain, D-Wave might deliberately design hybrid algorithms that reduce QPU utilization.
+
+An open question remains whether such design choices are applied only to non-paying users, as an incentive to encourage premium accounts, or if they are uniformly applied to all users.
+Assuming no distinction is made between paying and non-paying users, the development of alternative hybrid solvers may not only allow the use of open-source software but also provide greater control over the amount of computation delegated to the QPU.
+
+This topic is explored in Chapter \ref{sec:hsolver}, where an alternative solver to D-Wave's is proposed, analyzing the rationale behind its development and the performance results obtained.

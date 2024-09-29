@@ -4,7 +4,7 @@ This chapter will cover the main theoretical topics addressed during the develop
 The aim of this exposition is not to exhaustively cover the research conducted in the various fields 
 but to provide a sufficient overview to undertake the experimentation carried out.
 
-\section{Sentiment Analysis}
+\section{Sentiment Analysis}\label{sec:bsa}
 
 The task of Sentiment Analysis\cite{SentAnalysis} finds its theoretical framework in the broader context of Natural Language Processing (NLP). 
 NLP refers to algorithmic techniques aimed at manipulating, extracting information from, or generally ``understanding'' written text.
@@ -28,9 +28,9 @@ Another application context where Sentiment Analysis is fundamental for optimal 
 Some languages are naturally more prone to the use of irony, 
 and if this nuance of meaning is not captured, a ``naive'' translation would result in a completely meaningless output.
 
-\section{Support vector machine}
+\section{Support vector machine}\label{sec:svm}
 
-\note{Image \ref{fig:svm-margins} is extracted from Esposito's slides, can I use it?}
+% \note{Image \ref{fig:svm-margins} is extracted from Esposito's slides, can I use it?}
 
 Among the various machine learning models for binary classification, support vector machines\cite{SVM} (SVMs) aim to separate examples by generalizing them as effectively as possible. The underlying idea is to select, among the candidate separation lines, the one that maximizes the distance between the elements of the two classes. Provided the training dataset is balanced, this procedure ensures better generalization properties for examples near the decision boundary that discriminates between positive and negative examples.
 
