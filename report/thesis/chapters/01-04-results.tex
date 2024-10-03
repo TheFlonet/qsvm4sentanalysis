@@ -165,7 +165,7 @@ This behaviour is due to the use of multiple models to calculate the result, a p
 \subparagraph{Improving D-Wave Classification Time} From a qualitative analysis of the ensemble procedure, using multiple models does not seem to bring particular benefits; In almost all cases, the majority class equals the class predicted by each model in the set. 
 For this reason, it is possible to avoid the computational overhead of the ensemble procedure and use only one of the optimal models obtained through D-Wave, which reduces inference time, making the results produced by CPLEX and D-Wave comparable.
 
-\section{Testing with the whole dataset}
+\section{Testing with the whole dataset}\label{sec:dataset-full}
 
 Since the results obtained from different executions are almost identical, it is possible to perform a single test using the entire TweetDF. This additional test allows verification of the consistency of performance across the entire data set and the scalability of the hybrid optimisation.
 

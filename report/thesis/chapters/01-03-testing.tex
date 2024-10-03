@@ -34,7 +34,7 @@ Since the data in TweetEval are labelled with $0$ for the negative class and $2$
 
 \paragraph{Balancing the Dataset} As reported in Section \ref{sec:dataset}, the distribution of examples across classes is not fair. The balanced dataset is a desirable property in SVMs, so the number of examples extracted from the positive class equals the cardinality of the negative one. Despite the significant reduction in the number of examples, the dataset is large enough to guarantee more than 5,000 instances for each class considered. For this reason, it is possible to resize the dataset without worrying about potential information loss.
 
-\section{Generating Sentence Embeddings}
+\section{Generating Sentence Embeddings}\label{sec:embeddingused}
 
 Current artificial intelligence models are not capable of ``understanding'' text, at least not in the intuitive sense associated with the verb understand, so it is needed to reprocess the information and transform a sequence of characters into a sequence of numbers. This process is known as \emph{embedding generation}.
 
