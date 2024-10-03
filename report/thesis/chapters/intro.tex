@@ -61,6 +61,6 @@ To avoid excessive use of quantum resources, which are currently limited and cos
 An open question remains whether such design choices are applied only to non-paying users, as an incentive to encourage premium accounts, or if they are uniformly applied to all users.
 Assuming no distinction is made between paying and non-paying users, the development of alternative hybrid solvers may not only allow the use of open-source software but also provide greater control over the amount of computation delegated to the QPU.
 
-This topic is explored in Chapter \ref{sec:hsolver}, where an alternative solver to D-Wave's is proposed, analyzing the rationale behind its development and the performance results obtained.
+This topic is explored in more detail in the chapter \ref{sec:hsolver}, where an alternative solver to D-Wave is proposed, analysing the rationale behind its development and the performance achieved.
 
-AGGIUNGERE UNA O DUE FRASI PER RIASSUMERE COSA FA L'ALTERNATIVE SOLVER E COSA SI OTTIENE
+The alternative proposed in this thesis involves exploiting the algebraic properties of the QUBO problem in order to recursively partition large problems until they can be solved directly using QPU. The main purpose of this approach is to maximise the use of the QPU during the search for the global optimum.
