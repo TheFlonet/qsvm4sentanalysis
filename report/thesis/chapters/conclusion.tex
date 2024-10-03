@@ -3,12 +3,12 @@
 The research presented in this thesis has allowed for an in-depth exploration of:
 \begin{enumerate}
     \item The effectiveness of adiabatic quantum computing when applied to natural language processing tasks;
-    \item The study of the topological and architectural limitations of the current generation of quantum processing units (QPU);
+    \item The study of the topological and architectural limitations of the current generation of quantum processing units (QPU) designed to implement adiabatic quantum computing;
     \item The development of hybrid solvers as alternatives to those proposed by D-Wave.
 \end{enumerate}
 
 \paragraph{Quantum Support Vector Machine} The study of machine learning models based on quantum technologies is a relatively new topic in the research landscape. 
-Despite this, the potential to exploit quantum phenomena has piqued the interest of some researchers, who hope to achieve either performance or representational advantages.
+Despite this, the potential to exploit quantum phenomena has piqued the interest of some researchers, who hope to achieve advantages in terms of performance, representation or both.
 
 Among the works on quantum machine learning using quantum annealing, we can cite those by Vladislav Golyanik and his research group 4DQV\footnote{\url{https://4dqv.mpi-inf.mpg.de/}}, whose research focuses on the field of computer vision\cite{qcv1}\cite{qcv2}.
 
@@ -25,7 +25,7 @@ Furthermore, given the reduction in model complexity, quantum machine learning t
     \item Lower resource consumption, facilitating faster prototyping of new solutions.
 \end{itemize}
 
-\paragraph{QPU Analysis} The analysis of the QPU revealed that the computational resources required by the minor embedding algorithm do not allow problems with more than 128 logical qubits to be solved directly using the QPU. 
+\paragraph{QPU Analysis} The analysis of D-Wave's QPU utilisation strategies revealed that the computational resources required by the minor embedding algorithm do not allow problems with more than 128 logical qubits to be solved directly using the QPU. 
 Beyond this empirical limit, the current Pegasus architecture lacks sufficient physical qubits and adequate interconnections between qubits to express the problems.
 
 These limitations could be partially addressed with the introduction of new QPU topologies. 
@@ -37,7 +37,7 @@ Even with the potential development of increasingly efficient algorithms for min
 This makes the development of freely accessible solvers, both specialized for specific tasks and general purposes, a central necessity.
 
 \paragraph{Homebrewing a Hybrid Solver} The hybrid solver proposed and developed during this thesis, \texttt{QSplitSampler}, has as its primary goal the extensive use of available quantum resources, seeking to rebalance the workload between the CPU and QPU.
-Which in D-Wave's proposal seems to be heavily skewed towards CPU-intensive use.
+Which in D-Wave's proposal seems to be heavily skewed towards classical CPU-intensive use.
 
 The approach used by \texttt{QSplitSampler} allows application in various settings, far beyond what is possible with QML. 
 This is due to the fact that the algorithm is based on the structure of the QUBO problem.

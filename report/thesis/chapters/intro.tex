@@ -10,14 +10,14 @@ For this reason, some of the considerations discussed may not apply equally when
 
 \chapter{Introduction}
 
-In recent years, the development of models dedicated to the understanding and processing of language has significantly increased. 
+In recent years the development of models dedicated to the understanding and processing of natural language has significantly increased. 
 With the public release of ChatGPT\cite{chatgpt}, the use of large language models has become accessible to anyone, enabling their rapid diffusion.
 
 OpenAI, the company behind the development of GPT models, has shown\cite{scaling} that the quality of the model stems inevitably from a few fundamental aspects:
 \begin{itemize}
     \item The quantity and relative quality of the data;
     \item The size of the model;
-    \item The training time, also depends on the computational infrastructure available.
+    \item The training time also depends on the computational infrastructure available.
 \end{itemize}
 
 The relationship between the quality or the quantity of data and the model's expressiveness is intuitive, even without the need to fully understand the architectural mechanisms of language processing models. 
@@ -29,10 +29,10 @@ On the other hand, understanding why a larger model empirically yields better re
 As larger models require more data, there is also a need for greater computational power to train these models while limiting training time.
 The resource demand is so high that training a ``foundational'' model, i.e., a large-scale model trained on general data, is feasible only for large tech companies such as Facebook, Google, and Microsoft.
 
-This thesis studies alternative models that can reduce the required computational resources.
+\paragraph{Goals} This thesis studies alternative models that can reduce the required computational resources.
 By working with unconventional computational architectures, this work aims to determine whether and how they can accelerate the creation of new models, correlating the increased speed with differences in the model's expressiveness.
 
-The computational architecture on which the research has been conducted is adiabatic quantum computing (AQC, Section \ref{sec:AQC}), specifically its application in quantum annealing as proposed by D-Wave.
+The computational architecture on which the research has been conducted is adiabatic quantum computing (AQC, Section \ref{sec:AQC}), specifically its implementation is quantum annealing as proposed by D-Wave.
 There are two primary reasons for this choice. 
 First, adiabatic quantum computing naturally solves problems formulated in QUBO (quadratic unconstrained binary optimization) form.
 Second, many deep learning training algorithms aim to minimize a function based on specific parameters.
@@ -62,3 +62,5 @@ An open question remains whether such design choices are applied only to non-pay
 Assuming no distinction is made between paying and non-paying users, the development of alternative hybrid solvers may not only allow the use of open-source software but also provide greater control over the amount of computation delegated to the QPU.
 
 This topic is explored in Chapter \ref{sec:hsolver}, where an alternative solver to D-Wave's is proposed, analyzing the rationale behind its development and the performance results obtained.
+
+AGGIUNGERE UNA O DUE FRASI PER RIASSUMERE COSA FA L'ALTERNATIVE SOLVER E COSA SI OTTIENE
