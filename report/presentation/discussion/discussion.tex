@@ -69,6 +69,8 @@
 
 \end{frame}
 
+\section{Using Quantum Annealing for Sentiment Analysis}
+
 \begin{frame}
     \frametitle{From Machine Learning to Quantum Annealing}
     
@@ -158,6 +160,50 @@
 
 \end{frame}
 
+\section{Increase QPU usage}
+
+\begin{frame}
+    \frametitle{From Quadratic Programming to QUBO}
+
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \centering
+            Quadratic Programming Problem
+        \end{column}
+        \begin{column}{0.1\textwidth}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \centering
+            QUBO Problem
+        \end{column}
+    \end{columns}
+    \vspace{0.5cm}
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \begin{equation*}
+                \begin{aligned}
+                    \min_{x} \quad & \frac{1}{2}x^TQx + c^Tx\\
+                    \textrm{s.t.} \quad & Ax \preceq b\\
+                    &x_i\in \mathbb{R}, \forall i    \\
+                \end{aligned}
+            \end{equation*}        
+        \end{column}
+        \begin{column}{0.1\textwidth}
+            \LARGE
+            $\Longrightarrow$
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{equation*}
+                \begin{aligned}
+                    \min_{x} \quad & x^TQx\\
+                    &x_i\in\{0, 1\}, \forall i    \\
+                \end{aligned}
+            \end{equation*}  
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
 \begin{frame}
     \frametitle{From Quadratic Problem to QPU}
 
@@ -165,8 +211,8 @@
         \centering
         \begin{tikzpicture}[node distance=2cm]
             \node (step1) [block, fill=orange!50] {QP Formulation};
-            \node (step2) [block, below right of=step1, fill=orange!50] {Variables Binarization};
-            \node (step3) [block, below right of=step2, fill=orange!50] {Lagrangian Relaxation (QUBO formulation)};
+            \node (step2) [block, below right of=step1, fill=orange!50] {Variables Binarization + Lagrangian Relaxation};
+            \node (step3) [block, below right of=step2, fill=orange!50] {QUBO formulation};
             \node (step4) [block, below right of=step3, fill=teal!30] {Minor Embedding};
             \node (step5) [block, below right of=step4, fill=orange!50] {Problem with QPU structure};
         
@@ -227,8 +273,12 @@
 
     The QPU process directly problems in QUBO form:
 
-    $$\arg\min_x x^TQx$$
-    $$x_i \in \{0, 1\} \forall i$$
+    \begin{equation*}
+        \begin{aligned}
+            \min_{x} \quad & x^TQx\\
+            &x_i\in\{0, 1\}, \forall i    \\
+        \end{aligned}
+    \end{equation*}  
 
     Example with 4 binary variables:
 
@@ -381,11 +431,6 @@
         \item How closed source infrastructure can be avoided
         \item How the use of QPU can be increased
     \end{itemize}
-
-    \vspace{1cm}
-
-    Does this bring benefits when solving machine learning problems?
-
 \end{frame}
 
 \section{Thanks for your attention}
