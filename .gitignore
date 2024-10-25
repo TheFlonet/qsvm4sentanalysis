@@ -36,6 +36,7 @@ sketches
 *.fls
 *.out
 *.pdf
+!artifacts/*.pdf
 *.gz
 *.bbl
 *.bcf
